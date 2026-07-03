@@ -1,1 +1,275 @@
-.auth{display:flex;align-items:center;padding:18px}.auth .card{width:100%}h1{margin:0 0 4px;font-size:32px}form{display:grid;gap:10px}.market{display:grid;gap:7px;max-height:330px;overflow:auto}.team{display:flex;justify-content:space-between;padding:10px;border-radius:14px;background:rgba(255,255,255,.07);color:var(--text);border:1px solid var(--border)}.team.sel{background:rgba(52,211,153,.18);border-color:rgba(52,211,153,.5)}a.btn{text-decoration:none;text-align:center}
+.auth-page {
+    display: flex;
+    align-items: center;
+    padding: 18px;
+}
+
+.auth-card {
+    width: 100%;
+}
+
+.auth-title {
+    margin: 0 0 4px;
+    font-size: 32px;
+    font-weight: 1000;
+    line-height: 1;
+}
+
+.auth-description {
+    margin: 0 0 18px;
+    font-size: 14px;
+}
+
+.auth-form {
+    display: grid;
+    gap: 10px;
+}
+
+.auth-link {
+    text-align: center;
+    text-decoration: none;
+}
+
+.register-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.register-summary-item {
+    padding: 10px 8px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .06);
+    text-align: center;
+}
+
+.register-summary-item span {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.register-summary-item strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.1;
+    font-weight: 1000;
+    white-space: nowrap;
+}
+
+.register-summary-ok {
+    color: var(--primary);
+}
+
+.register-summary-warning {
+    color: var(--accent);
+}
+
+.register-summary-error {
+    color: var(--danger);
+}
+
+.register-market {
+    display: grid;
+    gap: 7px;
+    max-height: 330px;
+    overflow: auto;
+    padding-right: 2px;
+}
+
+.register-team-card {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .07);
+    color: var(--text);
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.register-team-card.selected {
+    background: rgba(52, 211, 153, .18);
+    border-color: rgba(52, 211, 153, .5);
+}
+
+.register-team-card.disabled {
+    opacity: .42;
+    cursor: not-allowed;
+}
+
+.register-team-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.register-team-price {
+    flex-shrink: 0;
+    font-weight: 1000;
+    color: var(--accent);
+}
+
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.login-card {
+    width: 100%;
+    display: grid;
+    gap: 22px;
+}
+
+.login-header {
+    text-align: center;
+}
+
+.login-logo {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 14px;
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    background: rgba(52, 211, 153, .16);
+    border: 1px solid rgba(52, 211, 153, .35);
+    color: var(--primary);
+}
+
+.login-logo .material-symbols-rounded {
+    font-size: 36px;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 700,
+        'GRAD' 0,
+        'opsz' 40;
+}
+
+.login-title {
+    margin: 0;
+    font-size: 34px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.login-description {
+    margin: 10px 0 0;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.login-form {
+    display: grid;
+    gap: 12px;
+}
+
+.login-register-link {
+    text-align: center;
+    text-decoration: none;
+}
+
+.register-step-indicator {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.register-step {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+}
+
+.register-step span {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    font-weight: 1000;
+}
+
+.register-step strong {
+    font-size: 12px;
+    font-weight: 1000;
+}
+
+.register-step.active {
+    color: var(--accent);
+}
+
+.register-step.active span {
+    background: rgba(252, 211, 77, .18);
+    border-color: rgba(252, 211, 77, .45);
+    color: var(--accent);
+}
+
+.register-step.done {
+    color: var(--primary);
+}
+
+.register-step.done span {
+    background: rgba(52, 211, 153, .18);
+    border-color: rgba(52, 211, 153, .45);
+    color: var(--primary);
+}
+
+.register-step-line {
+    height: 2px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .12);
+}
+
+.register-step-panel {
+    display: grid;
+    gap: 10px;
+}
+
+.register-step-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.register-back-button {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .08);
+    color: var(--text);
+}
+
+.register-back-button .material-symbols-rounded {
+    font-size: 22px;
+}
+
+button:disabled,
+.btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    filter: grayscale(.25);
+}
+
+.auth-form .btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}

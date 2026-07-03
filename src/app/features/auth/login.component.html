@@ -1,1 +1,37 @@
-<main class="auth mobile-page"><section class="card"><h1>Fanta Serie A</h1><p class="muted">Accedi alla lega.</p><form [formGroup]="form" (ngSubmit)="submit()"><input class="input" placeholder="Username" formControlName="username"><input class="input" type="password" placeholder="Password" formControlName="password"><button class="btn">Entra</button><a class="btn secondary" routerLink="/register">Registrati</a></form></section></main>
+<main class="login-page mobile-page">
+    <section class="card login-card">
+        <div class="login-header">
+            <div class="login-logo">
+                <span class="material-symbols-rounded">
+                    sports_soccer
+                </span>
+            </div>
+
+            <h1 class="login-title">
+                Fanta Serie A
+            </h1>
+
+            <p class="muted login-description">
+                Accedi alla tua lega e schiera la formazione.
+            </p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+            <input class="input" placeholder="Username" formControlName="username">
+
+            <input class="input" type="password" placeholder="Password" formControlName="password">
+
+            <button class="btn" type="submit" [disabled]="form.invalid || loading()">
+                @if(loading()) {
+                Accesso...
+                } @else {
+                Entra
+                }
+            </button>
+
+            <a class="btn secondary login-register-link" routerLink="/register">
+                Registrati
+            </a>
+        </form>
+    </section>
+</main>

@@ -1,1 +1,83 @@
-<main><h1>Profilo</h1>@if(auth.appUser$|async;as user){<section class="card"><h2>{{user.username}}</h2><p class="muted">{{user.teamName}} · {{cost(user.roster)}} FC</p>@for(t of user.roster; track t){<p>{{t}}</p>}<button class="btn secondary" (click)="logout()">Logout</button></section>}</main>
+<main class="profile-content">
+  @if (vm$ | async; as vm) {
+    @if (vm.user; as user) {
+      <section class="profile-hero">
+        <div class="profile-avatar">
+          <span class="material-symbols-rounded"> person </span>
+        </div>
+
+        <h1>
+          {{ user.teamName }}
+        </h1>
+
+        <p>{{ "@" }}{{ user.username }}</p>
+      </section>
+
+      <section class="profile-stats-card">
+        <div>
+          <strong>{{ vm.myStanding?.fantasyPoints || 0 }}</strong>
+          <span>Punti</span>
+        </div>
+
+        <div>
+          <strong> {{ rosterCost(user.roster) }}/100 </strong>
+          <span>FC usati</span>
+        </div>
+
+        <div>
+          <strong>
+            @if (vm.myStanding?.position) {
+              #{{ vm.myStanding?.position }}
+            } @else {
+              -
+            }
+          </strong>
+          <span>Posizione</span>
+        </div>
+      </section>
+
+      <section class="profile-roster-section">
+        <h2>La tua rosa completa</h2>
+
+        <div class="profile-roster-list">
+          @for (teamName of user.roster; track teamName) {
+            <article class="profile-team-card">
+              <div class="team-color-bars">
+                <span [style.background]="teamColors(teamName).primary"></span>
+
+                <span
+                  [style.background]="teamColors(teamName).secondary"
+                ></span>
+              </div>
+
+              <div class="profile-team-info">
+                <strong>
+                  {{ teamName }}
+                </strong>
+
+                <p>
+                  Piazzamento precedente:
+                  @if (previousPlacement(teamName) > 0) {
+                    #{{ previousPlacement(teamName) }}
+                  } @else {
+                    -
+                  }
+                </p>
+              </div>
+
+              <strong class="profile-team-price">
+                {{ teamPrice(teamName) }} FC
+              </strong>
+            </article>
+          }
+        </div>
+      </section>
+
+      <button type="button" class="logout-card" (click)="logout()">
+        <span class="material-symbols-rounded"> logout </span>
+
+        Esci dall’account
+      </button>
+    }
+  }
+</main>

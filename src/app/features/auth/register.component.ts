@@ -1,2 +1,216 @@
-import { Component, inject, signal } from '@angular/core';import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';import { Router, RouterLink } from '@angular/router';import { FormsModule } from '@angular/forms';import { AuthService } from '../../core/services/auth.service';import { INITIAL_BUDGET, ROSTER_SIZE, SERIE_A_TEAMS, rosterCost } from '../../core/constants/serie-a-teams';import { ToastService } from '../../core/services/toast.service';
-@Component({standalone:true,imports:[ReactiveFormsModule,RouterLink,FormsModule],templateUrl:'./register.component.html',styleUrl:'./auth.scss'})export class RegisterComponent{fb=inject(FormBuilder);auth=inject(AuthService);router=inject(Router);toast=inject(ToastService);teams=SERIE_A_TEAMS;budget=INITIAL_BUDGET;size=ROSTER_SIZE;selected:string[]=[];loading=signal(false);form=this.fb.nonNullable.group({username:['',[Validators.required,Validators.minLength(3)]],password:['',[Validators.required,Validators.minLength(6)]],teamName:['',Validators.required]});toggle(t:string){this.selected=this.selected.includes(t)?this.selected.filter(x=>x!==t):[...this.selected,t]}cost(){return rosterCost(this.selected)}canSave(){return this.form.valid&&this.selected.length===this.size&&this.cost()<=this.budget}async submit(){if(!this.canSave()){this.toast.show('Scegli 10 squadre entro 100 FC e compila i dati','error');return}try{this.loading.set(true);const v=this.form.getRawValue();await this.auth.register(v.username,v.password,v.teamName,this.selected);await this.router.navigateByUrl('/home')}catch(e){console.error(e);this.toast.show('Registrazione non riuscita','error')}finally{this.loading.set(false)}}}
+import { Component, inject, signal } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Router, RouterLink } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+
+import { AuthService } from "../../core/services/auth.service";
+import {
+  INITIAL_BUDGET,
+  ROSTER_SIZE,
+  SERIE_A_TEAMS,
+  rosterCost,
+} from "../../core/constants/serie-a-teams";
+import { ToastService } from "../../core/services/toast.service";
+
+type RegistrationStep = "account" | "team";
+
+@Component({
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterLink, FormsModule],
+  templateUrl: "./register.component.html",
+  styleUrl: "./auth.scss",
+})
+export class RegisterComponent {
+  private fb = inject(FormBuilder);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private toast = inject(ToastService);
+
+  teams = SERIE_A_TEAMS;
+  budget = INITIAL_BUDGET;
+  size = ROSTER_SIZE;
+
+  currentStep = signal<RegistrationStep>("account");
+  selected: string[] = [];
+  loading = signal(false);
+
+  form = this.fb.nonNullable.group({
+    username: ["", [Validators.required, Validators.minLength(3)]],
+    password: ["", [Validators.required, Validators.minLength(6)]],
+    teamName: ["", Validators.required],
+  });
+
+  goToTeamStep(): void {
+    if (!this.canContinueToTeamStep()) {
+      this.form.controls.username.markAsTouched();
+      this.form.controls.password.markAsTouched();
+
+      this.toast.show(
+        "Inserisci username e password prima di continuare.",
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    this.currentStep.set("team");
+  }
+
+  goToAccountStep(): void {
+    this.currentStep.set("account");
+  }
+
+  toggle(teamName: string): void {
+    if (this.isSelected(teamName)) {
+      this.selected = this.selected.filter((team) => team !== teamName);
+      return;
+    }
+
+    if (this.selected.length >= this.size) {
+      this.toast.show(
+        `Hai già selezionato ${this.size} squadre. Deselezionane una per cambiarla.`,
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    this.selected = [...this.selected, teamName];
+
+    if (this.selected.length === this.size) {
+      this.toast.show(
+        `Hai selezionato tutte le ${this.size} squadre disponibili.`,
+        "success",
+        3000,
+      );
+    }
+  }
+
+  isSelected(teamName: string): boolean {
+    return this.selected.includes(teamName);
+  }
+
+  cost(): number {
+    return rosterCost(this.selected);
+  }
+
+  remainingBudget(): number {
+    return this.budget - this.cost();
+  }
+
+  selectedCount(): number {
+    return this.selected.length;
+  }
+
+  canSelectMoreTeams(): boolean {
+    return this.selected.length < this.size;
+  }
+
+  isOverBudget(): boolean {
+    return this.cost() > this.budget;
+  }
+
+  canSave(): boolean {
+    return (
+      this.form.valid &&
+      this.selected.length === this.size &&
+      this.cost() <= this.budget
+    );
+  }
+
+  async submit(): Promise<void> {
+    if (!this.canSave()) {
+      if (this.form.invalid) {
+        this.currentStep.set("account");
+        this.form.markAllAsTouched();
+        this.toast.show("Compila tutti i campi richiesti.", "error", 3000);
+        return;
+      }
+
+      if (this.selected.length !== this.size) {
+        this.currentStep.set("team");
+        this.toast.show(
+          `Devi selezionare esattamente ${this.size} squadre.`,
+          "error",
+          3000,
+        );
+
+        return;
+      }
+
+      if (this.cost() > this.budget) {
+        this.currentStep.set("team");
+        this.toast.show(
+          `Budget superato di ${this.cost() - this.budget} FC.`,
+          "error",
+          3000,
+        );
+
+        return;
+      }
+
+      this.toast.show("Registrazione non valida.", "error", 3000);
+      return;
+    }
+
+    try {
+      this.loading.set(true);
+
+      const value = this.form.getRawValue();
+
+      await this.auth.register(
+        value.username,
+        value.password,
+        value.teamName,
+        this.selected,
+      );
+
+      await this.router.navigateByUrl("/home");
+    } catch (error: any) {
+      console.error("Errore registrazione:", error);
+
+      const code = error?.code;
+      const message = error?.message;
+
+      if (message === "USERNAME_NON_VALIDO") {
+        this.toast.show(
+          "Username non valido. Usa almeno 3 caratteri.",
+          "error",
+          3000,
+        );
+      } else if (code === "auth/email-already-in-use") {
+        this.toast.show("Username già registrato.", "error", 3000);
+      } else if (code === "auth/invalid-email") {
+        this.toast.show("Username non valido.", "error", 3000);
+      } else if (code === "auth/weak-password") {
+        this.toast.show(
+          "Password troppo debole. Usa almeno 6 caratteri.",
+          "error",
+          3000,
+        );
+      } else if (code === "auth/operation-not-allowed") {
+        this.toast.show(
+          "Abilita Email/Password in Firebase Authentication.",
+          "error",
+          3000,
+        );
+      } else {
+        this.toast.show(
+          `Registrazione non riuscita: ${code || message || "errore sconosciuto"}`,
+          "error",
+          4000,
+        );
+      }
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  canContinueToTeamStep(): boolean {
+    return (
+      this.form.controls.username.valid && this.form.controls.password.valid
+    );
+  }
+}

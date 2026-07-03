@@ -1,1 +1,149 @@
-<main><h1>Classifica</h1>@if(vm$|async;as vm){<section class="card"><h2>Per punteggio</h2>@for(r of vm.fantasy; track r.uid){<div class="row"><span>#{{r.position}} {{r.teamName}}</span><strong>{{r.fantasyPoints}} pt</strong></div>}</section><section class="card"><h2>Punti incontri</h2>@for(r of vm.league; track r.uid; let i=$index){<div class="row"><span>#{{i+1}} {{r.teamName}} <small>{{r.wins}}V {{r.draws}}N {{r.losses}}P</small></span><strong>{{r.leaguePoints}}</strong></div>}</section>}</main>
+<main class="leaderboard-content">
+  <section class="leaderboard-hero">
+    <div class="leaderboard-hero-icon">
+      <span class="material-symbols-rounded"> leaderboard </span>
+    </div>
+
+    <div>
+      <h1>Classifica Lega</h1>
+
+      <p>
+        @if (activeTab() === "fantasy") {
+          Punteggio totale accumulato in stagione
+        } @else {
+          Classifica degli scontri diretti tra partecipanti
+        }
+      </p>
+    </div>
+  </section>
+
+  @if (vm$ | async; as vm) {
+    <section class="leaderboard-tabs">
+      <button
+        type="button"
+        [class.active]="activeTab() === 'fantasy'"
+        (click)="setTab('fantasy')"
+      >
+        <span class="material-symbols-rounded"> workspace_premium </span>
+
+        Punteggio
+      </button>
+
+      <button
+        type="button"
+        [class.active]="activeTab() === 'league'"
+        (click)="setTab('league')"
+      >
+        <span class="material-symbols-rounded"> sports_score </span>
+
+        Incontri
+      </button>
+    </section>
+
+    @if (activeTab() === "fantasy") {
+      <section class="card leaderboard-card-list">
+        <div class="leaderboard-section-title">
+          <div>
+            <span class="muted">Classifica</span>
+            <h2>Per punteggio fantasy</h2>
+          </div>
+
+          <span class="material-symbols-rounded"> trophy </span>
+        </div>
+
+        @if (vm.fantasy.length === 0) {
+          <p class="muted empty-leaderboard">Nessun utente in classifica.</p>
+        }
+
+        @for (row of vm.fantasy; track row.uid; let i = $index) {
+          <article class="leaderboard-row" [class.podium]="i < 3">
+            <div class="rank-badge">
+              {{ i + 1 }}
+            </div>
+
+            <div class="leaderboard-team-info">
+              <strong>
+                {{ row.teamName }}
+              </strong>
+
+              <p>
+                {{ row.username }}
+              </p>
+            </div>
+
+            <div class="leaderboard-score">
+              <strong>{{ row.fantasyPoints }}</strong>
+              <span>pt</span>
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+    @if (activeTab() === "league") {
+      <section class="card league-table-card">
+        <div class="leaderboard-section-title">
+          <div>
+            <span class="muted">Classifica</span>
+            <h2>Punti incontri</h2>
+          </div>
+
+          <span class="material-symbols-rounded"> groups </span>
+        </div>
+
+        @if (vm.league.length === 0) {
+          <p class="muted empty-leaderboard">Nessun utente in classifica.</p>
+        }
+
+        @if (vm.league.length > 0) {
+          <div class="league-table">
+            <div class="league-table-header">
+              <span>#</span>
+              <span>Team</span>
+              <span>PG</span>
+              <span>V</span>
+              <span>N</span>
+              <span>P</span>
+              <span>F/S</span>
+              <span>DR</span>
+              <span>Pt</span>
+            </div>
+
+            @for (row of vm.league; track row.uid; let i = $index) {
+              <div class="league-table-row" [class.podium]="i < 3">
+                <span class="league-position">
+                  {{ i + 1 }}
+                </span>
+
+                <span class="league-team">
+                  <strong>{{ row.teamName }}</strong>
+                  <small>{{ row.username }}</small>
+                </span>
+
+                <span>{{ played(row) }}</span>
+                <span>{{ row.wins }}</span>
+                <span>{{ row.draws }}</span>
+                <span>{{ row.losses }}</span>
+                <span class="goals-for-against">
+                  {{ row.goalsFor }}/{{ row.goalsAgainst }}
+                </span>
+
+                <span
+                  [class.positive-text]="goalDifference(row) > 0"
+                  [class.negative-text]="goalDifference(row) < 0"
+                >
+                  {{ goalDifference(row) > 0 ? "+" : ""
+                  }}{{ goalDifference(row) }}
+                </span>
+
+                <span class="league-points">
+                  {{ row.leaguePoints }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+  }
+</main>

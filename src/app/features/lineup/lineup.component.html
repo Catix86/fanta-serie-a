@@ -1,1 +1,106 @@
-<main><h1>Formazione</h1>@if(vm$|async;as vm){<section class="card"><h2>Giornata {{vm.round}}</h2>@if(vm.locked){<p class="muted">Formazione bloccata.</p>}@else{<p class="muted">Scegli 6 squadre tra le tue 10. Se dimentichi, vale la precedente.</p><div class="chips">@for(t of vm.me?.roster||[]; track t){<button class="chip" [class.sel]="selected.includes(t)" (click)="toggle(t)">{{t}}</button>}</div><label class="muted">Capitano</label><select class="input" [(ngModel)]="captain"><option value="">Scegli</option>@for(t of selected; track t){<option [value]="t">{{t}}</option>}</select><button class="btn warn" (click)="save(vm.round)" [disabled]="saving()">Salva formazione</button>}}</section>}</main>
+<main class="lineup-content">
+  @if (vm$ | async; as vm) {
+    <section class="lineup-hero">
+      <div class="lineup-hero-top">
+        <button
+          type="button"
+          class="back-button"
+          aria-label="Torna alla home"
+          (click)="goBack()"
+        >
+          <span class="material-symbols-rounded"> arrow_back </span>
+        </button>
+
+        <div>
+          <h1>Giornata {{ vm.round }}</h1>
+
+          <p>Scegli {{ size }} squadre e il capitano</p>
+        </div>
+      </div>
+
+      <div class="deadline-pill">
+        <span class="material-symbols-rounded"> schedule </span>
+
+        <strong>Scadenza tra:</strong>
+
+        <b>{{ countdown(vm.deadline) }}</b>
+      </div>
+    </section>
+
+    <section class="card lineup-panel">
+      <div class="selected-summary">
+        <span>Squadre selezionate</span>
+
+        <strong
+          [class.complete]="selected.length === size"
+          [class.incomplete]="selected.length !== size"
+        >
+          {{ selected.length }}/{{ size }}
+        </strong>
+      </div>
+
+      @if (vm.locked) {
+        <p class="locked-message">Formazione bloccata per questa giornata.</p>
+      } @else {
+        <p class="lineup-help">
+          Tocca per schierare · Tocca la stella per il capitano
+        </p>
+
+        <div class="teams-list">
+          @for (teamName of vm.me?.roster || []; track teamName) {
+            <button
+              type="button"
+              class="lineup-team-card"
+              [class.selected]="isSelected(teamName)"
+              [class.captain]="isCaptain(teamName)"
+              [style.background]="teamCardBackground(teamName)"
+              [style.color]="teamTextColor(teamName)"
+              (click)="toggleTeam(teamName)"
+            >
+              <span class="check-circle">
+                @if (isSelected(teamName)) {
+                  <span class="material-symbols-rounded"> check </span>
+                }
+              </span>
+
+              <span class="team-info">
+                <strong>{{ teamName }}</strong>
+
+                <small>
+                  {{ teamPrice(teamName) }} FC · #{{
+                    teamRank(teamName, vm.me?.roster)
+                  }}
+                </small>
+              </span>
+
+              <span
+                class="captain-button"
+                [class.active]="isCaptain(teamName)"
+                (click)="toggleCaptain(teamName, $event)"
+              >
+                <span class="material-symbols-rounded"> star </span>
+              </span>
+            </button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="btn save-lineup-button"
+          [disabled]="!canSave(vm.locked) || saving()"
+          (click)="save(vm.round)"
+        >
+          <span class="material-symbols-rounded"> save </span>
+
+          @if (saving()) {
+            Salvataggio...
+          } @else if (vm.existingLineup) {
+            Aggiorna formazione
+          } @else {
+            Salva formazione
+          }
+        </button>
+      }
+    </section>
+  }
+</main>

@@ -1,27 +1,60 @@
 <main>
-    <h1><span class="material-symbols-rounded">admin_panel_settings</span> Admin</h1>
-    <details class="card">
-        <summary>Import calendario</summary>
-        <p class="muted">Importa seed iniziale Serie A 2026/27.</p><button class="btn warn" (click)="import()">Importa
-            calendario</button>
-    </details>
-    <details class="card">
-        <summary>Bonus/Malus</summary><select class="input" [(ngModel)]="selFixture">
-            <option [ngValue]="undefined">Partita</option>@if(fixtures$|async;as fs){@for(f of fs;track f.id){<option
-                [ngValue]="f">G{{f.round}} {{f.homeTeam}}-{{f.awayTeam}}</option>}}
-        </select><select class="input" [(ngModel)]="selTeam">
-            <option value="">Squadra</option>@if(selFixture){@for(t of teams(selFixture);track t){<option [value]="t">
-                {{t}}</option>}}
-        </select>
-        <div class="chips">@for(r of rules;track r.id){<button class="chip" [class.sel]="ruleIds.includes(r.id)"
-                (click)="toggle(r.id)">{{r.points>0?'+':''}}{{r.points}} {{r.label}}</button>}</div><button
-            class="btn warn" (click)="addEvents()">Inserisci</button>
-    </details>
-    <details class="card">
-        <summary>Risultati</summary>@if(fixtures$|async;as fs){@for(f of fs;track f.id){<section class="inner">
-            <strong>G{{f.round}} {{f.homeTeam}} - {{f.awayTeam}}</strong>
-            <div class="score"><input class="input" [(ngModel)]="home"><input class="input" [(ngModel)]="away"><button
-                    class="btn" (click)="result(f)">Salva</button></div>
-        </section>}}
-    </details>
+  <h1>
+    <span class="material-symbols-rounded">admin_panel_settings</span> Admin
+  </h1>
+  <details class="card">
+    <summary>Import calendario</summary>
+    <p class="muted">Importa seed iniziale Serie A 2026/27.</p>
+    <button class="btn warn" (click)="import()">Importa calendario</button>
+  </details>
+  <details class="card">
+    <summary>Bonus/Malus</summary>
+    <select class="input" [(ngModel)]="selFixture">
+      <option [ngValue]="undefined">Partita</option>
+      @if (fixtures$ | async; as fs) {
+        @for (f of fs; track f.id) {
+          <option [ngValue]="f">
+            G{{ f.round }} {{ f.homeTeam }}-{{ f.awayTeam }}
+          </option>
+        }
+      }</select
+    ><select class="input" [(ngModel)]="selTeam">
+      <option value="">Squadra</option>
+      @if (selFixture) {
+        @for (t of teams(selFixture); track t) {
+          <option [value]="t">
+            {{ t }}
+          </option>
+        }
+      }
+    </select>
+    <div class="chips">
+      @for (r of rules; track r.id) {
+        <button
+          class="chip"
+          [class.sel]="ruleIds.includes(r.id)"
+          (click)="toggle(r.id)"
+        >
+          {{ r.points > 0 ? "+" : "" }}{{ r.points }} {{ r.label }}
+        </button>
+      }
+    </div>
+    <button class="btn warn" (click)="addEvents()">Inserisci</button>
+  </details>
+  <details class="card">
+    <summary>Risultati</summary>
+    @if (fixtures$ | async; as fs) {
+      @for (f of fs; track f.id) {
+        <section class="inner">
+          <strong>G{{ f.round }} {{ f.homeTeam }} - {{ f.awayTeam }}</strong>
+          <div class="score">
+            <input class="input" [(ngModel)]="home" /><input
+              class="input"
+              [(ngModel)]="away"
+            /><button class="btn" (click)="result(f)">Salva</button>
+          </div>
+        </section>
+      }
+    }
+  </details>
 </main>

@@ -1,1 +1,89 @@
-<div class="mobile-page"><router-outlet />@if(user$|async;as user){<nav class="bottom-nav"><div class="bottom-nav-inner" [class.cols-5]="user.role==='admin'" [class.cols-4]="user.role!=='admin'"><a class="nav-btn" routerLink="/home" routerLinkActive="active"><span class="material-symbols-rounded">home</span></a><a class="nav-btn" routerLink="/formazione" routerLinkActive="active"><span class="material-symbols-rounded">groups</span></a><a class="nav-btn" routerLink="/classifica" routerLinkActive="active"><span class="material-symbols-rounded">leaderboard</span></a><a class="nav-btn" routerLink="/profilo" routerLinkActive="active"><span class="material-symbols-rounded">person</span></a>@if(user.role==='admin'){<a class="nav-btn" routerLink="/admin" routerLinkActive="active"><span class="material-symbols-rounded">admin_panel_settings</span></a>}</div></nav>}<div class="toast" [class.visible]="toast().visible" [class.success]="toast().type==='success'" [class.error]="toast().type==='error'">{{toast().message}}</div></div>
+<div class="mobile-page">
+  <router-outlet />
+
+  @if (user$ | async; as user) {
+    <nav class="bottom-nav">
+      <div
+        class="bottom-nav-inner"
+        [class.cols-5]="user.role === 'admin'"
+        [class.cols-4]="user.role !== 'admin'"
+      >
+        <a
+          class="nav-btn"
+          routerLink="/home"
+          routerLinkActive="active"
+          aria-label="Home"
+        >
+          <span class="nav-icon-wrap">
+            <span class="material-symbols-rounded">home</span>
+          </span>
+
+          <span class="nav-label">Home</span>
+        </a>
+
+        <a
+          class="nav-btn"
+          routerLink="/formazione"
+          routerLinkActive="active"
+          aria-label="Formazione"
+        >
+          <span class="nav-icon-wrap">
+            <span class="material-symbols-rounded">assignment</span>
+          </span>
+
+          <span class="nav-label">Formazione</span>
+        </a>
+
+        <a
+          class="nav-btn"
+          routerLink="/classifica"
+          routerLinkActive="active"
+          aria-label="Classifica"
+        >
+          <span class="nav-icon-wrap">
+            <span class="material-symbols-rounded">leaderboard</span>
+          </span>
+
+          <span class="nav-label">Classifica</span>
+        </a>
+
+        <a
+          class="nav-btn"
+          routerLink="/profilo"
+          routerLinkActive="active"
+          aria-label="Profilo"
+        >
+          <span class="nav-icon-wrap">
+            <span class="material-symbols-rounded">person</span>
+          </span>
+
+          <span class="nav-label">Profilo</span>
+        </a>
+
+        @if (user.role === "admin") {
+          <a
+            class="nav-btn"
+            routerLink="/admin"
+            routerLinkActive="active"
+            aria-label="Admin"
+          >
+            <span class="nav-icon-wrap">
+              <span class="material-symbols-rounded">admin_panel_settings</span>
+            </span>
+
+            <span class="nav-label">Admin</span>
+          </a>
+        }
+      </div>
+    </nav>
+  }
+
+  <div
+    class="toast"
+    [class.visible]="toast().visible"
+    [class.success]="toast().type === 'success'"
+    [class.error]="toast().type === 'error'"
+  >
+    {{ toast().message }}
+  </div>
+</div>

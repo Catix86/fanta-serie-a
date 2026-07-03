@@ -1,0 +1,242 @@
+.home-content {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.home-hero {
+  position: relative;
+  margin: -16px -16px 0;
+  padding: 26px 24px 42px;
+  border-bottom-left-radius: 34px;
+  border-bottom-right-radius: 34px;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(52, 211, 153, .34), transparent 32%),
+    linear-gradient(135deg, rgba(124, 58, 237, .95), rgba(20, 184, 166, .68));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .30);
+}
+
+.home-hero-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-hero p {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .88);
+}
+
+.home-hero h1 {
+  margin: 0;
+  font-size: 25px;
+  line-height: 1.08;
+  font-weight: 1000;
+  color: #ffffff;
+}
+
+.home-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.home-action-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, .20);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+}
+
+.home-action-button .material-symbols-rounded {
+  font-size: 23px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 28;
+}
+
+.home-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.home-stats > div {
+  padding: 14px 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .18);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+}
+
+.home-stats span {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, .86);
+}
+
+.home-stats strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.deadline-card {
+  margin-top: -32px;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 16px;
+  background: rgba(255, 255, 255, .96);
+  color: #020617;
+  border: 0;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, .24);
+}
+
+.deadline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.deadline-header span:first-child {
+  display: block;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: .02em;
+}
+
+.deadline-header h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+  line-height: 1.1;
+  font-weight: 1000;
+}
+
+.deadline-icon {
+  color: #8b5cf6;
+  font-size: 32px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 32;
+}
+
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.countdown-grid > div {
+  padding: 12px 4px 10px;
+  border-radius: 14px;
+  background: #f8fafc;
+  text-align: center;
+}
+
+.countdown-grid strong {
+  display: block;
+  color: #8b5cf6;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.countdown-grid span {
+  display: block;
+  margin-top: 7px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.home-lineup-button {
+  height: 54px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(124, 58, 237, .34);
+}
+
+.home-lineup-button .material-symbols-rounded {
+  font-size: 20px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 700,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+.no-deadline {
+  margin: 0;
+  color: #64748b;
+}
+
+.last-round-card {
+  display: grid;
+  gap: 10px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.section-title-row h2 {
+  margin: 2px 0 0;
+  font-size: 18px;
+}
+
+.section-title-row .material-symbols-rounded {
+  color: var(--primary);
+}
+
+.result-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 9px 0;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.result-row span:last-child {
+  text-align: right;
+}
+
+.result-row strong {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  font-size: 13px;
+}
+
+.empty-results {
+  margin: 0;
+  font-size: 13px;
+}

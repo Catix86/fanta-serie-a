@@ -1,1 +1,151 @@
-<main><h1>Home</h1>@if(vm$|async;as vm){<section class="card hero"><span class="muted">{{vm.me?.teamName}}</span><strong>{{vm.row?.fantasyPoints||0}} pt</strong><p>Posizione: #{{vm.row?.position||'-'}} · Punti incontri: {{vm.row?.leaguePoints||0}}</p></section>@if(vm.next){<section class="card"><h2>Prossima partita Serie A</h2><p>{{vm.next.homeTeam}} - {{vm.next.awayTeam}}</p><p class="muted">Giornata {{vm.next.round}} · {{toDate(vm.next.kickoffAt)|date:'dd MMM HH:mm'}}</p></section>}<section class="card"><h2>Ultima giornata conclusa</h2>@for(f of vm.fixtures; track f.id){<p>{{f.homeTeam}} {{f.homeGoals}}-{{f.awayGoals}} {{f.awayTeam}}</p>}</section>}</main>
+<main class="home-content">
+  @if (vm$ | async; as vm) {
+    <section class="home-hero">
+      <div class="home-hero-top">
+        <div>
+          <p>Benvenuto/a</p>
+
+          <h1>
+            {{ vm.me?.teamName || vm.me?.username || "Fanta Serie A" }}
+          </h1>
+        </div>
+
+        <div class="home-actions">
+          <button
+            type="button"
+            class="home-action-button"
+            aria-label="Profilo"
+            (click)="goToProfile()"
+          >
+            <span class="material-symbols-rounded">person</span>
+          </button>
+
+          <button
+            type="button"
+            class="home-action-button"
+            aria-label="Logout"
+            (click)="logout()"
+          >
+            <span class="material-symbols-rounded">logout</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="home-stats">
+        <div>
+          <span>Punti totali</span>
+          <strong>{{ vm.myStanding?.fantasyPoints || 0 }}</strong>
+        </div>
+
+        <div>
+          <span>Posizione in lega</span>
+          <strong>
+            @if (vm.myStanding?.position) {
+              #{{ vm.myStanding?.position }}
+            } @else {
+              -
+            }
+          </strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="card deadline-card">
+      <div class="deadline-header">
+        <div>
+          <span>Prossima scadenza formazione</span>
+
+          <h2>
+            @if (vm.nextRound) {
+              Giornata {{ vm.nextRound }}
+            } @else {
+              Nessuna giornata
+            }
+          </h2>
+        </div>
+
+        <span class="material-symbols-rounded deadline-icon">
+          hourglass_top
+        </span>
+      </div>
+
+      @if (vm.deadline) {
+        @let timer = countdown(vm.deadline);
+
+        <div class="countdown-grid">
+          <div>
+            <strong>{{ timer.days }}</strong>
+            <span>giorni</span>
+          </div>
+
+          <div>
+            <strong>{{ timer.hours }}</strong>
+            <span>ore</span>
+          </div>
+
+          <div>
+            <strong>{{ timer.minutes }}</strong>
+            <span>min</span>
+          </div>
+
+          <div>
+            <strong>{{ timer.seconds }}</strong>
+            <span>sec</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="btn home-lineup-button"
+          (click)="goToLineup()"
+        >
+          <span class="material-symbols-rounded"> assignment </span>
+
+          @if (vm.hasLineup) {
+            Vedi formazione
+          } @else {
+            Imposta formazione
+          }
+        </button>
+      } @else {
+        <p class="muted no-deadline">
+          Non ci sono giornate future disponibili.
+        </p>
+      }
+    </section>
+
+    <section class="card last-round-card">
+      <div class="section-title-row">
+        <div>
+          <span class="muted">Risultati</span>
+
+          <h2>
+            @if (vm.lastFinishedRound > 0) {
+              Ultima giornata conclusa
+            } @else {
+              Nessun risultato
+            }
+          </h2>
+        </div>
+
+        <span class="material-symbols-rounded">sports_soccer</span>
+      </div>
+
+      @if (vm.lastFinishedRound > 0 && vm.lastRoundFixtures.length > 0) {
+        @for (fixture of vm.lastRoundFixtures; track fixture.id) {
+          <div class="result-row">
+            <span>{{ fixture.homeTeam }}</span>
+
+            <strong> {{ fixture.homeGoals }}-{{ fixture.awayGoals }} </strong>
+
+            <span>{{ fixture.awayTeam }}</span>
+          </div>
+        }
+      } @else {
+        <p class="muted empty-results">
+          I risultati appariranno qui quando l’admin inizierà a inserirli.
+        </p>
+      }
+    </section>
+  }
+</main>
