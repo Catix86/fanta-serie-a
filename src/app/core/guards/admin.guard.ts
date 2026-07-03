@@ -1,0 +1,1 @@
+import {inject} from '@angular/core';import {CanActivateFn,Router}from '@angular/router';import {map,take}from'rxjs';import {AuthService}from'../services/auth.service';export const adminGuard:CanActivateFn=()=>{const a=inject(AuthService),r=inject(Router);return a.appUser$.pipe(take(1),map(u=>u?.role==='admin'?true:r.createUrlTree(['/home'])))};

@@ -1,0 +1,2 @@
+import { Component, inject } from '@angular/core';import { AsyncPipe } from '@angular/common';import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';import { AuthService } from '../../core/services/auth.service';import { ToastService } from '../../core/services/toast.service';
+@Component({standalone:true,imports:[RouterOutlet,RouterLink,RouterLinkActive,AsyncPipe],templateUrl:'./shell.component.html'})export class ShellComponent{auth=inject(AuthService);user$=this.auth.appUser$;toast=inject(ToastService).toast;}

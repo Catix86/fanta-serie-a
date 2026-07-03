@@ -1,0 +1,13 @@
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeIt from '@angular/common/locales/it';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { provideFirebaseApp, initializeApp, getApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+import { environment } from './environments/environment';
+registerLocaleData(localeIt);
+bootstrapApplication(AppComponent,{providers:[provideRouter(routes),provideFirebaseApp(()=>initializeApp(environment.firebase)),provideAuth(()=>getAuth(getApp())),provideFirestore(()=>getFirestore(getApp())),{provide:LOCALE_ID,useValue:'it-IT'}]}).catch(console.error);

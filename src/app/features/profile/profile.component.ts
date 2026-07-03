@@ -1,0 +1,2 @@
+import { Component, inject } from '@angular/core';import { AsyncPipe } from '@angular/common';import { Router } from '@angular/router';import { AuthService } from '../../core/services/auth.service';import { rosterCost } from '../../core/constants/serie-a-teams';
+@Component({standalone:true,imports:[AsyncPipe],templateUrl:'./profile.component.html',styleUrl:'../shared-page.scss'})export class ProfileComponent{auth=inject(AuthService);router=inject(Router);cost=rosterCost;async logout(){await this.auth.logout(); await this.router.navigateByUrl('/login')}}

@@ -1,0 +1,2 @@
+import { Injectable, signal } from '@angular/core';
+@Injectable({providedIn:'root'}) export class ToastService{private t:any;toast=signal({message:'',type:'success' as 'success'|'error',visible:false});show(message:string,type:'success'|'error'='success'){clearTimeout(this.t);this.toast.set({message,type,visible:true});this.t=setTimeout(()=>this.hide(),4500)}hide(){this.toast.update(v=>({...v,visible:false}))}}

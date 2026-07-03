@@ -1,0 +1,1 @@
+<main><h1>Profilo</h1>@if(auth.appUser$|async;as user){<section class="card"><h2>{{user.username}}</h2><p class="muted">{{user.teamName}} · {{cost(user.roster)}} FC</p>@for(t of user.roster; track t){<p>{{t}}</p>}<button class="btn secondary" (click)="logout()">Logout</button></section>}</main>
