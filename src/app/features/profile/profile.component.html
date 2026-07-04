@@ -42,13 +42,20 @@
         <div class="profile-roster-list">
           @for (teamName of user.roster; track teamName) {
             <article class="profile-team-card">
-              <div class="team-color-bars">
+              <!-- <div class="team-color-bars">
                 <span [style.background]="teamColors(teamName).primary"></span>
 
                 <span
                   [style.background]="teamColors(teamName).secondary"
                 ></span>
-              </div>
+              </div> -->
+
+              <img
+                class="profile-team-logo"
+                [src]="teamLogo(teamName)"
+                [alt]="teamName"
+                loading="lazy"
+              />
 
               <div class="profile-team-info">
                 <strong>
@@ -73,11 +80,77 @@
         </div>
       </section>
 
+      <button
+        type="button"
+        class="change-password-card"
+        (click)="openChangePassword()"
+      >
+        <span class="material-symbols-rounded"> lock_reset </span>
+        Cambia password
+      </button>
+
       <button type="button" class="logout-card" (click)="logout()">
         <span class="material-symbols-rounded"> logout </span>
-
         Esci dall’account
       </button>
     }
+  }
+
+  @if (changePasswordOpen()) {
+    <div class="password-modal-backdrop" (click)="closeChangePassword()">
+      <section class="card password-modal" (click)="$event.stopPropagation()">
+        <div class="password-modal-header">
+          <div>
+            <span class="muted">Sicurezza account</span>
+            <h2>Cambia password</h2>
+          </div>
+
+          <button
+            type="button"
+            class="password-modal-close"
+            aria-label="Chiudi"
+            (click)="closeChangePassword()"
+          >
+            <span class="material-symbols-rounded"> close </span>
+          </button>
+        </div>
+
+        <div class="password-form">
+          <input
+            class="input"
+            type="password"
+            placeholder="Password attuale"
+            [(ngModel)]="currentPassword"
+          />
+
+          <input
+            class="input"
+            type="password"
+            placeholder="Nuova password"
+            [(ngModel)]="newPassword"
+          />
+
+          <input
+            class="input"
+            type="password"
+            placeholder="Conferma nuova password"
+            [(ngModel)]="confirmNewPassword"
+          />
+
+          <button
+            type="button"
+            class="btn warn"
+            [disabled]="changingPassword()"
+            (click)="submitPasswordChange()"
+          >
+            @if (changingPassword()) {
+              Aggiornamento...
+            } @else {
+              Aggiorna password
+            }
+          </button>
+        </div>
+      </section>
+    </div>
   }
 </main>

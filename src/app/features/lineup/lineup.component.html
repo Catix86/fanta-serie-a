@@ -53,8 +53,6 @@
               class="lineup-team-card"
               [class.selected]="isSelected(teamName)"
               [class.captain]="isCaptain(teamName)"
-              [style.background]="teamCardBackground(teamName)"
-              [style.color]="teamTextColor(teamName)"
               (click)="toggleTeam(teamName)"
             >
               <span class="check-circle">
@@ -62,6 +60,13 @@
                   <span class="material-symbols-rounded"> check </span>
                 }
               </span>
+
+              <img
+                class="lineup-team-logo"
+                [src]="teamLogo(teamName)"
+                [alt]="teamName"
+                loading="lazy"
+              />
 
               <span class="team-info">
                 <strong>{{ teamName }}</strong>

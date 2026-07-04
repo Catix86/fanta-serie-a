@@ -1,60 +1,250 @@
-<main>
-  <h1>
-    <span class="material-symbols-rounded">admin_panel_settings</span> Admin
+<main class="admin-content">
+  <h1 class="admin-title">
+    <span class="material-symbols-rounded admin-title-icon">
+      admin_panel_settings
+    </span>
+
+    <span>Admin</span>
   </h1>
-  <details class="card">
-    <summary>Import calendario</summary>
-    <p class="muted">Importa seed iniziale Serie A 2026/27.</p>
-    <button class="btn warn" (click)="import()">Importa calendario</button>
-  </details>
-  <details class="card">
-    <summary>Bonus/Malus</summary>
-    <select class="input" [(ngModel)]="selFixture">
-      <option [ngValue]="undefined">Partita</option>
-      @if (fixtures$ | async; as fs) {
-        @for (f of fs; track f.id) {
-          <option [ngValue]="f">
-            G{{ f.round }} {{ f.homeTeam }}-{{ f.awayTeam }}
-          </option>
+
+  <!-- IMPORT CALENDARIO CSV -->
+  <details class="card admin-accordion">
+    <summary>
+      <div class="admin-accordion-summary-content">
+        <strong>Import calendario Serie A</strong>
+        <span class="muted">Importa o aggiorna le partite da CSV</span>
+      </div>
+
+      <span class="material-symbols-rounded admin-accordion-expand-icon">
+        expand_more
+      </span>
+    </summary>
+
+    <div class="admin-accordion-content">
+      <p class="muted">
+        Incolla un CSV con colonne:
+        <strong>id, round, homeTeam, awayTeam, kickoffAtIso</strong>
+      </p>
+
+      <textarea
+        class="input calendar-import-textarea"
+        rows="10"
+        [(ngModel)]="calendarCsv"
+        placeholder="id,round,homeTeam,awayTeam,kickoffAtIso"
+      ></textarea>
+
+      <button
+        type="button"
+        class="btn warn"
+        [disabled]="importingCalendar()"
+        (click)="importCalendarCsv()"
+      >
+        @if (importingCalendar()) {
+          Import in corso...
+        } @else {
+          Importa calendario
         }
-      }</select
-    ><select class="input" [(ngModel)]="selTeam">
-      <option value="">Squadra</option>
-      @if (selFixture) {
-        @for (t of teams(selFixture); track t) {
-          <option [value]="t">
-            {{ t }}
-          </option>
-        }
-      }
-    </select>
-    <div class="chips">
-      @for (r of rules; track r.id) {
-        <button
-          class="chip"
-          [class.sel]="ruleIds.includes(r.id)"
-          (click)="toggle(r.id)"
-        >
-          {{ r.points > 0 ? "+" : "" }}{{ r.points }} {{ r.label }}
-        </button>
-      }
+      </button>
     </div>
-    <button class="btn warn" (click)="addEvents()">Inserisci</button>
   </details>
-  <details class="card">
-    <summary>Risultati</summary>
-    @if (fixtures$ | async; as fs) {
-      @for (f of fs; track f.id) {
-        <section class="inner">
-          <strong>G{{ f.round }} {{ f.homeTeam }} - {{ f.awayTeam }}</strong>
-          <div class="score">
-            <input class="input" [(ngModel)]="home" /><input
-              class="input"
-              [(ngModel)]="away"
-            /><button class="btn" (click)="result(f)">Salva</button>
+
+  <!-- BONUS / MALUS -->
+  <details class="card admin-accordion">
+    <summary>
+      <div class="admin-accordion-summary-content">
+        <strong>Bonus/Malus squadra</strong>
+        <span class="muted">Inserisci uno o più eventi per una squadra</span>
+      </div>
+
+      <span class="material-symbols-rounded admin-accordion-expand-icon">
+        expand_more
+      </span>
+    </summary>
+
+    <div class="admin-accordion-content">
+      <div class="match-form">
+        <div>
+          <label class="muted">Partita</label>
+
+          <select class="input" [(ngModel)]="selFixture">
+            <option [ngValue]="undefined">Seleziona partita</option>
+
+            @if (fixtures$ | async; as fixtures) {
+              @for (fixture of fixtures; track fixture.id) {
+                <option [ngValue]="fixture">
+                  G{{ fixture.round }} · {{ fixture.homeTeam }} -
+                  {{ fixture.awayTeam }}
+                </option>
+              }
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="muted">Squadra</label>
+
+          <select class="input" [(ngModel)]="selTeam" [disabled]="!selFixture">
+            <option value="">
+              @if (selFixture) {
+                Seleziona squadra
+              } @else {
+                Prima seleziona una partita
+              }
+            </option>
+
+            @if (selFixture) {
+              @for (team of teams(selFixture); track team) {
+                <option [value]="team">
+                  {{ team }}
+                </option>
+              }
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="muted">Bonus/Malus</label>
+
+          <div class="rules-picker">
+            @for (rule of rules; track rule.id) {
+              <button
+                type="button"
+                class="rule-choice"
+                [class.selected]="ruleIds.includes(rule.id)"
+                (click)="toggle(rule.id)"
+              >
+                <span
+                  class="rule-points"
+                  [class.positive]="rule.points > 0"
+                  [class.negative]="rule.points < 0"
+                >
+                  {{ rule.points > 0 ? "+" : "" }}{{ rule.points }}
+                </span>
+
+                <span class="rule-label">
+                  {{ rule.label }}
+                </span>
+              </button>
+            }
           </div>
+
+          <p class="muted selected-rules-count">
+            {{ ruleIds.length }} bonus/malus selezionati
+          </p>
+        </div>
+
+        <button type="button" class="btn warn" (click)="addEvents()">
+          Inserisci Bonus/Malus
+        </button>
+      </div>
+    </div>
+  </details>
+
+  <!-- GESTIONE RISULTATI -->
+  <details class="card admin-accordion">
+    <summary>
+      <div class="admin-accordion-summary-content">
+        <strong>Gestione risultati</strong>
+        <span class="muted"
+          >Inserisci il risultato ufficiale delle partite</span
+        >
+      </div>
+
+      <span class="material-symbols-rounded admin-accordion-expand-icon">
+        expand_more
+      </span>
+    </summary>
+
+    <div class="admin-accordion-content">
+      <p class="muted">
+        Quando salvi il risultato, la partita viene considerata
+        <strong>terminata</strong>.
+      </p>
+
+      @if (fixtures$ | async; as fixtures) {
+        @if (fixtures.length === 0) {
+          <section class="card match-admin-card">
+            <p class="muted">
+              Nessuna partita presente. Importa prima il calendario.
+            </p>
+          </section>
+        }
+
+        <div class="match-admin-list">
+          @for (fixture of fixtures; track fixture.id) {
+            <section class="card match-admin-card">
+              <div class="match-admin-topline">
+                <div>
+                  <strong>
+                    G{{ fixture.round }} · {{ fixture.homeTeam }} -
+                    {{ fixture.awayTeam }}
+                  </strong>
+
+                  <p class="muted match-date">
+                    {{ fixtureDate(fixture) | date: "dd MMM HH:mm" }}
+                  </p>
+                </div>
+
+                <span
+                  class="status-badge"
+                  [class.status-scheduled]="fixture.status === 'scheduled'"
+                  [class.status-live]="fixture.status === 'live'"
+                  [class.status-finished]="fixture.status === 'finished'"
+                >
+                  @if (fixture.status === "scheduled") {
+                    Programmata
+                  } @else if (fixture.status === "live") {
+                    In corso
+                  } @else {
+                    Terminata
+                  }
+                </span>
+              </div>
+
+              @if (fixture.status === "finished") {
+                <p class="official-result">
+                  Risultato attuale:
+                  <strong>
+                    {{ fixture.homeGoals }}-{{ fixture.awayGoals }}
+                  </strong>
+                </p>
+              }
+
+              <div class="result-row">
+                <input
+                  class="input result-input"
+                  inputmode="numeric"
+                  min="0"
+                  max="30"
+                  [(ngModel)]="home"
+                />
+
+                <strong>-</strong>
+
+                <input
+                  class="input result-input"
+                  inputmode="numeric"
+                  min="0"
+                  max="30"
+                  [(ngModel)]="away"
+                />
+
+                <button
+                  type="button"
+                  class="btn save-result-btn"
+                  (click)="result(fixture)"
+                >
+                  Salva
+                </button>
+              </div>
+            </section>
+          }
+        </div>
+      } @else {
+        <section class="card match-admin-card">
+          <p class="muted">Caricamento partite...</p>
         </section>
       }
-    }
+    </div>
   </details>
 </main>

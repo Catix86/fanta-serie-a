@@ -1,28 +1,22 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { interval, combineLatest, map } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AsyncPipe } from "@angular/common";
+import { Component, DestroyRef, inject, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { Router } from "@angular/router";
+import { interval, combineLatest, map } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
-import { AuthService } from '../../core/services/auth.service';
-import { DataService } from '../../core/services/data.service';
-import {
-  LINEUP_SIZE,
-  teamPrice
-} from '../../core/constants/serie-a-teams';
-import { getTeamColors } from '../../core/constants/serie-a-team-colors';
-import {
-  isRoundLocked,
-  roundDeadline
-} from '../../core/utils/scoring';
-import { ToastService } from '../../core/services/toast.service';
+import { AuthService } from "../../core/services/auth.service";
+import { DataService } from "../../core/services/data.service";
+import { LINEUP_SIZE, teamPrice } from "../../core/constants/serie-a-teams";
+import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
+import { isRoundLocked, roundDeadline } from "../../core/utils/scoring";
+import { ToastService } from "../../core/services/toast.service";
 
 @Component({
   standalone: true,
   imports: [AsyncPipe, FormsModule],
-  templateUrl: './lineup.component.html',
-  styleUrl: './lineup.component.scss'
+  templateUrl: "./lineup.component.html",
+  styleUrl: "./lineup.component.scss",
 })
 export class LineupComponent {
   private auth = inject(AuthService);
@@ -34,7 +28,7 @@ export class LineupComponent {
   size = LINEUP_SIZE;
 
   selected: string[] = [];
-  captain = '';
+  captain = "";
 
   saving = signal(false);
   now = signal(Date.now());
@@ -42,22 +36,21 @@ export class LineupComponent {
   vm$ = combineLatest([
     this.auth.appUser$,
     this.data.fixtures$(),
-    this.data.lineups$()
+    this.data.lineups$(),
   ]).pipe(
     map(([me, fixtures, lineups]) => {
       const nextRound = Math.min(
         ...fixtures
-          .filter(fixture => fixture.status !== 'finished')
-          .map(fixture => fixture.round)
+          .filter((fixture) => fixture.status !== "finished")
+          .map((fixture) => fixture.round),
       );
 
       const validNextRound = Number.isFinite(nextRound) ? nextRound : 1;
 
       const existingLineup = me
         ? lineups.find(
-            lineup =>
-              lineup.uid === me.uid &&
-              lineup.round === validNextRound
+            (lineup) =>
+              lineup.uid === me.uid && lineup.round === validNextRound,
           )
         : undefined;
 
@@ -71,9 +64,9 @@ export class LineupComponent {
         round: validNextRound,
         locked: isRoundLocked(fixtures, validNextRound),
         deadline: roundDeadline(fixtures, validNextRound),
-        existingLineup
+        existingLineup,
       };
-    })
+    }),
   );
 
   constructor() {
@@ -85,15 +78,15 @@ export class LineupComponent {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('/home');
+    this.router.navigateByUrl("/home");
   }
 
   toggleTeam(teamName: string): void {
     if (this.selected.includes(teamName)) {
-      this.selected = this.selected.filter(team => team !== teamName);
+      this.selected = this.selected.filter((team) => team !== teamName);
 
       if (this.captain === teamName) {
-        this.captain = '';
+        this.captain = "";
       }
 
       return;
@@ -102,8 +95,8 @@ export class LineupComponent {
     if (this.selected.length >= this.size) {
       this.toast.show(
         `Hai già selezionato ${this.size} squadre.`,
-        'error',
-        3000
+        "error",
+        3000,
       );
 
       return;
@@ -114,8 +107,8 @@ export class LineupComponent {
     if (this.selected.length === this.size) {
       this.toast.show(
         `Hai selezionato tutte le ${this.size} squadre.`,
-        'success',
-        3000
+        "success",
+        3000,
       );
     }
   }
@@ -125,15 +118,15 @@ export class LineupComponent {
 
     if (!this.selected.includes(teamName)) {
       this.toast.show(
-        'Prima devi schierare la squadra per renderla capitano.',
-        'error',
-        3000
+        "Prima devi schierare la squadra per renderla capitano.",
+        "error",
+        3000,
       );
 
       return;
     }
 
-    this.captain = this.captain === teamName ? '' : teamName;
+    this.captain = this.captain === teamName ? "" : teamName;
   }
 
   isSelected(teamName: string): boolean {
@@ -154,32 +147,19 @@ export class LineupComponent {
     }
 
     const orderedRoster = [...roster].sort(
-      (a, b) => this.teamPrice(b) - this.teamPrice(a)
+      (a, b) => this.teamPrice(b) - this.teamPrice(a),
     );
 
     return orderedRoster.indexOf(teamName) + 1;
   }
 
-  teamCardBackground(teamName: string): string {
-    const colors = getTeamColors(teamName);
-
-    return `
-      linear-gradient(
-        135deg,
-        ${colors.primary} 0%,
-        ${colors.secondary} 58%,
-        rgba(15, 23, 42, .92) 100%
-      )
-    `;
-  }
-
-  teamTextColor(teamName: string): string {
-    return getTeamColors(teamName).text;
+  teamLogo(teamName: string): string {
+    return getSerieATeamLogo(teamName);
   }
 
   countdown(deadline: Date | null): string {
     if (!deadline) {
-      return '--:--:--';
+      return "--:--:--";
     }
 
     const remainingMs = Math.max(0, deadline.getTime() - this.now());
@@ -189,14 +169,12 @@ export class LineupComponent {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
   canSave(locked: boolean): boolean {
     return (
-      !locked &&
-      this.selected.length === this.size &&
-      Boolean(this.captain)
+      !locked && this.selected.length === this.size && Boolean(this.captain)
     );
   }
 
@@ -204,8 +182,8 @@ export class LineupComponent {
     if (this.selected.length !== this.size || !this.captain) {
       this.toast.show(
         `Scegli ${this.size} squadre e il capitano.`,
-        'error',
-        3000
+        "error",
+        3000,
       );
 
       return;
@@ -214,16 +192,12 @@ export class LineupComponent {
     try {
       this.saving.set(true);
 
-      await this.data.saveLineup(
-        round,
-        this.selected,
-        this.captain
-      );
+      await this.data.saveLineup(round, this.selected, this.captain);
 
-      this.toast.show('Formazione salvata correttamente.', 'success', 3000);
+      this.toast.show("Formazione salvata correttamente.", "success", 3000);
     } catch (error) {
-      console.error('Errore salvataggio formazione:', error);
-      this.toast.show('Formazione non salvata.', 'error', 3000);
+      console.error("Errore salvataggio formazione:", error);
+      this.toast.show("Formazione non salvata.", "error", 3000);
     } finally {
       this.saving.set(false);
     }

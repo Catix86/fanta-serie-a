@@ -101,6 +101,13 @@ export const BONUS_RULES: BonusRule[] = [
     description: "Il portiere para un rigore.",
   },
   {
+    id: "senza-sconfitte",
+    category: "defense",
+    points: 20,
+    label: "Senza sconfitte",
+    description: "La squadra non perde per 10 partite di fila.",
+  },
+  {
     id: "sorpresa",
     category: "pop",
     points: 15,
@@ -127,6 +134,20 @@ export const BONUS_RULES: BonusRule[] = [
     points: 5,
     label: "Gioco pulito",
     description: "La squadra non riceve ammonizioni o espulsioni.",
+  },
+  {
+    id: "campione-di-inverno",
+    category: "pop",
+    points: 50,
+    label: "Campione di inverno",
+    description: "La squadra è in testa dopo il girone d'andata.",
+  },
+  {
+    id: "striscia-vincente",
+    category: "pop",
+    points: 30,
+    label: "Striscia vincente",
+    description: "La squadra vince 10 partite di fila.",
   },
   {
     id: "noia-mortale",

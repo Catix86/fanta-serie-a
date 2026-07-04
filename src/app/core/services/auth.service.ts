@@ -1,10 +1,13 @@
 import { Injectable, inject } from "@angular/core";
 import {
   Auth,
+  EmailAuthProvider,
   createUserWithEmailAndPassword,
   deleteUser,
+  reauthenticateWithCredential,
   signInWithEmailAndPassword,
   signOut,
+  updatePassword,
   user,
 } from "@angular/fire/auth";
 import {
@@ -81,7 +84,27 @@ export class AuthService {
       password,
     );
   }
+  
   logout() {
     return signOut(this.auth);
+  }
+
+  async changePassword(
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const currentUser = this.auth.currentUser;
+
+    if (!currentUser || !currentUser.email) {
+      throw new Error("USER_NOT_AUTHENTICATED");
+    }
+
+    const credential = EmailAuthProvider.credential(
+      currentUser.email,
+      currentPassword,
+    );
+
+    await reauthenticateWithCredential(currentUser, credential);
+    await updatePassword(currentUser, newPassword);
   }
 }

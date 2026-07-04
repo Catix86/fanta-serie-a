@@ -112,18 +112,21 @@
 }
 
 .profile-team-card {
-    position: relative;
-    min-height: 62px;
-    padding: 11px 12px 11px 22px;
-    border-radius: 16px;
+    min-height: 66px;
+    padding: 11px 12px;
+    border-radius: 18px;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, .96);
-    color: #020617;
+    gap: 12px;
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, .10),
+            rgba(255, 255, 255, .05));
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, .10);
     overflow: hidden;
-    box-shadow: 0 10px 22px rgba(15, 23, 42, .12);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .18);
 }
 
 .team-color-bars {
@@ -195,4 +198,128 @@
         'wght' 700,
         'GRAD' 0,
         'opsz' 22;
+}
+
+.change-password-card {
+    margin-top: 8px;
+    min-height: 52px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(52, 211, 153, .12);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 1000;
+}
+
+.change-password-card .material-symbols-rounded,
+.logout-card .material-symbols-rounded {
+    font-size: 19px;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 700,
+        'GRAD' 0,
+        'opsz' 22;
+}
+
+.password-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    padding: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: rgba(2, 6, 23, .72);
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+}
+
+.password-modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+    overflow: auto;
+}
+
+.password-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.password-modal-header h2 {
+    margin: 2px 0 0;
+    font-size: 24px;
+    font-weight: 1000;
+}
+
+.password-modal-close {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .08);
+    color: var(--text);
+}
+
+.password-modal-close .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.password-form {
+    display: grid;
+    gap: 10px;
+}
+
+.profile-team-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 999px;
+    object-fit: contain;
+    padding: 5px;
+    background: rgba(255, 255, 255, .92);
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, .16),
+        0 8px 16px rgba(0, 0, 0, .20);
+}
+
+.profile-team-info {
+    min-width: 0;
+}
+
+.profile-team-info strong {
+    display: block;
+    max-width: 100%;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: 1000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    white-space: nowrap;
+}
+
+.profile-team-info p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.profile-team-price {
+    flex-shrink: 0;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 1000;
+    white-space: nowrap;
 }
