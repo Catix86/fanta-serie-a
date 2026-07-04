@@ -1,17 +1,13 @@
 <main class="profile-content">
   @if (vm$ | async; as vm) {
     @if (vm.user; as user) {
-      <section class="profile-hero">
-        <div class="profile-avatar">
-          <span class="material-symbols-rounded"> person </span>
-        </div>
-
-        <h1>
-          {{ user.teamName }}
-        </h1>
-
-        <p>{{ "@" }}{{ user.username }}</p>
-      </section>
+      <app-section-header
+        icon="person"
+        [title]="user.teamName"
+        [subtitle]="'@' + user.username"
+        [actions]="profileHeaderActions"
+        (actionClick)="onProfileHeaderAction($event)"
+      />
 
       <section class="profile-stats-card">
         <div>
@@ -42,14 +38,6 @@
         <div class="profile-roster-list">
           @for (teamName of user.roster; track teamName) {
             <article class="profile-team-card">
-              <!-- <div class="team-color-bars">
-                <span [style.background]="teamColors(teamName).primary"></span>
-
-                <span
-                  [style.background]="teamColors(teamName).secondary"
-                ></span>
-              </div> -->
-
               <img
                 class="profile-team-logo"
                 [src]="teamLogo(teamName)"
@@ -79,20 +67,6 @@
           }
         </div>
       </section>
-
-      <button
-        type="button"
-        class="change-password-card"
-        (click)="openChangePassword()"
-      >
-        <span class="material-symbols-rounded"> lock_reset </span>
-        Cambia password
-      </button>
-
-      <button type="button" class="logout-card" (click)="logout()">
-        <span class="material-symbols-rounded"> logout </span>
-        Esci dall’account
-      </button>
     }
   }
 
@@ -148,6 +122,41 @@
             } @else {
               Aggiorna password
             }
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+
+  @if (logoutConfirmOpen()) {
+    <div class="logout-modal-backdrop" (click)="closeLogoutConfirm()">
+      <section class="card logout-modal" (click)="$event.stopPropagation()">
+        <div class="logout-modal-icon">
+          <span class="material-symbols-rounded"> logout </span>
+        </div>
+
+        <h2>Vuoi uscire?</h2>
+
+        <p class="muted">
+          Verrai disconnesso dal tuo account e dovrai effettuare nuovamente il
+          login per accedere.
+        </p>
+
+        <div class="logout-modal-actions">
+          <button
+            type="button"
+            class="btn secondary"
+            (click)="closeLogoutConfirm()"
+          >
+            Annulla
+          </button>
+
+          <button
+            type="button"
+            class="btn logout-confirm-button"
+            (click)="confirmLogout()"
+          >
+            Esci
           </button>
         </div>
       </section>

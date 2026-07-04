@@ -1,0 +1,38 @@
+<section class="section-header">
+  <div class="section-header-main">
+    <div class="section-header-icon">
+      <span class="material-symbols-rounded">
+        {{ icon() }}
+      </span>
+    </div>
+
+    <div class="section-header-copy">
+      <h1>
+        {{ title() }}
+      </h1>
+
+      @if (subtitle()) {
+        <p>
+          {{ subtitle() }}
+        </p>
+      }
+    </div>
+  </div>
+
+  @if (actions().length > 0) {
+    <div class="section-header-actions">
+      @for (action of actions(); track action.id) {
+        <button
+          type="button"
+          class="section-header-action"
+          [attr.aria-label]="action.label"
+          (click)="onActionClick(action.id)"
+        >
+          <span class="material-symbols-rounded">
+            {{ action.icon }}
+          </span>
+        </button>
+      }
+    </div>
+  }
+</section>

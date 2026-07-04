@@ -1,18 +1,18 @@
-import { AsyncPipe } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { interval, combineLatest, map } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
-import { AuthService } from '../../core/services/auth.service';
-import { DataService } from '../../core/services/data.service';
-import { roundDeadline, standings, toDate } from '../../core/utils/scoring';
+import { AsyncPipe } from "@angular/common";
+import { Component, DestroyRef, inject, signal } from "@angular/core";
+import { Router } from "@angular/router";
+import { interval, combineLatest, map } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
+import { AuthService } from "../../core/services/auth.service";
+import { DataService } from "../../core/services/data.service";
+import { roundDeadline, standings, toDate } from "../../core/utils/scoring";
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  imports: [AsyncPipe, SectionHeaderComponent],
+  templateUrl: "./home.component.html",
+  styleUrl: "./home.component.scss",
 })
 export class HomeComponent {
   private auth = inject(AuthService);
@@ -27,17 +27,19 @@ export class HomeComponent {
     this.data.users$(),
     this.data.fixtures$(),
     this.data.lineups$(),
-    this.data.events$()
+    this.data.events$(),
   ]).pipe(
     map(([me, users, fixtures, lineups, events]) => {
       const table = standings(users, fixtures, lineups, events);
-      const myStanding = me ? table.find(row => row.uid === me.uid) : undefined;
+      const myStanding = me
+        ? table.find((row) => row.uid === me.uid)
+        : undefined;
 
       const nextFixtures = fixtures
-        .filter(fixture => fixture.status !== 'finished')
+        .filter((fixture) => fixture.status !== "finished")
         .sort(
           (a, b) =>
-            toDate(a.kickoffAt).getTime() - toDate(b.kickoffAt).getTime()
+            toDate(a.kickoffAt).getTime() - toDate(b.kickoffAt).getTime(),
         );
 
       const nextRound = nextFixtures[0]?.round ?? null;
@@ -46,20 +48,22 @@ export class HomeComponent {
       const hasLineup =
         Boolean(me) &&
         nextRound !== null &&
-        lineups.some(lineup => lineup.uid === me?.uid && lineup.round === nextRound);
+        lineups.some(
+          (lineup) => lineup.uid === me?.uid && lineup.round === nextRound,
+        );
 
       const lastFinishedRound = Math.max(
         0,
         ...fixtures
-          .filter(fixture => fixture.status === 'finished')
-          .map(fixture => fixture.round)
+          .filter((fixture) => fixture.status === "finished")
+          .map((fixture) => fixture.round),
       );
 
       const lastRoundFixtures = fixtures
-        .filter(fixture => fixture.round === lastFinishedRound)
+        .filter((fixture) => fixture.round === lastFinishedRound)
         .sort(
           (a, b) =>
-            toDate(a.kickoffAt).getTime() - toDate(b.kickoffAt).getTime()
+            toDate(a.kickoffAt).getTime() - toDate(b.kickoffAt).getTime(),
         );
 
       return {
@@ -69,9 +73,9 @@ export class HomeComponent {
         deadline,
         hasLineup,
         lastFinishedRound,
-        lastRoundFixtures
+        lastRoundFixtures,
       };
-    })
+    }),
   );
 
   constructor() {
@@ -90,10 +94,10 @@ export class HomeComponent {
   } {
     if (!deadline) {
       return {
-        days: '--',
-        hours: '--',
-        minutes: '--',
-        seconds: '--'
+        days: "--",
+        hours: "--",
+        minutes: "--",
+        seconds: "--",
       };
     }
 
@@ -106,24 +110,24 @@ export class HomeComponent {
     const seconds = totalSeconds % 60;
 
     return {
-      days: String(days).padStart(2, '0'),
-      hours: String(hours).padStart(2, '0'),
-      minutes: String(minutes).padStart(2, '0'),
-      seconds: String(seconds).padStart(2, '0')
+      days: String(days).padStart(2, "0"),
+      hours: String(hours).padStart(2, "0"),
+      minutes: String(minutes).padStart(2, "0"),
+      seconds: String(seconds).padStart(2, "0"),
     };
   }
 
   goToLineup(): void {
-    this.router.navigateByUrl('/formazione');
+    this.router.navigateByUrl("/formazione");
   }
 
   goToProfile(): void {
-    this.router.navigateByUrl('/profilo');
+    this.router.navigateByUrl("/profilo");
   }
 
   async logout(): Promise<void> {
     await this.auth.logout();
-    await this.router.navigateByUrl('/login');
+    await this.router.navigateByUrl("/login");
   }
 
   toDate(value: unknown): Date {

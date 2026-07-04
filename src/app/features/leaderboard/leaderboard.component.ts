@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { combineLatest, map } from "rxjs";
-
+import { SectionHeaderComponent } from '../../shared/components/section-header/section-header.component';
 import { DataService } from "../../core/services/data.service";
 import { standings } from "../../core/utils/scoring";
 
@@ -9,7 +9,7 @@ type LeaderboardTab = "fantasy" | "league";
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, SectionHeaderComponent],
   templateUrl: "./leaderboard.component.html",
   styleUrl: "./leaderboard.component.scss",
 })

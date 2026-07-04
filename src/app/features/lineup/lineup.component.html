@@ -1,30 +1,21 @@
 <main class="lineup-content">
   @if (vm$ | async; as vm) {
-    <section class="lineup-hero">
-      <div class="lineup-hero-top">
-        <button
-          type="button"
-          class="back-button"
-          aria-label="Torna alla home"
-          (click)="goBack()"
-        >
-          <span class="material-symbols-rounded"> arrow_back </span>
-        </button>
+    <app-section-header
+      icon="assignment"
+      [title]="'Giornata ' + vm.round"
+      [subtitle]="'Scegli ' + size + ' squadre e il capitano'"
+    />
 
-        <div>
-          <h1>Giornata {{ vm.round }}</h1>
-
-          <p>Scegli {{ size }} squadre e il capitano</p>
-        </div>
-      </div>
-
-      <div class="deadline-pill">
+    <section class="lineup-deadline-pill">
+      <div class="lineup-deadline-left">
         <span class="material-symbols-rounded"> schedule </span>
 
         <strong>Scadenza tra:</strong>
-
-        <b>{{ countdown(vm.deadline) }}</b>
       </div>
+
+      <strong class="lineup-deadline-countdown">
+        {{ countdown(vm.deadline) }}
+      </strong>
     </section>
 
     <section class="card lineup-panel">
@@ -42,10 +33,6 @@
       @if (vm.locked) {
         <p class="locked-message">Formazione bloccata per questa giornata.</p>
       } @else {
-        <p class="lineup-help">
-          Tocca per schierare · Tocca la stella per il capitano
-        </p>
-
         <div class="teams-list">
           @for (teamName of vm.me?.roster || []; track teamName) {
             <button
@@ -55,12 +42,6 @@
               [class.captain]="isCaptain(teamName)"
               (click)="toggleTeam(teamName)"
             >
-              <span class="check-circle">
-                @if (isSelected(teamName)) {
-                  <span class="material-symbols-rounded"> check </span>
-                }
-              </span>
-
               <img
                 class="lineup-team-logo"
                 [src]="teamLogo(teamName)"
@@ -70,12 +51,6 @@
 
               <span class="team-info">
                 <strong>{{ teamName }}</strong>
-
-                <small>
-                  {{ teamPrice(teamName) }} FC · #{{
-                    teamRank(teamName, vm.me?.roster)
-                  }}
-                </small>
               </span>
 
               <span

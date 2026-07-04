@@ -5,56 +5,6 @@
     gap: 12px;
 }
 
-.profile-hero {
-    margin: -16px -16px 0;
-    padding: 28px 24px 58px;
-    border-bottom-left-radius: 34px;
-    border-bottom-right-radius: 34px;
-    display: grid;
-    justify-items: center;
-    text-align: center;
-    background:
-        radial-gradient(circle at 80% 10%, rgba(52, 211, 153, .24), transparent 34%),
-        linear-gradient(135deg, rgba(124, 58, 237, .98), rgba(20, 184, 166, .62));
-    box-shadow: 0 18px 40px rgba(0, 0, 0, .30);
-}
-
-.profile-avatar {
-    width: 58px;
-    height: 58px;
-    margin-bottom: 12px;
-    border-radius: 999px;
-    display: grid;
-    place-items: center;
-    color: #ffffff;
-    background: rgba(255, 255, 255, .20);
-    backdrop-filter: blur(12px);
-}
-
-.profile-avatar .material-symbols-rounded {
-    font-size: 32px;
-    font-variation-settings:
-        'FILL' 1,
-        'wght' 700,
-        'GRAD' 0,
-        'opsz' 32;
-}
-
-.profile-hero h1 {
-    margin: 0;
-    color: #ffffff;
-    font-size: 24px;
-    line-height: 1.05;
-    font-weight: 1000;
-}
-
-.profile-hero p {
-    margin: 6px 0 0;
-    color: rgba(255, 255, 255, .78);
-    font-size: 12px;
-    font-weight: 800;
-}
-
 .profile-stats-card {
     position: relative;
     z-index: 2;
@@ -177,53 +127,6 @@
     white-space: nowrap;
 }
 
-.logout-card {
-    margin-top: 8px;
-    min-height: 52px;
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: rgba(251, 113, 133, .12);
-    color: #ef4444;
-    font-size: 13px;
-    font-weight: 1000;
-}
-
-.logout-card .material-symbols-rounded {
-    font-size: 19px;
-    font-variation-settings:
-        'FILL' 1,
-        'wght' 700,
-        'GRAD' 0,
-        'opsz' 22;
-}
-
-.change-password-card {
-    margin-top: 8px;
-    min-height: 52px;
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: rgba(52, 211, 153, .12);
-    color: var(--primary);
-    font-size: 13px;
-    font-weight: 1000;
-}
-
-.change-password-card .material-symbols-rounded,
-.logout-card .material-symbols-rounded {
-    font-size: 19px;
-    font-variation-settings:
-        'FILL' 1,
-        'wght' 700,
-        'GRAD' 0,
-        'opsz' 22;
-}
-
 .password-modal-backdrop {
     position: fixed;
     inset: 0;
@@ -305,7 +208,7 @@
     font-weight: 1000;
     overflow: hidden;
     text-overflow: ellipsis;
-    
+
     white-space: nowrap;
 }
 
@@ -322,4 +225,78 @@
     font-size: 13px;
     font-weight: 1000;
     white-space: nowrap;
+}
+
+.logout-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    padding: 16px;
+    padding-top: calc(16px + env(safe-area-inset-top));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 6, 23, .72);
+    backdrop-filter: blur(10px);
+}
+
+.logout-modal {
+    width: 100%;
+    max-width: 420px;
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, .10),
+            rgba(255, 255, 255, .05));
+    border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.logout-modal-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    background: rgba(251, 113, 133, .14);
+    color: var(--danger);
+    border: 1px solid rgba(251, 113, 133, .28);
+}
+
+.logout-modal-icon .material-symbols-rounded {
+    font-size: 32px;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 800,
+        'GRAD' 0,
+        'opsz' 34;
+}
+
+.logout-modal h2 {
+    margin: 2px 0 0;
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.logout-modal p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.logout-modal-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.logout-confirm-button {
+    background: rgba(251, 113, 133, .18);
+    color: #fb7185;
+    border: 1px solid rgba(251, 113, 133, .34);
 }

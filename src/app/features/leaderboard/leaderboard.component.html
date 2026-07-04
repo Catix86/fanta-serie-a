@@ -1,21 +1,13 @@
 <main class="leaderboard-content">
-  <section class="leaderboard-hero">
-    <div class="leaderboard-hero-icon">
-      <span class="material-symbols-rounded"> leaderboard </span>
-    </div>
-
-    <div>
-      <h1>Classifica Lega</h1>
-
-      <p>
-        @if (activeTab() === "fantasy") {
-          Punteggio totale accumulato in stagione
-        } @else {
-          Classifica degli scontri diretti tra partecipanti
-        }
-      </p>
-    </div>
-  </section>
+  <app-section-header
+    icon="leaderboard"
+    title="Classifica Lega"
+    [subtitle]="
+      activeTab() === 'fantasy'
+        ? 'Punteggio totale accumulato in stagione'
+        : 'Classifica degli scontri diretti tra partecipanti'
+    "
+  />
 
   @if (vm$ | async; as vm) {
     <section class="leaderboard-tabs">

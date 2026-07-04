@@ -5,10 +5,11 @@ import { DataService } from "../../core/services/data.service";
 import { BONUS_RULES } from "../../core/constants/bonus-rules";
 import { Fixture } from "../../core/models";
 import { ToastService } from "../../core/services/toast.service";
+import { SectionHeaderComponent } from '../../shared/components/section-header/section-header.component';
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe, FormsModule, DatePipe],
+  imports: [AsyncPipe, FormsModule, DatePipe, SectionHeaderComponent],
   templateUrl: "./admin.component.html",
   styleUrl: "./admin.component.scss",
 })

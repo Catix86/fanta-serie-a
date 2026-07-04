@@ -18,10 +18,14 @@ import {
   getTeamColors,
 } from "../../core/constants/serie-a-team-colors";
 import { standings } from "../../core/utils/scoring";
+import {
+  SectionHeaderAction,
+  SectionHeaderComponent,
+} from "../../shared/components/section-header/section-header.component";
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe, FormsModule],
+  imports: [AsyncPipe, FormsModule, SectionHeaderComponent],
   templateUrl: "./profile.component.html",
   styleUrl: "./profile.component.scss",
 })
@@ -31,8 +35,21 @@ export class ProfileComponent {
   private router = inject(Router);
   private toast = inject(ToastService);
 
+  logoutConfirmOpen = signal(false);
   changePasswordOpen = signal(false);
   changingPassword = signal(false);
+  profileHeaderActions: SectionHeaderAction[] = [
+    {
+      id: "change-password",
+      icon: "lock_reset",
+      label: "Cambia password",
+    },
+    {
+      id: "logout",
+      icon: "logout",
+      label: "Esci dall’account",
+    },
+  ];
 
   currentPassword = "";
   newPassword = "";
@@ -153,5 +170,29 @@ export class ProfileComponent {
 
   teamLogo(teamName: string): string {
     return getSerieATeamLogo(teamName);
+  }
+
+  onProfileHeaderAction(actionId: string): void {
+    if (actionId === "change-password") {
+      this.openChangePassword();
+      return;
+    }
+
+    if (actionId === "logout") {
+      this.openLogoutConfirm();
+    }
+  }
+
+  openLogoutConfirm(): void {
+    this.logoutConfirmOpen.set(true);
+  }
+
+  closeLogoutConfirm(): void {
+    this.logoutConfirmOpen.set(false);
+  }
+
+  async confirmLogout(): Promise<void> {
+    this.logoutConfirmOpen.set(false);
+    await this.logout();
   }
 }

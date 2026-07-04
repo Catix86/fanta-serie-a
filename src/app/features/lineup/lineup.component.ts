@@ -4,7 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { interval, combineLatest, map } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-
+import { SectionHeaderComponent } from '../../shared/components/section-header/section-header.component';
 import { AuthService } from "../../core/services/auth.service";
 import { DataService } from "../../core/services/data.service";
 import { LINEUP_SIZE, teamPrice } from "../../core/constants/serie-a-teams";
@@ -14,7 +14,7 @@ import { ToastService } from "../../core/services/toast.service";
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe, FormsModule],
+  imports: [AsyncPipe, FormsModule, SectionHeaderComponent],
   templateUrl: "./lineup.component.html",
   styleUrl: "./lineup.component.scss",
 })

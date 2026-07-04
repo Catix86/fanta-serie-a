@@ -1,5 +1,11 @@
 <main class="home-content">
   @if (vm$ | async; as vm) {
+    <app-section-header
+      icon="home"
+      [title]="vm.me?.teamName || 'Home'"
+      subtitle="Riepilogo della tua stagione"
+    />
+
     <section class="home-hero">
       <div class="home-hero-top">
         <div>
