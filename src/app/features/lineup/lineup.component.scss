@@ -149,7 +149,7 @@
 
 .teams-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  // grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 9px;
 }
 
@@ -293,16 +293,16 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #7c3aed, #9333ea);
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(124, 58, 237, .34);
+  background: rgba(252, 211, 77, .18);
+  color: var(--accent);
+  border: 1px solid rgba(252, 211, 77, .34);
 }
 
 .save-lineup-button .material-symbols-rounded {
   font-size: 20px;
   font-variation-settings:
-    'FILL' 1,
-    'wght' 700,
+    'FILL' 0,
+    'wght' 300,
     'GRAD' 0,
     'opsz' 24;
 }
@@ -367,6 +367,17 @@
   flex-shrink: 0;
   font-size: 13px;
   font-weight: 1000;
-  letter-spacing: .02em;
+  letter-spacing: .01em;
   white-space: nowrap;
+  text-align: right;
+}
+
+@media (max-width: 360px) {
+  .lineup-deadline-countdown {
+    font-size: 12px;
+  }
+
+  .lineup-deadline-left strong {
+    font-size: 12px;
+  }
 }

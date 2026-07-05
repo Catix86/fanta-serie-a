@@ -8,11 +8,7 @@ import { ToastService } from "../../core/services/toast.service";
 import { AuthService } from "../../core/services/auth.service";
 import { DataService } from "../../core/services/data.service";
 import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
-import {
-  SERIE_A_TEAMS,
-  rosterCost,
-  teamPrice,
-} from "../../core/constants/serie-a-teams";
+import { rosterCost, teamPrice } from "../../core/constants/serie-a-teams";
 import {
   TeamColorConfig,
   getTeamColors,
@@ -85,14 +81,6 @@ export class ProfileComponent {
 
   teamColors(teamName: string): TeamColorConfig {
     return getTeamColors(teamName);
-  }
-
-  previousPlacement(teamName: string): number {
-    const orderedTeams = [...SERIE_A_TEAMS].sort((a, b) => b.price - a.price);
-
-    const index = orderedTeams.findIndex((team) => team.name === teamName);
-
-    return index >= 0 ? index + 1 : 0;
   }
 
   async logout(): Promise<void> {

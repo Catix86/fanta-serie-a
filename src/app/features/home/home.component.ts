@@ -30,10 +30,33 @@ export class HomeComponent {
     this.data.events$(),
   ]).pipe(
     map(([me, users, fixtures, lineups, events]) => {
-      const table = standings(users, fixtures, lineups, events);
-      const myStanding = me
-        ? table.find((row) => row.uid === me.uid)
+      const fantasyTable = standings(users, fixtures, lineups, events);
+
+      const leagueTable = [...fantasyTable].sort((a, b) => {
+        if (b.leaguePoints !== a.leaguePoints) {
+          return b.leaguePoints - a.leaguePoints;
+        }
+
+        const bGoalDifference = b.goalsFor - b.goalsAgainst;
+        const aGoalDifference = a.goalsFor - a.goalsAgainst;
+
+        if (bGoalDifference !== aGoalDifference) {
+          return bGoalDifference - aGoalDifference;
+        }
+
+        return b.goalsFor - a.goalsFor;
+      });
+
+      const myFantasyStanding = me
+        ? fantasyTable.find((row) => row.uid === me.uid)
         : undefined;
+
+      const myLeagueIndex = me
+        ? leagueTable.findIndex((row) => row.uid === me.uid)
+        : -1;
+
+      const myLeagueStanding =
+        myLeagueIndex >= 0 ? leagueTable[myLeagueIndex] : undefined;
 
       const nextFixtures = fixtures
         .filter((fixture) => fixture.status !== "finished")
@@ -68,7 +91,10 @@ export class HomeComponent {
 
       return {
         me,
-        myStanding,
+        myFantasyStanding,
+        myLeagueStanding,
+        fantasyPosition: myFantasyStanding?.position ?? null,
+        leaguePosition: myLeagueIndex >= 0 ? myLeagueIndex + 1 : null,
         nextRound,
         deadline,
         hasLineup,

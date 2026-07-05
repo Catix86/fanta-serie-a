@@ -4,7 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { interval, combineLatest, map } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { SectionHeaderComponent } from '../../shared/components/section-header/section-header.component';
+import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import { AuthService } from "../../core/services/auth.service";
 import { DataService } from "../../core/services/data.service";
 import { LINEUP_SIZE, teamPrice } from "../../core/constants/serie-a-teams";
@@ -159,17 +159,18 @@ export class LineupComponent {
 
   countdown(deadline: Date | null): string {
     if (!deadline) {
-      return "--:--:--";
+      return "--g --h --m --s";
     }
 
     const remainingMs = Math.max(0, deadline.getTime() - this.now());
     const totalSeconds = Math.floor(remainingMs / 1000);
 
-    const hours = Math.floor(totalSeconds / 3600);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    return `${days}g ${hours}h ${minutes}m ${seconds}s`;
   }
 
   canSave(locked: boolean): boolean {

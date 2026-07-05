@@ -72,7 +72,7 @@
   margin-top: 26px;
 }
 
-.home-stats > div {
+.home-stats>div {
   padding: 14px 12px;
   border-radius: 18px;
   background: rgba(255, 255, 255, .18);
@@ -96,12 +96,10 @@
 }
 
 .deadline-card {
-  margin-top: -32px;
   position: relative;
   z-index: 2;
   display: grid;
   gap: 16px;
-  background: rgba(255, 255, 255, .96);
   color: #020617;
   border: 0;
   box-shadow: 0 18px 34px rgba(0, 0, 0, .24);
@@ -128,16 +126,17 @@
   font-size: 18px;
   line-height: 1.1;
   font-weight: 1000;
+  color: white;
 }
 
 .deadline-icon {
-  color: #8b5cf6;
+  color: var(--primary);
   font-size: 32px;
   font-variation-settings:
-    'FILL' 1,
-    'wght' 700,
+    'FILL' 0,
+    'wght' 300,
     'GRAD' 0,
-    'opsz' 32;
+    'opsz' 24;
 }
 
 .countdown-grid {
@@ -146,16 +145,17 @@
   gap: 9px;
 }
 
-.countdown-grid > div {
+.countdown-grid>div {
   padding: 12px 4px 10px;
   border-radius: 14px;
-  background: #f8fafc;
+  background: rgba(255, 255, 255, .08);
+
   text-align: center;
 }
 
 .countdown-grid strong {
   display: block;
-  color: #8b5cf6;
+  color: var(--primary);
   font-size: 22px;
   line-height: 1;
   font-weight: 1000;
@@ -176,16 +176,16 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #7c3aed, #9333ea);
-  color: #ffffff;
-  box-shadow: 0 12px 24px rgba(124, 58, 237, .34);
+  background: rgba(52, 211, 153, .18);
+  color: var(--primary);
+  border: 1px solid rgba(52, 211, 153, .34);
 }
 
 .home-lineup-button .material-symbols-rounded {
   font-size: 20px;
   font-variation-settings:
-    'FILL' 1,
-    'wght' 700,
+    'FILL' 0,
+    'wght' 300,
     'GRAD' 0,
     'opsz' 24;
 }
@@ -239,4 +239,97 @@
 .empty-results {
   margin: 0;
   font-size: 13px;
+}
+
+.home-ranking-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.home-ranking-card {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 22px;
+  display: grid;
+  gap: 10px;
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, .10),
+      rgba(255, 255, 255, .05));
+  border: 1px solid rgba(255, 255, 255, .10);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, .20);
+}
+
+.home-ranking-card.fantasy {
+  background:
+    radial-gradient(circle at 90% 0%,
+      rgba(252, 211, 77, .18),
+      transparent 42%),
+    linear-gradient(135deg,
+      rgba(255, 255, 255, .10),
+      rgba(255, 255, 255, .05));
+}
+
+.home-ranking-card.league {
+  background:
+    radial-gradient(circle at 90% 0%,
+      rgba(52, 211, 153, .18),
+      transparent 42%),
+    linear-gradient(135deg,
+      rgba(255, 255, 255, .10),
+      rgba(255, 255, 255, .05));
+}
+
+.home-ranking-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, .10);
+  border: 1px solid rgba(255, 255, 255, .12);
+}
+
+.home-ranking-icon .material-symbols-rounded {
+  font-size: 22px;
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 800,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+.home-ranking-card.fantasy .home-ranking-icon {
+  color: var(--accent);
+}
+
+.home-ranking-card.league .home-ranking-icon {
+  color: var(--primary);
+}
+
+.home-ranking-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+
+.home-ranking-card strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.home-ranking-card p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 900;
 }

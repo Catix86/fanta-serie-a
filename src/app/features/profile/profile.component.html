@@ -9,31 +9,15 @@
         (actionClick)="onProfileHeaderAction($event)"
       />
 
-      <section class="profile-stats-card">
-        <div>
-          <strong>{{ vm.myStanding?.fantasyPoints || 0 }}</strong>
-          <span>Punti</span>
-        </div>
-
-        <div>
-          <strong> {{ rosterCost(user.roster) }}/100 </strong>
-          <span>FC usati</span>
-        </div>
-
-        <div>
-          <strong>
-            @if (vm.myStanding?.position) {
-              #{{ vm.myStanding?.position }}
-            } @else {
-              -
-            }
-          </strong>
-          <span>Posizione</span>
-        </div>
-      </section>
-
       <section class="profile-roster-section">
-        <h2>La tua rosa completa</h2>
+        <div class="profile-roster-header">
+          <h2>La tua rosa</h2>
+
+          <div class="profile-roster-budget">
+            <strong>{{ rosterCost(user.roster) }}/100</strong>
+            <span>Fanta crediti</span>
+          </div>
+        </div>
 
         <div class="profile-roster-list">
           @for (teamName of user.roster; track teamName) {
@@ -49,15 +33,6 @@
                 <strong>
                   {{ teamName }}
                 </strong>
-
-                <p>
-                  Piazzamento precedente:
-                  @if (previousPlacement(teamName) > 0) {
-                    #{{ previousPlacement(teamName) }}
-                  } @else {
-                    -
-                  }
-                </p>
               </div>
 
               <strong class="profile-team-price">
@@ -113,7 +88,7 @@
 
           <button
             type="button"
-            class="btn warn"
+            class="btn password-confirm-button"
             [disabled]="changingPassword()"
             (click)="submitPasswordChange()"
           >

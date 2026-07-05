@@ -56,19 +56,68 @@
     font-weight: 1000;
 }
 
+.profile-roster-section h2 div {
+    margin: 2px 0 0;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 1000;
+}
+
+.profile-roster-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.profile-roster-header h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 1000;
+    line-height: 1.1;
+}
+
+.profile-roster-budget {
+    flex-shrink: 0;
+    display: grid;
+    justify-items: end;
+    gap: 2px;
+}
+
+.profile-roster-budget strong {
+    color: var(--accent);
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.profile-roster-budget span {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
 .profile-roster-list {
     display: grid;
-    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
 }
 
 .profile-team-card {
-    min-height: 66px;
-    padding: 11px 12px;
+    min-height: 72px;
+    padding: 10px;
     border-radius: 18px;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "logo name"
+        "price price";
     align-items: center;
-    gap: 12px;
+    gap: 8px 10px;
     background:
         linear-gradient(135deg,
             rgba(255, 255, 255, .10),
@@ -98,25 +147,6 @@
 
 .profile-team-info {
     min-width: 0;
-}
-
-.profile-team-info strong {
-    display: block;
-    max-width: 100%;
-    color: #020617;
-    font-size: 14px;
-    line-height: 1.1;
-    font-weight: 1000;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.profile-team-info p {
-    margin: 4px 0 0;
-    color: #94a3b8;
-    font-size: 10px;
-    font-weight: 800;
 }
 
 .profile-team-price {
@@ -184,18 +214,21 @@
 }
 
 .profile-team-logo {
+    grid-area: logo;
     width: 38px;
     height: 38px;
+    flex-shrink: 0;
     border-radius: 999px;
     object-fit: contain;
     padding: 5px;
-    background: rgba(255, 255, 255, .92);
+    background: rgba(255, 255, 255, .05);
     box-shadow:
         0 0 0 1px rgba(255, 255, 255, .16),
         0 8px 16px rgba(0, 0, 0, .20);
 }
 
 .profile-team-info {
+    grid-area: name;
     min-width: 0;
 }
 
@@ -203,12 +236,11 @@
     display: block;
     max-width: 100%;
     color: var(--text);
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.1;
     font-weight: 1000;
     overflow: hidden;
     text-overflow: ellipsis;
-
     white-space: nowrap;
 }
 
@@ -220,9 +252,11 @@
 }
 
 .profile-team-price {
-    flex-shrink: 0;
+    grid-area: price;
+    justify-self: end;
     color: var(--accent);
     font-size: 13px;
+    line-height: 1;
     font-weight: 1000;
     white-space: nowrap;
 }
@@ -299,4 +333,37 @@
     background: rgba(251, 113, 133, .18);
     color: #fb7185;
     border: 1px solid rgba(251, 113, 133, .34);
+}
+
+.password-confirm-button {
+    background: rgba(252, 211, 77, .18);
+    color: var(--accent);
+    border: 1px solid rgba(252, 211, 77, .34);
+}
+
+@media (max-width: 360px) {
+    .profile-roster-list {
+        gap: 8px;
+    }
+
+    .profile-team-card {
+        min-height: 68px;
+        padding: 9px;
+        border-radius: 16px;
+        gap: 7px 8px;
+    }
+
+    .profile-team-logo {
+        width: 34px;
+        height: 34px;
+        padding: 5px;
+    }
+
+    .profile-team-info strong {
+        font-size: 13px;
+    }
+
+    .profile-team-price {
+        font-size: 12px;
+    }
 }

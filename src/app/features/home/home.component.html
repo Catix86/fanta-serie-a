@@ -6,54 +6,46 @@
       subtitle="Riepilogo della tua stagione"
     />
 
-    <section class="home-hero">
-      <div class="home-hero-top">
-        <div>
-          <p>Benvenuto/a</p>
-
-          <h1>
-            {{ vm.me?.teamName || vm.me?.username || "Fanta Serie A" }}
-          </h1>
-        </div>
-
-        <div class="home-actions">
-          <button
-            type="button"
-            class="home-action-button"
-            aria-label="Profilo"
-            (click)="goToProfile()"
-          >
-            <span class="material-symbols-rounded">person</span>
-          </button>
-
-          <button
-            type="button"
-            class="home-action-button"
-            aria-label="Logout"
-            (click)="logout()"
-          >
-            <span class="material-symbols-rounded">logout</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="home-stats">
-        <div>
-          <span>Punti totali</span>
-          <strong>{{ vm.myStanding?.fantasyPoints || 0 }}</strong>
+    <section class="home-ranking-summary">
+      <article class="home-ranking-card fantasy">
+        <div class="home-ranking-icon">
+          <span class="material-symbols-rounded"> workspace_premium </span>
         </div>
 
         <div>
-          <span>Posizione in lega</span>
-          <strong>
-            @if (vm.myStanding?.position) {
-              #{{ vm.myStanding?.position }}
+          <span>Classifica fantasy</span>
+
+          <strong> {{ vm.myFantasyStanding?.fantasyPoints || 0 }} pt </strong>
+
+          <p>
+            @if (vm.fantasyPosition) {
+              #{{ vm.fantasyPosition }} posizione
             } @else {
-              -
+              Posizione non disponibile
             }
-          </strong>
+          </p>
         </div>
-      </div>
+      </article>
+
+      <article class="home-ranking-card league">
+        <div class="home-ranking-icon">
+          <span class="material-symbols-rounded"> sports_score </span>
+        </div>
+
+        <div>
+          <span>Classifica incontri</span>
+
+          <strong> {{ vm.myLeagueStanding?.leaguePoints || 0 }} pt </strong>
+
+          <p>
+            @if (vm.leaguePosition) {
+              #{{ vm.leaguePosition }} posizione
+            } @else {
+              Posizione non disponibile
+            }
+          </p>
+        </div>
+      </article>
     </section>
 
     <section class="card deadline-card">
