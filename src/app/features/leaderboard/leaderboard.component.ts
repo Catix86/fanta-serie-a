@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { combineLatest, map } from "rxjs";
-import { SectionHeaderComponent } from '../../shared/components/section-header/section-header.component';
+import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import { DataService } from "../../core/services/data.service";
 import { standings } from "../../core/utils/scoring";
 
@@ -23,9 +23,10 @@ export class LeaderboardComponent {
     this.data.fixtures$(),
     this.data.lineups$(),
     this.data.events$(),
+    this.data.leagueMatches$(),
   ]).pipe(
-    map(([users, fixtures, lineups, events]) => {
-      const rows = standings(users, fixtures, lineups, events);
+    map(([users, fixtures, lineups, events, leagueMatches]) => {
+      const rows = standings(users, fixtures, lineups, events, leagueMatches);
 
       return {
         fantasy: rows,

@@ -28,9 +28,10 @@ export class HomeComponent {
     this.data.fixtures$(),
     this.data.lineups$(),
     this.data.events$(),
+    this.data.leagueMatches$(),
   ]).pipe(
-    map(([me, users, fixtures, lineups, events]) => {
-      const fantasyTable = standings(users, fixtures, lineups, events);
+    map(([me, users, fixtures, lineups, events, leagueMatches]) => {
+      const fantasyTable = standings(users, fixtures, lineups, events, leagueMatches);
 
       const leagueTable = [...fantasyTable].sort((a, b) => {
         if (b.leaguePoints !== a.leaguePoints) {

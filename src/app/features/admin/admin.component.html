@@ -59,46 +59,86 @@
       </span>
     </summary>
 
+    <div class="admin-scope-toggle">
+      <button
+        type="button"
+        [class.active]="eventScope === 'match'"
+        (click)="eventScope = 'match'"
+      >
+        Evento partita
+      </button>
+
+      <button
+        type="button"
+        [class.active]="eventScope === 'seasonal'"
+        (click)="eventScope = 'seasonal'"
+      >
+        Evento stagionale
+      </button>
+    </div>
+
     <div class="admin-accordion-content">
       <div class="match-form">
-        <div>
-          <label class="muted">Partita</label>
+        @if (eventScope === "match") {
+          <div>
+            <label class="muted">Partita</label>
 
-          <select class="input" [(ngModel)]="selFixture">
-            <option [ngValue]="undefined">Seleziona partita</option>
+            <select class="input" [(ngModel)]="selFixture">
+              <option [ngValue]="undefined">Seleziona partita</option>
 
-            @if (fixtures$ | async; as fixtures) {
-              @for (fixture of fixtures; track fixture.id) {
-                <option [ngValue]="fixture">
-                  G{{ fixture.round }} · {{ fixture.homeTeam }} -
-                  {{ fixture.awayTeam }}
-                </option>
+              @if (fixtures$ | async; as fixtures) {
+                @for (fixture of fixtures; track fixture.id) {
+                  <option [ngValue]="fixture">
+                    G{{ fixture.round }} · {{ fixture.homeTeam }} -
+                    {{ fixture.awayTeam }}
+                  </option>
+                }
               }
-            }
-          </select>
-        </div>
+            </select>
+          </div>
 
-        <div>
-          <label class="muted">Squadra</label>
+          <div>
+            <label class="muted">Squadra</label>
 
-          <select class="input" [(ngModel)]="selTeam" [disabled]="!selFixture">
-            <option value="">
+            <select
+              class="input"
+              [(ngModel)]="selTeam"
+              [disabled]="!selFixture"
+            >
+              <option value="">
+                @if (selFixture) {
+                  Seleziona squadra
+                } @else {
+                  Prima seleziona una partita
+                }
+              </option>
+
               @if (selFixture) {
-                Seleziona squadra
-              } @else {
-                Prima seleziona una partita
+                @for (team of teams(selFixture); track team) {
+                  <option [value]="team">
+                    {{ team }}
+                  </option>
+                }
               }
-            </option>
+            </select>
+          </div>
+        }
 
-            @if (selFixture) {
-              @for (team of teams(selFixture); track team) {
+        @if (eventScope === "seasonal") {
+          <div>
+            <label class="muted">Squadra</label>
+
+            <select class="input" [(ngModel)]="seasonalTeam">
+              <option value="">Seleziona squadra</option>
+
+              @for (team of teamsList; track team) {
                 <option [value]="team">
                   {{ team }}
                 </option>
               }
-            }
-          </select>
-        </div>
+            </select>
+          </div>
+        }
 
         <div>
           <label class="muted">Bonus/Malus</label>
@@ -243,6 +283,40 @@
           <p class="muted">Caricamento partite...</p>
         </section>
       }
+    </div>
+  </details>
+
+  <details class="card admin-accordion">
+    <summary>
+      <div class="admin-accordion-summary-content">
+        <strong>Calendario incontri</strong>
+        <span class="muted">Genera gli scontri tra utenti per giornata</span>
+      </div>
+
+      <span class="material-symbols-rounded admin-accordion-expand-icon">
+        expand_more
+      </span>
+    </summary>
+
+    <div class="admin-accordion-content">
+      <p class="muted">
+        Il calendario viene generato usando le giornate Serie A attualmente
+        presenti. Se aggiungi nuove giornate in futuro, premi di nuovo questo
+        pulsante.
+      </p>
+
+      <button
+        type="button"
+        class="btn warn"
+        [disabled]="generatingLeagueCalendar()"
+        (click)="generateLeagueCalendar()"
+      >
+        @if (generatingLeagueCalendar()) {
+          Generazione...
+        } @else {
+          Genera calendario incontri
+        }
+      </button>
     </div>
   </details>
 </main>

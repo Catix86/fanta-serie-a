@@ -5,7 +5,8 @@ import { DataService } from "../../core/services/data.service";
 import { BONUS_RULES } from "../../core/constants/bonus-rules";
 import { Fixture } from "../../core/models";
 import { ToastService } from "../../core/services/toast.service";
-import { SectionHeaderComponent } from '../../shared/components/section-header/section-header.component';
+import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
+import { SERIE_A_TEAMS } from "../../core/constants/serie-a-teams";
 
 @Component({
   standalone: true,
@@ -26,6 +27,34 @@ export class AdminComponent {
   saving = signal(false);
   calendarCsv = "";
   importingCalendar = signal(false);
+  generatingLeagueCalendar = signal(false);
+  eventScope: "match" | "seasonal" = "match";
+  seasonalTeam = "";
+  teamsList = SERIE_A_TEAMS.map((team) => team.name);
+
+  async generateLeagueCalendar(): Promise<void> {
+    this.generatingLeagueCalendar.set(true);
+
+    try {
+      const count = await this.data.generateLeagueCalendar();
+
+      this.toast.show(
+        `${count} incontri generati/aggiornati.`,
+        "success",
+        3000,
+      );
+    } catch (error: any) {
+      console.error("Errore generazione calendario incontri:", error);
+
+      this.toast.show(
+        error?.message || "Calendario incontri non generato.",
+        "error",
+        3000,
+      );
+    } finally {
+      this.generatingLeagueCalendar.set(false);
+    }
+  }
 
   teams(f: Fixture) {
     return [f.homeTeam, f.awayTeam];
@@ -41,14 +70,44 @@ export class AdminComponent {
     const n = await this.data.importSeedFixtures();
     this.toast.show(`${n} partite importate`);
   }
+  
+  async addEvents(): Promise<void> {
+    if (this.eventScope === "match") {
+      if (!this.selFixture || !this.selTeam || !this.ruleIds.length) {
+        this.toast.show(
+          "Seleziona partita, squadra e bonus/malus.",
+          "error",
+          3000,
+        );
 
-  async addEvents() {
-    if (!this.selFixture || !this.selTeam || !this.ruleIds.length) {
-      this.toast.show("Seleziona partita, squadra e bonus/malus", "error");
+        return;
+      }
+
+      await this.data.addTeamEvents(
+        this.selFixture,
+        this.selTeam,
+        this.ruleIds,
+      );
+
+      this.toast.show("Bonus/Malus partita inseriti.", "success", 3000);
+      this.ruleIds = [];
+
       return;
     }
-    await this.data.addTeamEvents(this.selFixture, this.selTeam, this.ruleIds);
-    this.toast.show("Bonus/Malus inseriti");
+
+    if (!this.seasonalTeam || !this.ruleIds.length) {
+      this.toast.show(
+        "Seleziona squadra e bonus/malus stagionali.",
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    await this.data.addSeasonalTeamEvents(this.seasonalTeam, this.ruleIds);
+
+    this.toast.show("Bonus/Malus stagionali inseriti.", "success", 3000);
     this.ruleIds = [];
   }
 

@@ -34,6 +34,13 @@
           <span class="nav-label">Formazione</span>
         </a>
 
+        <a class="nav-btn" routerLink="/calendario" routerLinkActive="active">
+          <span class="nav-icon-wrap">
+            <span class="material-symbols-rounded">calendar_month</span>
+          </span>
+          <span class="nav-label">Calendario</span>
+        </a>
+
         <a
           class="nav-btn"
           routerLink="/classifica"
@@ -61,7 +68,7 @@
         </a>
 
         @if (user.role === "admin") {
-          <a
+          <!-- <a
             class="nav-btn"
             routerLink="/admin"
             routerLinkActive="active"
@@ -72,7 +79,7 @@
             </span>
 
             <span class="nav-label">Admin</span>
-          </a>
+          </a> -->
         }
       </div>
     </nav>

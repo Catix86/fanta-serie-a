@@ -58,10 +58,10 @@
 .section-header-icon .material-symbols-rounded {
   font-size: 28px;
   font-variation-settings:
-    'FILL' 1,
-    'wght' 800,
+    'FILL' 0,
+    'wght' 300,
     'GRAD' 0,
-    'opsz' 30;
+    'opsz' 24;
 }
 
 .section-header-copy {
@@ -72,7 +72,7 @@
   margin: 0;
   color: #ffffff;
   font-size: 25px;
-  line-height: 1.05;
+  line-height: 1.35;
   font-weight: 1000;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -117,8 +117,8 @@
 .section-header-action .material-symbols-rounded {
   font-size: 22px;
   font-variation-settings:
-    'FILL' 1,
-    'wght' 750,
+    'FILL' 0,
+    'wght' 300,
     'GRAD' 0,
     'opsz' 24;
 }

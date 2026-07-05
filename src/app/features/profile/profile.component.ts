@@ -1,5 +1,5 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { combineLatest, map } from "rxjs";
 import { FormsModule } from "@angular/forms";
@@ -25,7 +25,7 @@ import {
   templateUrl: "./profile.component.html",
   styleUrl: "./profile.component.scss",
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   private auth = inject(AuthService);
   private data = inject(DataService);
   private router = inject(Router);
@@ -34,19 +34,9 @@ export class ProfileComponent {
   logoutConfirmOpen = signal(false);
   changePasswordOpen = signal(false);
   changingPassword = signal(false);
-  profileHeaderActions: SectionHeaderAction[] = [
-    {
-      id: "change-password",
-      icon: "lock_reset",
-      label: "Cambia password",
-    },
-    {
-      id: "logout",
-      icon: "logout",
-      label: "Esci dall’account",
-    },
-  ];
+  profileHeaderActions: SectionHeaderAction[] = [];
 
+  user$ = this.auth.appUser$;
   currentPassword = "";
   newPassword = "";
   confirmNewPassword = "";
@@ -57,9 +47,10 @@ export class ProfileComponent {
     this.data.fixtures$(),
     this.data.lineups$(),
     this.data.events$(),
+    this.data.leagueMatches$(),
   ]).pipe(
-    map(([user, users, fixtures, lineups, events]) => {
-      const table = standings(users, fixtures, lineups, events);
+    map(([user, users, fixtures, lineups, events, leagueMatches]) => {
+      const table = standings(users, fixtures, lineups, events, leagueMatches);
       const myStanding = user
         ? table.find((row) => row.uid === user.uid)
         : undefined;
@@ -70,6 +61,31 @@ export class ProfileComponent {
       };
     }),
   );
+
+  ngOnInit(): void {
+    this.user$.subscribe((user) => {
+      if (user?.role === "admin") {
+        this.profileHeaderActions.push({
+          id: "admin-panel",
+          icon: "admin_panel_settings",
+          label: "Pannello amministratore",
+        });
+      }
+
+      this.profileHeaderActions.push(
+        {
+          id: "change-password",
+          icon: "lock_reset",
+          label: "Cambia password",
+        },
+        {
+          id: "logout",
+          icon: "logout",
+          label: "Esci dall’account",
+        },
+      );
+    });
+  }
 
   rosterCost(teams: string[]): number {
     return rosterCost(teams);
@@ -168,6 +184,10 @@ export class ProfileComponent {
 
     if (actionId === "logout") {
       this.openLogoutConfirm();
+    }
+
+    if (actionId === "admin-panel") {
+      this.router.navigateByUrl("/admin");
     }
   }
 

@@ -45,6 +45,7 @@
     }
   }
 
+  <!-- MODALE CAMBIA PASSWORD -->
   @if (changePasswordOpen()) {
     <div class="password-modal-backdrop" (click)="closeChangePassword()">
       <section class="card password-modal" (click)="$event.stopPropagation()">
@@ -103,6 +104,7 @@
     </div>
   }
 
+  <!-- MODALE LOGOUT -->
   @if (logoutConfirmOpen()) {
     <div class="logout-modal-backdrop" (click)="closeLogoutConfirm()">
       <section class="card logout-modal" (click)="$event.stopPropagation()">

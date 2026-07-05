@@ -29,10 +29,14 @@ export interface Lineup {
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
+
+export type TeamEventScope = "match" | "seasonal";
+
 export interface TeamEvent {
   id: string;
-  fixtureId: string;
-  round: number;
+  scope: TeamEventScope;
+  fixtureId?: string;
+  round?: number;
   teamName: string;
   ruleId: string;
   label: string;
@@ -41,6 +45,7 @@ export interface TeamEvent {
   createdAt: Timestamp;
   createdBy: string;
 }
+
 export interface StandingRow {
   uid: string;
   username: string;
@@ -53,4 +58,13 @@ export interface StandingRow {
   goalsFor: number;
   goalsAgainst: number;
   position: number;
+}
+
+export interface LeagueMatch {
+  id: string;
+  round: number;
+  homeUid: string;
+  awayUid: string;
+  createdAt?: Timestamp;
+  updatedAt?: Timestamp;
 }

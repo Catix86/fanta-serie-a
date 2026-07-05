@@ -2,7 +2,7 @@ import { Component, inject, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-
+import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
 import { AuthService } from "../../core/services/auth.service";
 import {
   INITIAL_BUDGET,
@@ -212,5 +212,9 @@ export class RegisterComponent {
     return (
       this.form.controls.username.valid && this.form.controls.password.valid
     );
+  }
+
+  teamLogo(teamName: string): string {
+    return getSerieATeamLogo(teamName);
   }
 }

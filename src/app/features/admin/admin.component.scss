@@ -23,10 +23,10 @@
   align-items: center;
   justify-content: center;
   font-variation-settings:
-    'FILL' 1,
-    'wght' 700,
+    'FILL' 0,
+    'wght' 300,
     'GRAD' 0,
-    'opsz' 32;
+    'opsz' 24;
 }
 
 .admin-accordion {
@@ -246,4 +246,25 @@
   .save-result-btn {
     grid-column: 1 / -1;
   }
+}
+
+.admin-scope-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-scope-toggle button {
+  min-height: 42px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .08);
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, .10);
+  font-weight: 1000;
+}
+
+.admin-scope-toggle button.active {
+  background: rgba(52, 211, 153, .16);
+  color: var(--primary);
+  border-color: rgba(52, 211, 153, .38);
 }

@@ -1,123 +1,164 @@
-<main class="auth-page mobile-page">
-    <section class="card auth-card">
-        <div class="register-step-indicator">
-            <div class="register-step" [class.active]="currentStep() === 'account'"
-                [class.done]="currentStep() === 'team'">
-                <span>1</span>
-                <strong>Account</strong>
+<main class="auth-page register-page mobile-page">
+  <section class="card auth-card">
+    <div class="register-step-indicator">
+      <div
+        class="register-step"
+        [class.active]="currentStep() === 'account'"
+        [class.done]="currentStep() === 'team'"
+      >
+        <span>1</span>
+        <strong>Account</strong>
+      </div>
+
+      <div class="register-step-line"></div>
+
+      <div class="register-step" [class.active]="currentStep() === 'team'">
+        <span>2</span>
+        <strong>Team</strong>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+      @if (currentStep() === "account") {
+        <section class="register-step-panel">
+          <h1 class="auth-title">Registrati</h1>
+
+          <p class="muted auth-description">
+            Crea il tuo account e dai un nome al tuo team.
+          </p>
+
+          <input
+            class="input"
+            placeholder="Username"
+            formControlName="username"
+          />
+
+          <input
+            class="input"
+            type="password"
+            placeholder="Password"
+            formControlName="password"
+          />
+
+          <button
+            class="btn login-register-link"
+            type="button"
+            [disabled]="!canContinueToTeamStep()"
+            (click)="goToTeamStep()"
+          >
+            Continua
+          </button>
+
+          <a class="btn login-submit-button auth-link" routerLink="/login">
+            Ho già un account
+          </a>
+        </section>
+      }
+
+      @if (currentStep() === "team") {
+        <section class="register-step-panel">
+          <div class="register-step-header">
+            <button
+              type="button"
+              class="register-back-button"
+              (click)="goToAccountStep()"
+              aria-label="Torna indietro"
+            >
+              <span class="material-symbols-rounded"> arrow_back </span>
+            </button>
+            <div>
+              <h1 class="auth-title">Scegli le squadre</h1>
+
+              <p class="muted auth-description">
+                Dai un nome al tuo team e seleziona 10 squadre entro il budget
+                disponibile.
+              </p>
+            </div>
+          </div>
+
+          <input
+            class="input"
+            placeholder="Nome team"
+            formControlName="teamName"
+          />
+
+          <section class="register-summary">
+            <div class="register-summary-item">
+              <span class="muted">Squadre</span>
+
+              <strong
+                [class.register-summary-ok]="selectedCount() === size"
+                [class.register-summary-warning]="selectedCount() !== size"
+              >
+                {{ selectedCount() }} / {{ size }}
+              </strong>
             </div>
 
-            <div class="register-step-line"></div>
+            <div class="register-summary-item">
+              <span class="muted">Budget</span>
 
-            <div class="register-step" [class.active]="currentStep() === 'team'">
-                <span>2</span>
-                <strong>Team</strong>
+              <strong
+                [class.register-summary-ok]="!isOverBudget()"
+                [class.register-summary-error]="isOverBudget()"
+              >
+                {{ cost() }} / {{ budget }} FC
+              </strong>
             </div>
-        </div>
 
-        <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
-            @if(currentStep() === 'account') {
-            <section class="register-step-panel">
-                <h1 class="auth-title">
-                    Registrati
-                </h1>
+            <div class="register-summary-item">
+              <span class="muted">Residuo</span>
 
-                <p class="muted auth-description">
-                    Crea il tuo account e dai un nome al tuo team.
-                </p>
+              <strong
+                [class.register-summary-ok]="remainingBudget() >= 0"
+                [class.register-summary-error]="remainingBudget() < 0"
+              >
+                {{ remainingBudget() }} FC
+              </strong>
+            </div>
+          </section>
 
-                <input class="input" placeholder="Username" formControlName="username">
+          <div class="register-market">
+            @for (team of teams; track team.name) {
+              <button
+                type="button"
+                class="register-team-card"
+                [class.selected]="isSelected(team.name)"
+                [class.disabled]="
+                  !isSelected(team.name) && !canSelectMoreTeams()
+                "
+                (click)="toggle(team.name)"
+              >
+                <img
+                  class="register-team-logo"
+                  [src]="teamLogo(team.name)"
+                  [alt]="team.name"
+                  loading="lazy"
+                />
 
-                <input class="input" type="password" placeholder="Password" formControlName="password">
+                <span class="register-team-name">
+                  {{ team.name }}
+                </span>
 
-                <button class="btn warn" type="button" [disabled]="!canContinueToTeamStep()" (click)="goToTeamStep()">
-                    Continua
-                </button>
-
-
-                <a class="btn secondary auth-link" routerLink="/login">
-                    Ho già un account
-                </a>
-            </section>
+                <strong class="register-team-price">
+                  {{ team.price }} FC
+                </strong>
+              </button>
             }
+          </div>
 
-            @if(currentStep() === 'team') {
-            <section class="register-step-panel">
-                <div class="register-step-header">
-                    <div>
-                        <h1 class="auth-title">
-                            Scegli le squadre
-                        </h1>
-
-                        <p class="muted auth-description">
-                            Dai un nome al tuo team e seleziona 10 squadre entro il budget disponibile.
-                        </p>
-                    </div>
-
-                    <button type="button" class="register-back-button" (click)="goToAccountStep()"
-                        aria-label="Torna indietro">
-                        <span class="material-symbols-rounded">
-                            arrow_back
-                        </span>
-                    </button>
-                </div>
-
-                <input class="input" placeholder="Nome team" formControlName="teamName">
-
-
-                <section class="register-summary">
-                    <div class="register-summary-item">
-                        <span class="muted">Squadre</span>
-
-                        <strong [class.register-summary-ok]="selectedCount() === size"
-                            [class.register-summary-warning]="selectedCount() !== size">
-                            {{ selectedCount() }} / {{ size }}
-                        </strong>
-                    </div>
-
-                    <div class="register-summary-item">
-                        <span class="muted">Budget</span>
-
-                        <strong [class.register-summary-ok]="!isOverBudget()"
-                            [class.register-summary-error]="isOverBudget()">
-                            {{ cost() }} / {{ budget }} FC
-                        </strong>
-                    </div>
-
-                    <div class="register-summary-item">
-                        <span class="muted">Residuo</span>
-
-                        <strong [class.register-summary-ok]="remainingBudget() >= 0"
-                            [class.register-summary-error]="remainingBudget() < 0">
-                            {{ remainingBudget() }} FC
-                        </strong>
-                    </div>
-                </section>
-
-                <div class="register-market">
-                    @for(team of teams; track team.name) {
-                    <button type="button" class="register-team-card" [class.selected]="isSelected(team.name)"
-                        [class.disabled]="!isSelected(team.name) && !canSelectMoreTeams()" (click)="toggle(team.name)">
-                        <span class="register-team-name">
-                            {{ team.name }}
-                        </span>
-
-                        <strong class="register-team-price">
-                            {{ team.price }} FC
-                        </strong>
-                    </button>
-                    }
-                </div>
-
-                <button class="btn warn" type="submit" [disabled]="!canSave() || loading()">
-                    @if(loading()) {
-                    Creazione account...
-                    } @else {
-                    Crea account
-                    }
-                </button>
-            </section>
+          <button
+            class="btn login-register-link"
+            type="submit"
+            [disabled]="!canSave() || loading()"
+          >
+            @if (loading()) {
+              Creazione account...
+            } @else {
+              Crea account
             }
-        </form>
-    </section>
+          </button>
+        </section>
+      }
+    </form>
+  </section>
 </main>

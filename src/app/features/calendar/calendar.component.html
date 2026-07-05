@@ -1,0 +1,64 @@
+<main class="calendar-content">
+  <app-section-header
+    icon="calendar_month"
+    title="Calendario"
+    subtitle="Scontri diretti tra i partecipanti"
+  />
+
+  @if (vm$ | async; as vm) {
+    @if (vm.rounds.length > 0) {
+      <section class="round-selector">
+        @for (round of vm.rounds; track round) {
+          <button
+            type="button"
+            [class.active]="vm.currentRound === round"
+            (click)="selectRound(round)"
+          >
+            G{{ round }}
+          </button>
+        }
+      </section>
+    }
+
+    <section class="card calendar-matches-card">
+      <div class="calendar-section-title">
+        <div>
+          <span class="muted">Giornata</span>
+          <h2>G{{ vm.currentRound }}</h2>
+        </div>
+
+        <span class="material-symbols-rounded"> sports_score </span>
+      </div>
+
+      @if (vm.matches.length === 0) {
+        <p class="muted empty-calendar">
+          Nessuno scontro generato per questa giornata.
+        </p>
+      }
+
+      @for (match of vm.matches; track match.id) {
+        <article class="league-match-card">
+          <div class="league-player home">
+            <strong>
+              {{ match.homeUser?.teamName || "Utente" }}
+            </strong>
+
+            <span> {{ match.homePoints }} pt </span>
+          </div>
+
+          <div class="league-score">
+            <strong> {{ match.homeGoals }}-{{ match.awayGoals }} </strong>
+          </div>
+
+          <div class="league-player away">
+            <strong>
+              {{ match.awayUser?.teamName || "Utente" }}
+            </strong>
+
+            <span> {{ match.awayPoints }} pt </span>
+          </div>
+        </article>
+      }
+    </section>
+  }
+</main>
