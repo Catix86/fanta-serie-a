@@ -47,7 +47,11 @@
         }
 
         @for (row of vm.fantasy; track row.uid; let i = $index) {
-          <article class="leaderboard-row" [class.podium]="i < 3">
+          <article
+            class="leaderboard-row"
+            [class.current-user]="row.uid === vm.currentUser?.uid"
+            [class.podium]="i < 3"
+          >
             <div class="rank-badge">
               {{ i + 1 }}
             </div>
@@ -72,7 +76,7 @@
     }
 
     @if (activeTab() === "league") {
-      <section class="card league-table-card">
+      <section class="card leaderboard-card-list">
         <div class="leaderboard-section-title">
           <div>
             <h2>Classifica Incontri</h2>
@@ -86,50 +90,53 @@
         }
 
         @if (vm.league.length > 0) {
-          <div class="league-table">
-            <div class="league-table-header">
-              <span>#</span>
-              <span>Team</span>
-              <span>PG</span>
+          <div class="league-compact-table">
+            <div class="league-compact-header">
+              <span>G</span>
               <span>V</span>
               <span>N</span>
               <span>P</span>
-              <span>F/S</span>
+              <span>G+</span>
+              <span>G-</span>
               <span>DR</span>
-              <span>Pt</span>
             </div>
 
             @for (row of vm.league; track row.uid; let i = $index) {
-              <div class="league-table-row" [class.podium]="i < 3">
-                <span class="league-position">
-                  {{ i + 1 }}
-                </span>
+              <article
+                class="league-compact-row"
+                [class.current-user]="row.uid === vm.currentUser?.uid"
+                [class.podium]="i < 3"
+              >
+                <div class="league-compact-main">
+                  <div class="league-team-left">
+                    <span class="league-position" [class.podium]="i < 3">
+                      {{ i + 1 }}
+                    </span>
 
-                <span class="league-team">
-                  <strong>{{ row.teamName }}</strong>
-                  <small>{{ row.username }}</small>
-                </span>
+                    <strong>
+                      {{ row.teamName }}
+                    </strong>
+                  </div>
 
-                <span>{{ played(row) }}</span>
-                <span>{{ row.wins }}</span>
-                <span>{{ row.draws }}</span>
-                <span>{{ row.losses }}</span>
-                <span class="goals-for-against">
-                  {{ row.goalsFor }}/{{ row.goalsAgainst }}
-                </span>
+                  <strong class="league-main-points">
+                    {{ row.leaguePoints }}
+                  </strong>
+                </div>
 
-                <span
-                  [class.positive-text]="goalDifference(row) > 0"
-                  [class.negative-text]="goalDifference(row) < 0"
-                >
-                  {{ goalDifference(row) > 0 ? "+" : ""
-                  }}{{ goalDifference(row) }}
-                </span>
+                <div class="league-compact-stats">
+                  <span>{{ played(row) }}</span>
+                  <span>{{ row.wins }}</span>
+                  <span>{{ row.draws }}</span>
+                  <span>{{ row.losses }}</span>
+                  <span>{{ row.goalsFor }}</span>
+                  <span>{{ row.goalsAgainst }}</span>
 
-                <span class="league-points">
-                  {{ row.leaguePoints }}
-                </span>
-              </div>
+                  <span>
+                    {{ goalDifference(row) > 0 ? "+" : ""
+                    }}{{ goalDifference(row) }}
+                  </span>
+                </div>
+              </article>
             }
           </div>
         }

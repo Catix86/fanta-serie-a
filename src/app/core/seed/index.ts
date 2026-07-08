@@ -1,0 +1,1 @@
+export * from './serie-a-2026-27.seed';

@@ -4,6 +4,7 @@ import { combineLatest, map } from "rxjs";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import { DataService } from "../../core/services/data.service";
 import { standings } from "../../core/utils/scoring";
+import { AuthService } from "../../core/services/auth.service";
 
 type LeaderboardTab = "fantasy" | "league";
 
@@ -15,10 +16,12 @@ type LeaderboardTab = "fantasy" | "league";
 })
 export class LeaderboardComponent {
   private data = inject(DataService);
+  private auth = inject(AuthService);
 
   activeTab = signal<LeaderboardTab>("fantasy");
 
   vm$ = combineLatest([
+    this.auth.appUser$,
     this.data.users$(),
     this.data.fixtures$(),
     this.data.lineups$(),
@@ -26,27 +29,45 @@ export class LeaderboardComponent {
     this.data.leagueMatches$(),
     this.data.roundSettings$(),
   ]).pipe(
-    map(([users, fixtures, lineups, events, leagueMatches, roundSettings]) => {
-      const rows = standings(users, fixtures, lineups, events, leagueMatches, roundSettings);
+    map(
+      ([
+        currentUser,
+        users,
+        fixtures,
+        lineups,
+        events,
+        leagueMatches,
+        roundSettings,
+      ]) => {
+        const rows = standings(
+          users,
+          fixtures,
+          lineups,
+          events,
+          leagueMatches,
+          roundSettings,
+        );
 
-      return {
-        fantasy: rows,
-        league: [...rows].sort((a, b) => {
-          if (b.leaguePoints !== a.leaguePoints) {
-            return b.leaguePoints - a.leaguePoints;
-          }
+        return {
+          currentUser,
+          fantasy: rows,
+          league: [...rows].sort((a, b) => {
+            if (b.leaguePoints !== a.leaguePoints) {
+              return b.leaguePoints - a.leaguePoints;
+            }
 
-          const bGoalDifference = b.goalsFor - b.goalsAgainst;
-          const aGoalDifference = a.goalsFor - a.goalsAgainst;
+            const bGoalDifference = b.goalsFor - b.goalsAgainst;
+            const aGoalDifference = a.goalsFor - a.goalsAgainst;
 
-          if (bGoalDifference !== aGoalDifference) {
-            return bGoalDifference - aGoalDifference;
-          }
+            if (bGoalDifference !== aGoalDifference) {
+              return bGoalDifference - aGoalDifference;
+            }
 
-          return b.goalsFor - a.goalsFor;
-        }),
-      };
-    }),
+            return b.goalsFor - a.goalsFor;
+          }),
+        };
+      },
+    ),
   );
 
   setTab(tab: LeaderboardTab): void {

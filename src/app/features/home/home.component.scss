@@ -320,10 +320,7 @@
     "price price";
   align-items: center;
   gap: 8px 10px;
-  background:
-    linear-gradient(135deg,
-      var(--grad-a),
-      var(--grad-b));
+  background: linear-gradient(135deg, var(--bg-blue), var(--bg));
   color: var(--text);
   border: 1px solid var(--border);
   overflow: hidden;
@@ -355,7 +352,8 @@
   border-radius: 999px;
   object-fit: contain;
   padding: 5px;
-  background: var(--bg-card);
+  // background: var(--bg-card);
+  border: 1px solid var(--card);
   box-shadow:
     0 0 0 1px var(--border) 0 8px 16px var(--shadow);
 }
@@ -435,10 +433,6 @@
   justify-items: center;
   gap: 12px;
   text-align: center;
-  background:
-    linear-gradient(135deg,
-      var(--border),
-      var(--bg-card));
   border: 1px solid var(--border);
 }
 

@@ -4,11 +4,16 @@ import { Router } from "@angular/router";
 import { interval, combineLatest, map } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
-import { AuthService } from "../../core/services/auth.service";
-import { DataService } from "../../core/services/data.service";
-import { roundDeadline, standings, toDate } from "../../core/utils/scoring";
-import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
-import { rosterCost, teamPrice } from "../../core/constants/serie-a-teams";
+import {
+  AuthService,
+  DataService,
+  getSerieATeamLogo,
+  rosterCost,
+  roundDeadline,
+  standings,
+  toDate,
+  teamPrice,
+} from "../../core";
 
 @Component({
   standalone: true,

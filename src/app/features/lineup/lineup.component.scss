@@ -194,7 +194,8 @@
   border-radius: 999px;
   object-fit: contain;
   padding: 5px;
-  background: var(--bg-card);
+  // background: var(--bg-card);
+  border: 1px solid var(--card);
   box-shadow:
     0 0 0 1px var(--border) 0 8px 16px var(--shadow);
   transition:

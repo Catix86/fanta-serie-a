@@ -2,6 +2,7 @@
 
 :root {
     --bg: #020617;
+    --bg-blue: #0057a8;
     --bg-shadow: rgba(2, 6, 23, .65);
     --bg-alt: #0f172a;
     --card: rgba(255, 255, 255, .08);
@@ -20,6 +21,8 @@
     --success: #34d399;
     --bg-success: rgba(52, 211, 153, .18);
     --border-success: rgba(52, 211, 153, .36);
+    --grad-a-success: rgba(52, 211, 153, .15);
+    --grad-b-success: rgba(52, 211, 153, .05);
     // DANGER: Rosso
     --danger: #fb7185;
     --bg-danger: rgba(251, 113, 133, .18);
