@@ -5,8 +5,8 @@
     <nav class="bottom-nav">
       <div
         class="bottom-nav-inner"
-        [class.cols-5]="user.role === 'admin'"
-        [class.cols-4]="user.role !== 'admin'"
+        [class.cols-6]="user.role === 'admin'"
+        [class.cols-5]="user.role !== 'admin'"
       >
         <a
           class="nav-btn"
@@ -32,6 +32,19 @@
           </span>
 
           <span class="nav-label">Formazione</span>
+        </a>
+
+        <a
+          class="nav-btn"
+          routerLink="/squadre"
+          routerLinkActive="active"
+          aria-label="Squadre"
+        >
+          <span class="nav-icon-wrap">
+            <span class="material-symbols-rounded">groups</span>
+          </span>
+
+          <span class="nav-label">Squadre</span>
         </a>
 
         <a class="nav-btn" routerLink="/calendario" routerLinkActive="active">

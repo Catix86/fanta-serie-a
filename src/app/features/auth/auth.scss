@@ -387,3 +387,36 @@ button:disabled,
     grid-template-columns: 1fr 1fr;
     gap: 8px;
 }
+
+.team-logo-url-field {
+    display: grid;
+    gap: 8px;
+}
+
+.team-logo-preview {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto;
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    background:
+        linear-gradient(135deg,
+            var(--grad-a),
+            var(--grad-b));
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.team-logo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.team-logo-error {
+    margin: -2px 4px 0;
+    color: var(--danger);
+    font-size: 11px;
+    font-weight: 800;
+}

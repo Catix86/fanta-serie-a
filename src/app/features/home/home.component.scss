@@ -413,3 +413,39 @@
   gap: 10px;
   margin-top: 4px;
 }
+
+.profile-roster-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.profile-roster-title h2 {
+  margin: 0;
+}
+
+.home-team-logo,
+.home-team-logo-placeholder {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 999px;
+}
+
+.home-team-logo {
+  object-fit: cover;
+  background: var(--bg-card);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 8px 16px var(--shadow);
+}
+
+.home-team-logo-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: var(bg-primary);
+  border: 1px solid var(--border-primary);
+  font-size: 20px;
+}

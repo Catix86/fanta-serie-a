@@ -47,6 +47,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: "squadre",
+        loadComponent: () =>
+          import("./features/squads/squads.component").then(
+            (component) => component.SquadsComponent,
+          ),
+      },
+      {
         path: "admin",
         canActivate: [adminGuard],
         loadComponent: () =>

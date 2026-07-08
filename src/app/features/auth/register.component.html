@@ -88,6 +88,41 @@
             {{ form.controls.teamName.value.length }}/{{ maxTeamNameLength }}
           </small>
 
+          <section class="team-logo-url-field">
+            <label class="muted"> Logo squadra </label>
+
+            <div class="team-logo-preview">
+              @if (teamLogoPreview) {
+                <img
+                  [src]="teamLogoPreview"
+                  alt="Logo team"
+                  (error)="onLogoPreviewError()"
+                />
+              } @else {
+                <span class="material-symbols-rounded"> shield </span>
+              }
+            </div>
+
+            <input
+              class="input"
+              placeholder="Incolla URL logo immagine"
+              [ngModel]="teamLogoUrl"
+              [ngModelOptions]="{ standalone: true }"
+              [attr.maxlength]="maxTeamLogoUrlLength"
+              (ngModelChange)="onTeamLogoUrlChange($event)"
+            />
+
+            <small class="register-field-counter">
+              {{ teamLogoUrl.length }}/{{ maxTeamLogoUrlLength }}
+            </small>
+
+            @if (teamLogoUrl && !isValidImageUrl(teamLogoUrl)) {
+              <p class="team-logo-error">
+                URL non valida. Usa un link che inizi con http:// o https://
+              </p>
+            }
+          </section>
+
           <section class="register-summary">
             <div class="register-summary-item">
               <span class="muted">Squadre</span>

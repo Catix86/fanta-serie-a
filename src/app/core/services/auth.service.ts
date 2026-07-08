@@ -20,6 +20,7 @@ import {
 import { Observable, of, switchMap } from "rxjs";
 import { AppUser } from "../models";
 import { rosterCost } from "../constants/serie-a-teams";
+
 @Injectable({ providedIn: "root" })
 export class AuthService {
   private auth = inject(Auth);
@@ -53,6 +54,7 @@ export class AuthService {
     password: string,
     teamName: string,
     roster: string[],
+    teamLogoUrl: string,
   ): Promise<void> {
     const credential = await createUserWithEmailAndPassword(
       this.auth,
@@ -66,6 +68,7 @@ export class AuthService {
         username: username.trim(),
         role: "player",
         teamName: teamName.trim(),
+        teamLogoUrl: teamLogoUrl.trim(),
         roster,
         budgetUsed: rosterCost(roster),
         createdAt: serverTimestamp(),
@@ -84,7 +87,7 @@ export class AuthService {
       password,
     );
   }
-  
+
   logout() {
     return signOut(this.auth);
   }

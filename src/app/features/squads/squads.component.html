@@ -1,0 +1,104 @@
+<main class="squads-content">
+  <app-section-header
+    icon="groups"
+    title="Squadre"
+    subtitle="Rosa di tutti i partecipanti"
+  />
+
+  @if (vm$ | async; as vm) {
+    @if (vm.otherUsers.length === 0) {
+      <section class="card empty-squads-card">
+        <p class="muted">Non ci sono ancora altre squadre disponibili.</p>
+      </section>
+    }
+
+    <section class="squads-list">
+      @for (user of vm.otherUsers; track user.uid) {
+        <button
+          type="button"
+          class="squad-user-card"
+          (click)="openUserSquad(user)"
+        >
+          <div class="squad-user-logo">
+            @if (user.teamLogoUrl) {
+              <img
+                [src]="user.teamLogoUrl"
+                [alt]="user.teamName"
+                loading="lazy"
+              />
+            } @else {
+              <span class="material-symbols-rounded"> shield </span>
+            }
+          </div>
+
+          <div class="squad-user-info">
+            <strong>
+              {{ user.teamName }}
+            </strong>
+
+            <span> Allenatore: {{ user.username }} </span>
+          </div>
+
+          <div class="squad-user-budget">
+            <strong>
+              {{ rosterCost(user.roster) }}
+            </strong>
+
+            <span>FC</span>
+          </div>
+        </button>
+      }
+    </section>
+  }
+
+  <!-- SQUAD MODAL -->
+  @if (selectedUser(); as user) {
+    <div class="squad-modal-backdrop" (click)="closeUserSquad()">
+      <section class="card squad-modal" (click)="$event.stopPropagation()">
+        <div class="squad-modal-header">
+          <div>
+            <h2>
+              {{ user.teamName }}
+            </h2>
+
+            <p class="muted">
+              {{ user.username }} · {{ rosterCost(user.roster) }}/100 FC
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="squad-modal-close"
+            aria-label="Chiudi"
+            (click)="closeUserSquad()"
+          >
+            <span class="material-symbols-rounded"> close </span>
+          </button>
+        </div>
+
+        <div class="squad-modal-roster">
+          @for (teamName of user.roster; track teamName) {
+            <article class="squad-team-card">
+              <img
+                class="squad-team-logo"
+                [src]="teamLogo(teamName)"
+                [alt]="teamName"
+                loading="lazy"
+              />
+
+              <div class="squad-team-info">
+                <strong>
+                  {{ teamName }}
+                </strong>
+              </div>
+
+              <strong class="squad-team-price">
+                {{ teamPrice(teamName) }} FC
+              </strong>
+            </article>
+          }
+        </div>
+      </section>
+    </div>
+  }
+</main>

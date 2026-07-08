@@ -32,6 +32,9 @@ export class RegisterComponent {
 
   maxUsernameLength = 16;
   maxTeamNameLength = 24;
+  teamLogoUrl = "";
+  teamLogoPreview = "";
+  maxTeamLogoUrlLength = 500;
 
   currentStep = signal<RegistrationStep>("account");
   selected: string[] = [];
@@ -147,7 +150,9 @@ export class RegisterComponent {
     return (
       this.form.valid &&
       this.selected.length === this.size &&
-      this.cost() <= this.budget
+      this.cost() <= this.budget &&
+      this.isValidImageUrl(this.teamLogoUrl) &&
+      this.teamLogoUrl.length <= this.maxTeamLogoUrlLength
     );
   }
 
@@ -207,6 +212,22 @@ export class RegisterComponent {
         return;
       }
 
+      if (!this.isValidImageUrl(this.teamLogoUrl)) {
+        this.currentStep.set("team");
+        this.toast.show("Inserisci una URL logo valida.", "error", 3000);
+        return;
+      }
+
+      if (this.teamLogoUrl.length > this.maxTeamLogoUrlLength) {
+        this.currentStep.set("team");
+        this.toast.show(
+          `URL logo troppo lunga. Massimo ${this.maxTeamLogoUrlLength} caratteri.`,
+          "error",
+          3000,
+        );
+        return;
+      }
+
       this.toast.show("Registrazione non valida.", "error", 3000);
       return;
     }
@@ -221,6 +242,7 @@ export class RegisterComponent {
         value.password,
         value.teamName,
         this.selected,
+        this.teamLogoUrl,
       );
 
       await this.router.navigateByUrl("/home");
@@ -272,5 +294,30 @@ export class RegisterComponent {
 
   teamLogo(teamName: string): string {
     return getSerieATeamLogo(teamName);
+  }
+
+  onTeamLogoUrlChange(value: string): void {
+    this.teamLogoUrl = value.trim();
+    this.teamLogoPreview = this.isValidImageUrl(this.teamLogoUrl)
+      ? this.teamLogoUrl
+      : "";
+  }
+
+  isValidImageUrl(value: string): boolean {
+    if (!value) {
+      return true;
+    }
+
+    try {
+      const url = new URL(value);
+
+      return url.protocol === "https:" || url.protocol === "http:";
+    } catch {
+      return false;
+    }
+  }
+
+  onLogoPreviewError(): void {
+    this.teamLogoPreview = "";
   }
 }

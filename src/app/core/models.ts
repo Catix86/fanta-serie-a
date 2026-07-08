@@ -7,6 +7,7 @@ export interface AppUser {
   username: string;
   role: Role;
   teamName: string;
+  teamLogoUrl?: string;
   roster: string[];
   budgetUsed: number;
   createdAt: Timestamp;

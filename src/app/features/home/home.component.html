@@ -110,12 +110,24 @@
       <!-- LA TUA ROSA -->
       <section class="card deadline-card">
         <div class="deadline-header">
-          <div>
+          <div class="profile-roster-title">
+            @if (vm.me.teamLogoUrl) {
+              <img
+                class="home-team-logo"
+                [src]="vm.me.teamLogoUrl"
+                alt="Logo team"
+              />
+            } @else {
+              <span class="material-symbols-rounded home-team-logo-placeholder">
+                shield
+              </span>
+            }
+
             <h2>La tua rosa</h2>
           </div>
 
           <div class="profile-roster-budget">
-            <strong>99/100</strong>
+            <strong>{{ rosterCost(vm.me.roster || []) }}/100</strong>
             <span>Fanta crediti</span>
           </div>
         </div>

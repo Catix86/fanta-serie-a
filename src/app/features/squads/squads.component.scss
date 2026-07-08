@@ -1,0 +1,277 @@
+.squads-content {
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+}
+
+.empty-squads-card p {
+    margin: 0;
+}
+
+.squads-list {
+    display: grid;
+    gap: 10px;
+}
+
+.squad-user-card {
+    width: 100%;
+    min-height: 72px;
+    padding: 12px;
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background:
+        linear-gradient(135deg,
+            var(--grad-a),
+            var(--grad-b));
+    color: var(--text);
+    border: 1px solid var(--grad-a);
+    text-align: left;
+    box-shadow: 0 10px 22px var(--shadow);
+}
+
+.squad-user-card:active {
+    transform: scale(.99);
+}
+
+.squad-user-logo {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    color: var(--primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    overflow: hidden;
+}
+
+.squad-user-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.squad-user-logo .material-symbols-rounded {
+    font-size: 25px;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 800,
+        'GRAD' 0,
+        'opsz' 28;
+}
+
+.squad-user-info {
+    min-width: 0;
+}
+
+.squad-user-info strong {
+    display: block;
+    max-width: 100%;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.15;
+    font-weight: 1000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.squad-user-info span {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.squad-user-budget {
+    flex-shrink: 0;
+    display: grid;
+    justify-items: end;
+    gap: 2px;
+}
+
+.squad-user-budget strong {
+    color: var(--accent);
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.squad-user-budget span {
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+/* MODAL */
+
+.squad-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    padding: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: var(--bg-shadow);
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+}
+
+.squad-modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+    overflow: auto;
+    display: grid;
+    gap: 14px;
+    background:
+        linear-gradient(135deg,
+            var(--grad-a),
+            var(--grad-b));
+    border: 1px solid var(--border);
+}
+
+.squad-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.squad-modal-header h2 {
+    margin: 2px 0 0;
+    font-size: 23px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.squad-modal-header p {
+    margin: 5px 0 0;
+    font-size: 12px;
+}
+
+.squad-modal-close {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--grad-a);
+}
+
+.squad-modal-close .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.squad-modal-roster {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.squad-team-card {
+    min-height: 72px;
+    padding: 10px;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "logo name"
+        "price price";
+    align-items: center;
+    gap: 8px 10px;
+    background:
+        linear-gradient(135deg,
+            var(--grad-a),
+            var(--grad-b));
+    color: var(--text);
+    border: 1px solid var(--grad-a);
+    overflow: hidden;
+    box-shadow: 0 10px 22px var(--shadow);
+}
+
+.squad-team-logo {
+    grid-area: logo;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    object-fit: contain;
+    padding: 5px;
+    background: var(--bg-card);
+    box-shadow:
+        0 0 0 1px var(--border),
+        0 8px 16px var(--shadow);
+}
+
+.squad-user-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.squad-team-info {
+    grid-area: name;
+    min-width: 0;
+}
+
+.squad-team-info strong {
+    display: block;
+    max-width: 100%;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: 1000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.squad-team-price {
+    grid-area: price;
+    justify-self: end;
+    color: var(--accent);
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 1000;
+    white-space: nowrap;
+}
+
+@media (max-width: 360px) {
+    .squad-modal-roster {
+        gap: 8px;
+    }
+
+    .squad-team-card {
+        min-height: 68px;
+        padding: 9px;
+        border-radius: 16px;
+        gap: 7px 8px;
+    }
+
+    .squad-team-logo {
+        width: 34px;
+        height: 34px;
+    }
+
+    .squad-team-info strong {
+        font-size: 13px;
+    }
+
+    .squad-team-price {
+        font-size: 12px;
+    }
+}
