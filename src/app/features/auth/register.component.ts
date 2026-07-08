@@ -1,22 +1,22 @@
 import { Component, inject, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import { FormsModule } from "@angular/forms";
-import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
-import { AuthService } from "../../core/services/auth.service";
 import {
+  AuthService,
+  getSerieATeamLogo,
+  ToastService,
   INITIAL_BUDGET,
   ROSTER_SIZE,
   SERIE_A_TEAMS,
   rosterCost,
-} from "../../core/constants/serie-a-teams";
-import { ToastService } from "../../core/services/toast.service";
+} from "../../core";
 
 type RegistrationStep = "account" | "team";
 
 @Component({
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule],
   templateUrl: "./register.component.html",
   styleUrl: "./auth.scss",
 })
@@ -137,6 +137,10 @@ export class RegisterComponent {
 
   isOverBudget(): boolean {
     return this.cost() > this.budget;
+  }
+
+  goToBack(): void {
+    this.router.navigateByUrl("/login");
   }
 
   canSave(): boolean {

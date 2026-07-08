@@ -268,30 +268,3 @@
     'GRAD' 0,
     'opsz' 24;
 }
-
-.save-lineup-button {
-  height: 54px;
-  border-radius: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: var(--bg-primary);
-  color: var(--primary);
-  border: 1px solid var(--border-primary);
-}
-
-.save-lineup-button .material-symbols-rounded {
-  font-size: 20px;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 24;
-}
-
-.save-lineup-button:disabled {
-  opacity: .44;
-  cursor: not-allowed;
-  filter: grayscale(.25);
-}

@@ -33,7 +33,7 @@
 
       <button
         type="button"
-        class="btn primary-button"
+        class="btn action-button primary"
         [disabled]="importingCalendar()"
         (click)="importCalendarCsv()"
       >
@@ -216,7 +216,11 @@
           </p>
         </div>
 
-        <button type="button" class="btn primary-button" (click)="addEvents()">
+        <button
+          type="button"
+          class="btn action-button primary"
+          (click)="addEvents()"
+        >
           Inserisci Bonus/Malus
         </button>
       </div>
@@ -245,7 +249,7 @@
 
       <button
         type="button"
-        class="btn primary-button"
+        class="btn action-button primary"
         [disabled]="generatingLeagueCalendar()"
         (click)="generateLeagueCalendar()"
       >

@@ -23,7 +23,7 @@
       />
 
       <button
-        class="btn login-submit-button"
+        class="btn action-button success"
         type="submit"
         [disabled]="form.invalid || loading()"
       >
@@ -34,9 +34,13 @@
         }
       </button>
 
-      <a class="btn secondary login-register-link" routerLink="/register">
+      <button
+        class="btn action-button primary"
+        type="button"
+        (click)="goToRegister()"
+      >
         Registrati
-      </a>
+      </button>
     </form>
   </section>
 </main>

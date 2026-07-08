@@ -11,7 +11,8 @@
         @for (round of vm.rounds; track round) {
           <button
             type="button"
-            [class.active]="vm.currentRound === round"
+            class="btn action-button primary"
+            [class.accent]="vm.currentRound === round"
             (click)="selectRound(round)"
           >
             G{{ round }}

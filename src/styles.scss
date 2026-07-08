@@ -92,25 +92,6 @@ button {
     outline: none
 }
 
-.btn {
-    width: 100%;
-    padding: 13px 14px;
-    border-radius: 16px;
-    background: var(--primary);
-    color: var(--bg);
-    font-weight: 1000
-}
-
-.btn.secondary {
-    background: var(--border);
-    color: var(--text)
-}
-
-.btn.warn {
-    background: var(--accent);
-    color: var(--bg)
-}
-
 .muted {
     color: var(--muted)
 }
@@ -257,14 +238,50 @@ button {
     color: var(--danger)
 }
 
-.primary-button {
+.btn {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 16px;
+    background: var(--primary);
+    color: var(--bg);
+    font-weight: 1000
+}
+
+.action-button {
     height: 54px;
     border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: var(--bg-primary);
-    color: var(--primary);
-    border: 1px solid var(--border-primary);
+
+    &.primary {
+        background: var(--bg-primary);
+        color: var(--primary);
+        border: 1px solid var(--border-primary);
+    }
+
+    &.danger {
+        background: var(--bg-danger);
+        color: var(--danger);
+        border: 1px solid var(--border-danger);
+    }
+
+    &.success {
+        background: var(--bg-success);
+        color: var(--success);
+        border: 1px solid var(--border-success);
+    }
+
+    &.accent {
+        background: var(--bg-accent);
+        color: var(--accent);
+        border: 1px solid var(--border-accent);
+    }
+}
+
+.action-button:disabled {
+    opacity: .44;
+    cursor: not-allowed;
+    filter: grayscale(.25);
 }

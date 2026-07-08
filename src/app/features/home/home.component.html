@@ -89,7 +89,7 @@
 
           <button
             type="button"
-            class="btn home-lineup-button"
+            class="btn action-button primary"
             (click)="goToLineup()"
           >
             <span class="material-symbols-rounded"> assignment </span>
@@ -147,7 +147,7 @@
 
       <button
         type="button"
-        class="btn logout-button"
+        class="btn action-button danger"
         (click)="openLogoutConfirm()"
       >
         <span class="material-symbols-rounded"> logout </span>
@@ -174,7 +174,7 @@
         <div class="logout-modal-actions">
           <button
             type="button"
-            class="btn secondary"
+            class="btn action-button primary"
             (click)="closeLogoutConfirm()"
           >
             Annulla
@@ -182,7 +182,7 @@
 
           <button
             type="button"
-            class="btn logout-confirm-button"
+            class="btn action-button danger"
             (click)="confirmLogout()"
           >
             Esci

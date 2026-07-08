@@ -46,7 +46,7 @@
           />
 
           <button
-            class="btn login-register-link"
+            class="btn action-button success"
             type="button"
             [disabled]="!canContinueToTeamStep()"
             (click)="goToTeamStep()"
@@ -54,23 +54,19 @@
             Continua
           </button>
 
-          <a class="btn login-submit-button auth-link" routerLink="/login">
+          <button
+            class="btn action-button primary"
+            type="button"
+            (click)="goToBack()"
+          >
             Ho già un account
-          </a>
+          </button>
         </section>
       }
 
       @if (currentStep() === "team") {
         <section class="register-step-panel">
           <div class="register-step-header">
-            <button
-              type="button"
-              class="register-back-button"
-              (click)="goToAccountStep()"
-              aria-label="Torna indietro"
-            >
-              <span class="material-symbols-rounded"> arrow_back </span>
-            </button>
             <div>
               <h1 class="auth-title">Scegli le squadre</h1>
 
@@ -156,17 +152,26 @@
             }
           </div>
 
-          <button
-            class="btn login-register-link"
-            type="submit"
-            [disabled]="!canSave() || loading()"
-          >
-            @if (loading()) {
-              Creazione account...
-            } @else {
-              Crea account
-            }
-          </button>
+          <section class="register-button-tabs">
+            <button
+              type="button"
+              class="btn action-button danger"
+              (click)="goToAccountStep()"
+            >
+              Indietro
+            </button>
+            <button
+              class="btn action-button success"
+              type="submit"
+              [disabled]="!canSave() || loading()"
+            >
+              @if (loading()) {
+                Creazione account...
+              } @else {
+                Crea account
+              }
+            </button>
+          </section>
         </section>
       }
     </form>

@@ -11,23 +11,6 @@
     padding-bottom: 2px;
 }
 
-.round-selector button {
-    flex-shrink: 0;
-    min-width: 48px;
-    height: 42px;
-    border-radius: 15px;
-    background: var(--bg-primary);
-    color: var(--primary);
-    border-color: var(--border-primary);
-    font-weight: 1000;
-}
-
-.round-selector button.active {
-    background: var(--bg-accent);
-    color: var(--accent);
-    border-color: var(--border-accent);
-}
-
 .calendar-matches-card {
     display: grid;
     gap: 10px;

@@ -25,11 +25,6 @@
     gap: 10px;
 }
 
-.auth-link {
-    text-align: center;
-    text-decoration: none;
-}
-
 .register-summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -68,7 +63,6 @@
 .register-summary-error {
     color: var(--danger);
 }
-
 
 .register-market {
     flex: 1;
@@ -207,32 +201,6 @@
     gap: 12px;
 }
 
-.login-submit-button {
-    height: 54px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--bg-success);
-    color: var(--success);
-    border: 1px solid var(--border-success);
-    text-decoration: none;
-}
-
-.login-register-link {
-    height: 54px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--bg-accent);
-    color: var(--accent);
-    border: 1px solid var(--border-accent);
-    text-decoration: none;
-}
-
 .register-step-indicator {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -301,22 +269,6 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-}
-
-.register-back-button {
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--card);
-    color: var(--text);
-}
-
-.register-back-button .material-symbols-rounded {
-    font-size: 22px;
 }
 
 button:disabled,
@@ -421,11 +373,6 @@ button:disabled,
     margin-bottom: 10px;
 }
 
-.register-step-panel>.btn.warn {
-    margin-top: 2px;
-    flex-shrink: 0;
-}
-
 .register-field-counter {
     display: block;
     margin: -4px 4px 2px;
@@ -433,4 +380,10 @@ button:disabled,
     font-size: 11px;
     font-weight: 800;
     text-align: right;
+}
+
+.register-button-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
 }

@@ -13,7 +13,8 @@
     <section class="leaderboard-tabs">
       <button
         type="button"
-        [class.active]="activeTab() === 'fantasy'"
+        class="btn action-button primary"
+        [class.accent]="activeTab() === 'fantasy'"
         (click)="setTab('fantasy')"
       >
         <span class="material-symbols-rounded"> workspace_premium </span>
@@ -23,7 +24,8 @@
 
       <button
         type="button"
-        [class.active]="activeTab() === 'league'"
+        class="btn action-button primary"
+        [class.accent]="activeTab() === 'league'"
         (click)="setTab('league')"
       >
         <span class="material-symbols-rounded"> sports_score </span>
