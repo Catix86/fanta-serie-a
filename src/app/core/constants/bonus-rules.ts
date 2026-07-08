@@ -133,7 +133,7 @@ export const BONUS_RULES: BonusRule[] = [
   },
   {
     id: "esultanza-trash",
-    category: "bonus",
+    category: "malus",
     scope: "match",
     points: 5,
     label: "Esultanza trash",
@@ -266,6 +266,14 @@ export const BONUS_RULES: BonusRule[] = [
     points: -10,
     label: "Nervi tesi",
     description: "Si verifica una rissa tra le due squadre in campo.",
+  },
+  {
+    id: "scenata",
+    category: "malus",
+    scope: "match",
+    points: -5,
+    label: "Scenata",
+    description: "Il calciatore della squadra si arrabbia quando sostituito.",
   },
   {
     id: "senza-vittorie",

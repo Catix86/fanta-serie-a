@@ -37,6 +37,7 @@
         [disabled]="importingCalendar()"
         (click)="importCalendarCsv()"
       >
+        <span class="material-symbols-rounded">calendar_month</span>
         @if (importingCalendar()) {
           Import in corso...
         } @else {
@@ -50,7 +51,7 @@
   <details class="card admin-accordion">
     <summary>
       <div class="admin-accordion-summary-content">
-        <strong>Bonus/Malus squadra</strong>
+        <strong>Bonus & Malus</strong>
         <span class="muted">Inserisci uno o più eventi per una squadra</span>
       </div>
 
@@ -59,21 +60,25 @@
       </span>
     </summary>
 
-    <div class="admin-scope-toggle">
+    <div class="register-button-tabs">
       <button
         type="button"
-        [class.active]="eventScope === 'match'"
+        class="btn action-button primary"
+        [class.accent]="eventScope === 'match'"
         (click)="setEventScope('match')"
       >
-        Evento partita
+        <span class="material-symbols-rounded">scoreboard</span>
+        Partita
       </button>
 
       <button
         type="button"
-        [class.active]="eventScope === 'seasonal'"
+        class="btn action-button primary"
+        [class.accent]="eventScope === 'seasonal'"
         (click)="setEventScope('seasonal')"
       >
-        Evento stagionale
+        <span class="material-symbols-rounded">sports_soccer</span>
+        Squadra
       </button>
     </div>
 
@@ -145,12 +150,6 @@
 
           <div class="rules-columns">
             <section class="rules-column">
-              <div class="rules-column-header bonus">
-                <span class="material-symbols-rounded"> add_circle </span>
-
-                <strong>Bonus</strong>
-              </div>
-
               <div class="rules-picker">
                 @if (filteredBonusRules().length === 0) {
                   <p class="muted empty-rules-message">
@@ -178,12 +177,6 @@
             </section>
 
             <section class="rules-column">
-              <div class="rules-column-header malus">
-                <span class="material-symbols-rounded"> remove_circle </span>
-
-                <strong>Malus</strong>
-              </div>
-
               <div class="rules-picker">
                 @if (filteredMalusRules().length === 0) {
                   <p class="muted empty-rules-message">
@@ -221,6 +214,7 @@
           class="btn action-button primary"
           (click)="addEvents()"
         >
+          <span class="material-symbols-rounded">crown</span>
           Inserisci Bonus/Malus
         </button>
       </div>
@@ -253,6 +247,7 @@
         [disabled]="generatingLeagueCalendar()"
         (click)="generateLeagueCalendar()"
       >
+        <span class="material-symbols-rounded">calendar_month</span>
         @if (generatingLeagueCalendar()) {
           Generazione...
         } @else {
@@ -313,7 +308,7 @@
                 @if (round.status === "closed") {
                   <button
                     type="button"
-                    class="admin-round-button secondary"
+                    class="btn action-button mini success"
                     [disabled]="updatingRound() === round.round"
                     (click)="reopenRound(round.round)"
                   >
@@ -326,7 +321,7 @@
                 } @else {
                   <button
                     type="button"
-                    class="admin-round-button"
+                    class="btn action-button mini danger"
                     [disabled]="updatingRound() === round.round"
                     (click)="closeRound(round.round)"
                   >

@@ -90,15 +90,6 @@
   gap: 10px;
 }
 
-.rules-picker {
-  display: grid;
-  gap: 8px;
-  margin-top: 8px;
-  max-height: 340px;
-  overflow: auto;
-  padding-right: 2px;
-}
-
 .rule-points {
   min-width: 42px;
   padding: 5px 8px;
@@ -230,25 +221,11 @@
   }
 }
 
-.admin-scope-toggle {
+.register-button-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-
-.admin-scope-toggle button {
-  min-height: 42px;
-  border-radius: 16px;
-  background: var(--bg-muted);
-  color: var(--muted);
-  border: 1px solid var(--border-muted);
-  font-weight: 1000;
-}
-
-.admin-scope-toggle button.active {
-  background: var(--bg-success);
-  color: var(--success);
-  border-color: var(--border-success);
+  margin-top: 10px;
 }
 
 .admin-rounds-list {
@@ -294,42 +271,19 @@
 }
 
 .admin-round-status.open {
-  background: var(--bg-accent);
-  color: var(--accent);
-  border: 1px solid var(--border-accent);
-}
-
-.admin-round-status.closed {
   background: var(--bg-success);
   color: var(--success);
   border: 1px solid var(--border-success);
+}
+
+.admin-round-status.closed {
+  background: var(--bg-danger);
+  color: var(--danger);
+  border: 1px solid var(--border-danger);
 }
 
 .admin-round-actions {
   flex-shrink: 0;
-}
-
-.admin-round-button {
-  min-width: 84px;
-  height: 38px;
-  padding: 0 12px;
-  border-radius: 14px;
-  background: var(--bg-success);
-  color: var(--success);
-  border: 1px solid var(--border-success);
-  font-size: 12px;
-  font-weight: 1000;
-}
-
-.admin-round-button.secondary {
-  background: var(--bg-muted);
-  color: var(--text);
-  border: 1px solid var(--border-muted);
-}
-
-.admin-round-button:disabled {
-  opacity: .48;
-  cursor: not-allowed;
 }
 
 .rules-columns {
@@ -345,47 +299,10 @@
   gap: 8px;
 }
 
-.rules-column-header {
-  min-height: 38px;
-  padding: 8px 10px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-}
-
-.rules-column-header strong {
-  font-size: 13px;
-  font-weight: 1000;
-}
-
-.rules-column-header .material-symbols-rounded {
-  font-size: 18px;
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 800,
-    'GRAD' 0,
-    'opsz' 20;
-}
-
-.rules-column-header.bonus {
-  color: var(--success);
-  background: var(--bg-success);
-  border-color: var(--border-success);
-}
-
-.rules-column-header.malus {
-  color: var(--danger);
-  background: var(--bg-danger);
-  border-color: var(--border-danger);
-}
-
 .rules-picker {
   display: grid;
   gap: 8px;
-  max-height: 340px;
+  margin-top: 8px;
   overflow: auto;
   padding-right: 2px;
 }

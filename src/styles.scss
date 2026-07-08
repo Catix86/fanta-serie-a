@@ -255,6 +255,12 @@ button {
     justify-content: center;
     gap: 8px;
 
+    &.mini {
+        height: 34px;
+        font-size: 14px;
+        min-width: 75px;
+    }
+
     &.primary {
         background: var(--bg-primary);
         color: var(--primary);
