@@ -2,64 +2,109 @@
   <app-section-header
     icon="calendar_month"
     title="Calendario"
-    subtitle="Scontri diretti tra i partecipanti"
+    subtitle="Scontri diretti tra partecipanti"
   />
 
   @if (vm$ | async; as vm) {
-    @if (vm.rounds.length > 0) {
-      <section class="round-selector">
-        @for (round of vm.rounds; track round) {
-          <button
-            type="button"
-            class="btn action-button primary"
-            [class.accent]="vm.currentRound === round"
-            (click)="selectRound(round)"
-          >
-            G{{ round }}
-          </button>
-        }
+    @if (vm.groups.length === 0) {
+      <section class="card empty-calendar-card">
+        <p class="muted">
+          Nessuno scontro generato. Vai in Admin e genera il calendario
+          incontri.
+        </p>
       </section>
     }
 
-    <section class="card calendar-matches-card">
-      <div class="calendar-section-title">
-        <div>
-          <span class="muted">Giornata</span>
-          <h2>G{{ vm.currentRound }}</h2>
-        </div>
+    @if (vm.groups.length > 0) {
+      <section class="calendar-rounds-list">
+        @for (group of vm.groups; track group.round) {
+          <section
+            class="calendar-round-section"
+            [id]="'calendar-round-' + group.round"
+          >
+            <div class="calendar-round-header">
+              <div>
+                <strong>
+                  {{ roundTitle(group.round) }} -
+                  {{ serieARoundTitle(group.serieARound) }}
+                </strong>
+              </div>
 
-        <span class="material-symbols-rounded"> sports_score </span>
-      </div>
+              <span
+                class="round-status"
+                [class.closed]="group.isClosed"
+                [class.open]="!group.isClosed"
+              >
+                @if (group.isClosed) {
+                  Chiusa
+                } @else {
+                  Aperta
+                }
+              </span>
+            </div>
 
-      @if (vm.matches.length === 0) {
-        <p class="muted empty-calendar">
-          Nessuno scontro generato per questa giornata.
-        </p>
-      }
+            <div class="calendar-matches-list">
+              @for (match of group.matches; track match.id) {
+                <article
+                  class="calendar-match-card"
+                  [class.current-user]="match.isCurrentUserMatch"
+                >
+                  <div class="calendar-team home">
+                    <div class="calendar-team-logo">
+                      @if (match.homeLogoUrl) {
+                        <img
+                          [src]="match.homeLogoUrl"
+                          [alt]="match.homeTeamName"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <span class="material-symbols-rounded"> shield </span>
+                      }
+                    </div>
 
-      @for (match of vm.matches; track match.id) {
-        <article class="league-match-card">
-          <div class="league-player home">
-            <strong>
-              {{ match.homeUser?.teamName || "Utente" }}
-            </strong>
+                    <strong>
+                      {{ match.homeTeamName }}
+                    </strong>
+                  </div>
 
-            <span> {{ match.homePoints }} pt </span>
-          </div>
+                  <div
+                    class="calendar-score"
+                    [class.home-win]="match.resultClass === 'home-win'"
+                    [class.away-win]="match.resultClass === 'away-win'"
+                    [class.draw]="match.resultClass === 'draw'"
+                  >
+                    <strong>
+                      {{ match.homeGoals }} - {{ match.awayGoals }}
+                    </strong>
 
-          <div class="league-score">
-            <strong> {{ match.homeGoals }}-{{ match.awayGoals }} </strong>
-          </div>
+                    <span>
+                      {{ match.homePoints }}pt · {{ match.awayPoints }}pt
+                    </span>
+                  </div>
 
-          <div class="league-player away">
-            <strong>
-              {{ match.awayUser?.teamName || "Utente" }}
-            </strong>
+                  <div class="calendar-team away">
+                    <div class="calendar-team-logo">
+                      @if (match.awayLogoUrl) {
+                        <img
+                          [src]="match.awayLogoUrl"
+                          [alt]="match.awayTeamName"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <span class="material-symbols-rounded"> shield </span>
+                      }
+                    </div>
 
-            <span> {{ match.awayPoints }} pt </span>
-          </div>
-        </article>
-      }
-    </section>
+                    <strong>
+                      {{ match.awayTeamName }}
+                    </strong>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+      </section>
+    }
   }
 </main>

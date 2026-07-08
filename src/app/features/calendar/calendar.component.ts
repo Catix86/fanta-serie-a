@@ -1,11 +1,31 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
-import { toObservable } from "@angular/core/rxjs-interop";
-import { combineLatest, map } from "rxjs";
-
+import { Component, inject } from "@angular/core";
+import { combineLatest, map, tap } from "rxjs";
+import { AuthService } from "../../core/services/auth.service";
 import { DataService } from "../../core/services/data.service";
-import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
+import { LeagueMatch } from "../../core/models";
 import { leagueMatchResult } from "../../core/utils/scoring";
+import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
+
+interface CalendarMatchView extends LeagueMatch {
+  homeTeamName: string;
+  awayTeamName: string;
+  homeLogoUrl: string;
+  awayLogoUrl: string;
+  homePoints: number;
+  awayPoints: number;
+  homeGoals: number;
+  awayGoals: number;
+  isCurrentUserMatch: boolean;
+  resultClass: "home-win" | "away-win" | "draw";
+}
+
+interface CalendarRoundGroup {
+  round: number;
+  serieARound: number;
+  isClosed: boolean;
+  matches: CalendarMatchView[];
+}
 
 @Component({
   standalone: true,
@@ -14,29 +34,27 @@ import { leagueMatchResult } from "../../core/utils/scoring";
   styleUrl: "./calendar.component.scss",
 })
 export class CalendarComponent {
+  private auth = inject(AuthService);
   private data = inject(DataService);
-
-  selectedRound = signal<number | null>(null);
-  private selectedRound$ = toObservable(this.selectedRound);
+  private hasAutoScrolledToNextOpenRound = false;
 
   vm$ = combineLatest([
+    this.auth.appUser$,
     this.data.users$(),
     this.data.lineups$(),
     this.data.events$(),
     this.data.leagueMatches$(),
     this.data.roundSettings$(),
-    this.selectedRound$,
   ]).pipe(
     map(
-      ([
-        users,
-        lineups,
-        events,
-        leagueMatches,
-        roundSettings,
-        selectedRound,
-      ]) => {
+      ([currentUser, users, lineups, events, leagueMatches, roundSettings]) => {
         const usersMap = new Map(users.map((user) => [user.uid, user]));
+
+        const closedRounds = new Set(
+          roundSettings
+            .filter((setting) => setting.status === "closed")
+            .map((setting) => Number(setting.round)),
+        );
 
         const rounds = Array.from(
           new Set(
@@ -46,44 +64,100 @@ export class CalendarComponent {
           ),
         ).sort((a, b) => a - b);
 
-        const firstRound = rounds[0] ?? null;
+        const groups: CalendarRoundGroup[] = rounds.map((round) => {
+          const matches = leagueMatches
+            .filter((match) => Number(match.round) === round)
+            .sort((a, b) => a.id.localeCompare(b.id))
+            .map((match) => {
+              const homeUser = usersMap.get(match.homeUid);
+              const awayUser = usersMap.get(match.awayUid);
 
-        const currentRound =
-          selectedRound !== null && rounds.includes(selectedRound)
-            ? selectedRound
-            : firstRound;
+              const result = leagueMatchResult(match, lineups, events);
 
-        const roundSetting = roundSettings.find(
-          (setting) => Number(setting.round) === currentRound,
-        );
+              return {
+                ...match,
+                homeTeamName: homeUser?.teamName || "Utente",
+                awayTeamName: awayUser?.teamName || "Utente",
+                homeLogoUrl: homeUser?.teamLogoUrl || "",
+                awayLogoUrl: awayUser?.teamLogoUrl || "",
+                homePoints: result.homePoints,
+                awayPoints: result.awayPoints,
+                homeGoals: result.homeGoals,
+                awayGoals: result.awayGoals,
+                isCurrentUserMatch:
+                  match.homeUid === currentUser?.uid ||
+                  match.awayUid === currentUser?.uid,
+                resultClass: this.resultClass(
+                  result.homeGoals,
+                  result.awayGoals,
+                ),
+              };
+            });
 
-        const isClosed = roundSetting?.status === "closed";
+          return {
+            round,
+            serieARound: round,
+            isClosed: closedRounds.has(round),
+            matches,
+          };
+        });
 
-        const matches = leagueMatches
-          .filter((match) => Number(match.round) === currentRound)
-          .sort((a, b) => a.id.localeCompare(b.id))
-          .map((match) => {
-            const result = leagueMatchResult(match, lineups, events);
-
-            return {
-              ...match,
-              homeUser: usersMap.get(match.homeUid),
-              awayUser: usersMap.get(match.awayUid),
-              ...result,
-            };
-          });
+        const nextOpenRound =
+          groups.find((group) => !group.isClosed)?.round ?? null;
 
         return {
-          rounds,
-          currentRound,
-          isClosed,
-          matches,
+          currentUser,
+          groups,
+          nextOpenRound,
         };
       },
     ),
+    tap((vm) => {
+      if (this.hasAutoScrolledToNextOpenRound || vm.nextOpenRound === null) {
+        return;
+      }
+
+      this.hasAutoScrolledToNextOpenRound = true;
+
+      window.setTimeout(() => {
+        this.scrollToRound(vm.nextOpenRound as number);
+      }, 150);
+    }),
   );
 
-  selectRound(round: number): void {
-    this.selectedRound.set(round);
+  roundTitle(round: number): string {
+    return `${round}ª Giornata`;
+  }
+
+  serieARoundTitle(round: number): string {
+    return `${round}ª Serie A`;
+  }
+
+  scrollToRound(round: number): void {
+    const element = document.getElementById(`calendar-round-${round}`);
+
+    if (!element) {
+      return;
+    }
+
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+
+  private resultClass(
+    homeGoals: number,
+    awayGoals: number,
+  ): "home-win" | "away-win" | "draw" {
+    if (homeGoals > awayGoals) {
+      return "home-win";
+    }
+
+    if (homeGoals < awayGoals) {
+      return "away-win";
+    }
+
+    return "draw";
   }
 }
