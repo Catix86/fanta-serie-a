@@ -24,9 +24,10 @@ export class LeaderboardComponent {
     this.data.lineups$(),
     this.data.events$(),
     this.data.leagueMatches$(),
+    this.data.roundSettings$(),
   ]).pipe(
-    map(([users, fixtures, lineups, events, leagueMatches]) => {
-      const rows = standings(users, fixtures, lineups, events, leagueMatches);
+    map(([users, fixtures, lineups, events, leagueMatches, roundSettings]) => {
+      const rows = standings(users, fixtures, lineups, events, leagueMatches, roundSettings);
 
       return {
         fantasy: rows,

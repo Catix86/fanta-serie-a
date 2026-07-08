@@ -30,20 +30,47 @@ export class RegisterComponent {
   budget = INITIAL_BUDGET;
   size = ROSTER_SIZE;
 
+  maxUsernameLength = 16;
+  maxTeamNameLength = 24;
+
   currentStep = signal<RegistrationStep>("account");
   selected: string[] = [];
   loading = signal(false);
 
   form = this.fb.nonNullable.group({
-    username: ["", [Validators.required, Validators.minLength(3)]],
+    username: [
+      "",
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(this.maxUsernameLength),
+      ],
+    ],
     password: ["", [Validators.required, Validators.minLength(6)]],
-    teamName: ["", Validators.required],
+    teamName: [
+      "",
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(this.maxTeamNameLength),
+      ],
+    ],
   });
 
   goToTeamStep(): void {
     if (!this.canContinueToTeamStep()) {
       this.form.controls.username.markAsTouched();
       this.form.controls.password.markAsTouched();
+
+      if (this.form.controls.username.hasError("maxlength")) {
+        this.toast.show(
+          `Username troppo lungo. Massimo ${this.maxUsernameLength} caratteri.`,
+          "error",
+          3000,
+        );
+
+        return;
+      }
 
       this.toast.show(
         "Inserisci username e password prima di continuare.",
@@ -123,9 +150,34 @@ export class RegisterComponent {
   async submit(): Promise<void> {
     if (!this.canSave()) {
       if (this.form.invalid) {
+        if (this.form.controls.username.hasError("maxlength")) {
+          this.currentStep.set("account");
+
+          this.toast.show(
+            `Username troppo lungo. Massimo ${this.maxUsernameLength} caratteri.`,
+            "error",
+            3000,
+          );
+
+          return;
+        }
+
+        if (this.form.controls.teamName.hasError("maxlength")) {
+          this.currentStep.set("team");
+
+          this.toast.show(
+            `Nome team troppo lungo. Massimo ${this.maxTeamNameLength} caratteri.`,
+            "error",
+            3000,
+          );
+
+          return;
+        }
+
         this.currentStep.set("account");
         this.form.markAllAsTouched();
         this.toast.show("Compila tutti i campi richiesti.", "error", 3000);
+
         return;
       }
 

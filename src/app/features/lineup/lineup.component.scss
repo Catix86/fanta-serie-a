@@ -4,23 +4,6 @@
   gap: 12px;
 }
 
-.lineup-hero {
-  margin: -16px -16px 0;
-  padding: 26px 24px 38px;
-  border-bottom-left-radius: 34px;
-  border-bottom-right-radius: 34px;
-  background:
-    radial-gradient(circle at 92% 10%, rgba(52, 211, 153, .30), transparent 34%),
-    linear-gradient(135deg, rgba(124, 58, 237, .96), rgba(20, 184, 166, .62));
-  box-shadow: 0 18px 40px rgba(0, 0, 0, .30);
-}
-
-.lineup-hero-top {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
 .back-button {
   width: 42px;
   height: 42px;
@@ -29,8 +12,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, .18);
-  color: #ffffff;
+  background: var(--border);
+  color: var(--text);
   backdrop-filter: blur(10px);
 }
 
@@ -40,7 +23,7 @@
 
 .lineup-hero h1 {
   margin: 0;
-  color: #ffffff;
+  color: var(--text);
   font-size: 25px;
   line-height: 1;
   font-weight: 1000;
@@ -48,7 +31,7 @@
 
 .lineup-hero p {
   margin: 6px 0 0;
-  color: rgba(255, 255, 255, .86);
+  color: var(--bg-card);
   font-size: 13px;
   font-weight: 800;
 }
@@ -61,8 +44,8 @@
   grid-template-columns: auto auto 1fr;
   align-items: center;
   gap: 6px;
-  color: #ffffff;
-  background: rgba(255, 255, 255, .20);
+  color: var(--text);
+  background: var(--border);
   backdrop-filter: blur(10px);
 }
 
@@ -90,11 +73,11 @@
   gap: 14px;
   background:
     linear-gradient(135deg,
-      rgba(255, 255, 255, .10),
-      rgba(255, 255, 255, .05));
+      var(--grad-a),
+      var(--grad-b));
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, .10);
-  box-shadow: 0 18px 34px rgba(0, 0, 0, .24);
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 34px var(--shadow);
 }
 
 .selected-summary {
@@ -104,8 +87,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  background: rgba(2, 6, 23, .42);
-  border: 1px solid rgba(255, 255, 255, .08);
+  background: var(--bg-shadow);
+  border: 1px solid var(--card);
 }
 
 .selected-summary span {
@@ -131,7 +114,7 @@
   margin: 0;
   padding: 12px;
   border-radius: 16px;
-  background: rgba(251, 113, 133, .12);
+  background: var(--bg-danger);
   color: var(--danger);
   font-size: 13px;
   font-weight: 900;
@@ -165,12 +148,12 @@
   gap: 9px;
   background:
     linear-gradient(135deg,
-      rgba(255, 255, 255, .10),
-      rgba(255, 255, 255, .05));
+      var(--grad-a),
+      var(--grad-b));
   color: var(--text);
-  border: 1px solid rgba(255, 255, 255, .10);
+  border: 1px solid var(--border);
   text-align: left;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, .18);
+  box-shadow: 0 10px 22px var(--shadow);
   transition:
     border-color .18s ease,
     background .18s ease,
@@ -185,23 +168,23 @@
 .lineup-team-card.selected {
   background:
     linear-gradient(135deg,
-      rgba(52, 211, 153, .15),
-      rgba(255, 255, 255, .06));
-  border-color: rgba(52, 211, 153, .45);
+      var(--grad-a-primary),
+      var(--grad-b-primary));
+  border-color: var(--border-primary);
   box-shadow:
-    0 0 0 1px rgba(52, 211, 153, .22),
-    0 12px 26px rgba(0, 0, 0, .22);
+    0 0 0 1px var(--border-primary),
+    0 12px 26px var(--shadow);
 }
 
 .lineup-team-card.captain {
   background:
     linear-gradient(135deg,
-      rgba(252, 211, 77, .16),
-      rgba(52, 211, 153, .08));
-  border-color: rgba(252, 211, 77, .62);
+      var(--grad-a-accent),
+      var(--grad-b-accent));
+  border-color: var(--border-accent);
   box-shadow:
-    0 0 0 1px rgba(252, 211, 77, .30),
-    0 12px 28px rgba(0, 0, 0, .24);
+    0 0 0 1px var(--border-accent),
+    0 12px 28px var(--shadow);
 }
 
 .lineup-team-logo {
@@ -211,10 +194,9 @@
   border-radius: 999px;
   object-fit: contain;
   padding: 5px;
-  background: rgba(255, 255, 255, .94);
+  background: var(--bg-card);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, .16),
-    0 8px 16px rgba(0, 0, 0, .20);
+    0 0 0 1px var(--border) 0 8px 16px var(--shadow);
   transition:
     background .18s ease,
     box-shadow .18s ease,
@@ -224,15 +206,15 @@
 .lineup-team-card.selected .lineup-team-logo {
   background: var(--primary);
   box-shadow:
-    0 0 0 2px rgba(52, 211, 153, .35),
-    0 8px 16px rgba(0, 0, 0, .24);
+    0 0 0 2px var(--border-primary),
+    0 8px 16px var(--shadow);
 }
 
 .lineup-team-card.captain .lineup-team-logo {
   background: var(--accent);
   box-shadow:
-    0 0 0 2px rgba(252, 211, 77, .40),
-    0 8px 16px rgba(0, 0, 0, .24);
+    0 0 0 2px var(--border-accent),
+    0 8px 16px var(--shadow);
 }
 
 .team-info {
@@ -266,15 +248,15 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, .08);
+  background: var(--card);
   color: var(--muted);
-  border: 1px solid rgba(255, 255, 255, .10);
+  border: 1px solid var(--border);
 }
 
 .captain-button.active {
-  background: rgba(252, 211, 77, .18);
+  background: var(--bg-accent);
   color: var(--accent);
-  border-color: rgba(252, 211, 77, .42);
+  border-color: var(--border-accent);
 }
 
 .captain-button .material-symbols-rounded {
@@ -293,9 +275,9 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: rgba(252, 211, 77, .18);
-  color: var(--accent);
-  border: 1px solid rgba(252, 211, 77, .34);
+  background: var(--bg-primary);
+  color: var(--primary);
+  border: 1px solid var(--border-primary);
 }
 
 .save-lineup-button .material-symbols-rounded {
@@ -311,73 +293,4 @@
   opacity: .44;
   cursor: not-allowed;
   filter: grayscale(.25);
-}
-
-.lineup-deadline-pill {
-  margin-top: 0px;
-  position: relative;
-  z-index: 2;
-  padding: 12px 14px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background:
-    linear-gradient(135deg,
-      rgba(124, 58, 237, .72),
-      rgba(20, 184, 166, .54));
-  border: 1px solid rgba(255, 255, 255, .14);
-  color: #ffffff;
-  box-shadow: 0 12px 26px rgba(0, 0, 0, .22);
-  backdrop-filter: blur(12px);
-}
-
-.lineup-deadline-left {
-  min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.lineup-deadline-left .material-symbols-rounded {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
-  background: rgba(255, 255, 255, .18);
-  font-size: 16px;
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 24;
-}
-
-.lineup-deadline-left strong {
-  min-width: 0;
-  font-size: 13px;
-  font-weight: 1000;
-  white-space: nowrap;
-}
-
-.lineup-deadline-countdown {
-  flex-shrink: 0;
-  font-size: 13px;
-  font-weight: 1000;
-  letter-spacing: .01em;
-  white-space: nowrap;
-  text-align: right;
-}
-
-@media (max-width: 360px) {
-  .lineup-deadline-countdown {
-    font-size: 12px;
-  }
-
-  .lineup-deadline-left strong {
-    font-size: 12px;
-  }
 }

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { AsyncPipe, DatePipe } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DataService } from "../../core/services/data.service";
 import { BONUS_RULES } from "../../core/constants/bonus-rules";
@@ -7,10 +7,11 @@ import { Fixture } from "../../core/models";
 import { ToastService } from "../../core/services/toast.service";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import { SERIE_A_TEAMS } from "../../core/constants/serie-a-teams";
+import { combineLatest, map } from "rxjs";
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe, FormsModule, DatePipe, SectionHeaderComponent],
+  imports: [AsyncPipe, FormsModule, SectionHeaderComponent],
   templateUrl: "./admin.component.html",
   styleUrl: "./admin.component.scss",
 })
@@ -22,8 +23,6 @@ export class AdminComponent {
   selFixture?: Fixture;
   selTeam = "";
   ruleIds: string[] = [];
-  home = 0;
-  away = 0;
   saving = signal(false);
   calendarCsv = "";
   importingCalendar = signal(false);
@@ -31,6 +30,30 @@ export class AdminComponent {
   eventScope: "match" | "seasonal" = "match";
   seasonalTeam = "";
   teamsList = SERIE_A_TEAMS.map((team) => team.name);
+
+  updatingRound = signal<number | null>(null);
+
+  roundsVm$ = combineLatest([this.fixtures$, this.data.roundSettings$()]).pipe(
+    map(([fixtures, roundSettings]) => {
+      const rounds = Array.from(
+        new Set(
+          fixtures
+            .map((fixture) => Number(fixture.round))
+            .filter((round) => Number.isFinite(round)),
+        ),
+      ).sort((a, b) => a - b);
+
+      return rounds.map((round) => {
+        const setting = roundSettings.find((item) => item.round === round);
+
+        return {
+          round,
+          status: setting?.status ?? "open",
+          closedAt: setting?.closedAt ?? null,
+        };
+      });
+    }),
+  );
 
   async generateLeagueCalendar(): Promise<void> {
     this.generatingLeagueCalendar.set(true);
@@ -70,12 +93,30 @@ export class AdminComponent {
     const n = await this.data.importSeedFixtures();
     this.toast.show(`${n} partite importate`);
   }
-  
+
   async addEvents(): Promise<void> {
     if (this.eventScope === "match") {
       if (!this.selFixture || !this.selTeam || !this.ruleIds.length) {
         this.toast.show(
           "Seleziona partita, squadra e bonus/malus.",
+          "error",
+          3000,
+        );
+
+        return;
+      }
+
+      const selectedRules = this.rules.filter((rule) =>
+        this.ruleIds.includes(rule.id),
+      );
+
+      const hasInvalidScope = selectedRules.some(
+        (rule) => rule.scope !== this.eventScope,
+      );
+
+      if (hasInvalidScope) {
+        this.toast.show(
+          "Hai selezionato bonus/malus non compatibili con il tipo di evento.",
           "error",
           3000,
         );
@@ -109,11 +150,6 @@ export class AdminComponent {
 
     this.toast.show("Bonus/Malus stagionali inseriti.", "success", 3000);
     this.ruleIds = [];
-  }
-
-  async result(f: Fixture) {
-    await this.data.setResult(f, this.home, this.away);
-    this.toast.show("Risultato salvato");
   }
 
   private parseFixturesCsv(csv: string) {
@@ -179,5 +215,82 @@ export class AdminComponent {
     }
 
     return new Date(kickoffAt);
+  }
+
+  async closeRound(round: number): Promise<void> {
+    this.updatingRound.set(round);
+
+    try {
+      await this.data.closeRound(round);
+
+      this.toast.show(
+        `Giornata ${round} chiusa correttamente.`,
+        "success",
+        3000,
+      );
+    } catch (error) {
+      console.error("Errore chiusura giornata:", error);
+
+      this.toast.show(
+        `Impossibile chiudere la giornata ${round}.`,
+        "error",
+        3000,
+      );
+    } finally {
+      this.updatingRound.set(null);
+    }
+  }
+
+  async reopenRound(round: number): Promise<void> {
+    this.updatingRound.set(round);
+
+    try {
+      await this.data.reopenRound(round);
+
+      this.toast.show(
+        `Giornata ${round} riaperta correttamente.`,
+        "success",
+        3000,
+      );
+    } catch (error) {
+      console.error("Errore riapertura giornata:", error);
+
+      this.toast.show(
+        `Impossibile riaprire la giornata ${round}.`,
+        "error",
+        3000,
+      );
+    } finally {
+      this.updatingRound.set(null);
+    }
+  }
+
+  filteredRules() {
+    return this.rules.filter((rule) => rule.scope === this.eventScope);
+  }
+
+  setEventScope(scope: "match" | "seasonal"): void {
+    if (this.eventScope === scope) {
+      return;
+    }
+
+    this.eventScope = scope;
+    this.ruleIds = [];
+
+    if (scope === "match") {
+      this.seasonalTeam = "";
+      return;
+    }
+
+    this.selFixture = undefined;
+    this.selTeam = "";
+  }
+
+  filteredBonusRules() {
+    return this.filteredRules().filter((rule) => rule.category === "bonus");
+  }
+
+  filteredMalusRules() {
+    return this.filteredRules().filter((rule) => rule.category === "malus");
   }
 }

@@ -1,20 +1,28 @@
 import { Injectable, inject } from "@angular/core";
 import { Auth } from "@angular/fire/auth";
+
 import {
   Firestore,
   Timestamp,
   addDoc,
   collection,
   collectionData,
+  deleteField,
   doc,
   getDocs,
   serverTimestamp,
   setDoc,
-  updateDoc,
   writeBatch,
 } from "@angular/fire/firestore";
 import { Observable } from "rxjs";
-import { AppUser, Fixture, LeagueMatch, Lineup, TeamEvent } from "../models";
+import {
+  AppUser,
+  Fixture,
+  LeagueMatch,
+  Lineup,
+  RoundSetting,
+  TeamEvent,
+} from "../models";
 import { ruleById } from "../constants/bonus-rules";
 import { SERIE_A_2026_27_SEED } from "../seed/serie-a-2026-27.seed";
 
@@ -113,14 +121,6 @@ export class DataService {
     );
   }
 
-  async setResult(fixture: Fixture, homeGoals: number, awayGoals: number) {
-    await updateDoc(doc(this.db, `fixtures/${fixture.id}`), {
-      homeGoals,
-      awayGoals,
-      status: "finished",
-    });
-  }
-
   async importSeedFixtures() {
     const batch = writeBatch(this.db);
     for (const f of SERIE_A_2026_27_SEED) {
@@ -129,7 +129,6 @@ export class DataService {
         homeTeam: f.homeTeam,
         awayTeam: f.awayTeam,
         kickoffAt: Timestamp.fromDate(new Date(f.kickoffAtIso)),
-        status: "scheduled",
       });
     }
     await batch.commit();
@@ -153,7 +152,6 @@ export class DataService {
           homeTeam: row.homeTeam.trim(),
           awayTeam: row.awayTeam.trim(),
           kickoffAt: Timestamp.fromDate(kickoffAt),
-          status: "scheduled",
         },
         { merge: true },
       );
@@ -167,6 +165,9 @@ export class DataService {
   async generateLeagueCalendar(): Promise<number> {
     const usersSnapshot = await getDocs(collection(this.db, "users"));
     const fixturesSnapshot = await getDocs(collection(this.db, "fixtures"));
+    const existingMatchesSnapshot = await getDocs(
+      collection(this.db, "leagueMatches"),
+    );
 
     const users = usersSnapshot.docs
       .map((document) => document.data() as AppUser)
@@ -177,20 +178,26 @@ export class DataService {
       new Set(
         fixturesSnapshot.docs
           .map((document) => document.data() as Fixture)
-          .map((fixture) => fixture.round),
+          .map((fixture) => Number(fixture.round))
+          .filter((round) => Number.isFinite(round)),
       ),
     ).sort((a, b) => a - b);
 
     if (users.length < 2) {
-      throw new Error("Servono almeno 2 utenti per generare il calendario.");
+      throw new Error(
+        "Servono almeno 2 utenti per generare il calendario incontri.",
+      );
     }
 
     if (rounds.length === 0) {
       throw new Error("Non ci sono giornate Serie A inserite.");
     }
 
-    const batch = writeBatch(this.db);
-    let createdMatches = 0;
+    await this.deleteExistingLeagueMatches(existingMatchesSnapshot.docs);
+
+    let generatedMatches = 0;
+    let batch = writeBatch(this.db);
+    let batchOperations = 0;
 
     for (const round of rounds) {
       const pairings = this.generateRoundPairings(users, round);
@@ -210,13 +217,46 @@ export class DataService {
           { merge: true },
         );
 
-        createdMatches += 1;
+        generatedMatches += 1;
+        batchOperations += 1;
+
+        if (batchOperations === 450) {
+          await batch.commit();
+
+          batch = writeBatch(this.db);
+          batchOperations = 0;
+        }
       }
     }
 
-    await batch.commit();
+    if (batchOperations > 0) {
+      await batch.commit();
+    }
 
-    return createdMatches;
+    return generatedMatches;
+  }
+
+  private async deleteExistingLeagueMatches(
+    documents: Array<{ ref: any }>,
+  ): Promise<void> {
+    let batch = writeBatch(this.db);
+    let batchOperations = 0;
+
+    for (const document of documents) {
+      batch.delete(document.ref);
+      batchOperations += 1;
+
+      if (batchOperations === 450) {
+        await batch.commit();
+
+        batch = writeBatch(this.db);
+        batchOperations = 0;
+      }
+    }
+
+    if (batchOperations > 0) {
+      await batch.commit();
+    }
   }
 
   private generateRoundPairings(
@@ -233,16 +273,18 @@ export class DataService {
       } as AppUser);
     }
 
-    const fixed = players[0];
-    const rotating = players.slice(1);
-    const rotationIndex = (round - 1) % rotating.length;
+    const fixedPlayer = players[0];
+    const rotatingPlayers = players.slice(1);
 
-    const rotated = [
-      ...rotating.slice(rotationIndex),
-      ...rotating.slice(0, rotationIndex),
+    const rotationIndex = (round - 1) % rotatingPlayers.length;
+
+    const rotatedPlayers = [
+      ...rotatingPlayers.slice(rotationIndex),
+      ...rotatingPlayers.slice(0, rotationIndex),
     ];
 
-    const orderedPlayers = [fixed, ...rotated];
+    const orderedPlayers = [fixedPlayer, ...rotatedPlayers];
+
     const pairings: [AppUser, AppUser][] = [];
 
     for (let index = 0; index < orderedPlayers.length / 2; index += 1) {
@@ -292,6 +334,36 @@ export class DataService {
           createdBy: user.uid,
         });
       }),
+    );
+  }
+
+  roundSettings$(): Observable<RoundSetting[]> {
+    return collectionData(collection(this.db, "roundSettings"), {
+      idField: "id",
+    }) as Observable<RoundSetting[]>;
+  }
+
+  async closeRound(round: number): Promise<void> {
+    await setDoc(
+      doc(this.db, `roundSettings/${round}`),
+      {
+        round,
+        status: "closed",
+        closedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+  }
+
+  async reopenRound(round: number): Promise<void> {
+    await setDoc(
+      doc(this.db, `roundSettings/${round}`),
+      {
+        round,
+        status: "open",
+        closedAt: null,
+      },
+      { merge: true },
     );
   }
 }

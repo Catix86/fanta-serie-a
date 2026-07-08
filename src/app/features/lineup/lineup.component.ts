@@ -37,20 +37,31 @@ export class LineupComponent {
     this.auth.appUser$,
     this.data.fixtures$(),
     this.data.lineups$(),
+    this.data.roundSettings$(),
   ]).pipe(
-    map(([me, fixtures, lineups]) => {
-      const nextRound = Math.min(
-        ...fixtures
-          .filter((fixture) => fixture.status !== "finished")
-          .map((fixture) => fixture.round),
+    map(([me, fixtures, lineups, roundSettings]) => {
+      const closedRounds = new Set(
+        roundSettings
+          .filter((setting) => setting.status === "closed")
+          .map((setting) => Number(setting.round)),
       );
 
-      const validNextRound = Number.isFinite(nextRound) ? nextRound : 1;
+      const availableRounds = Array.from(
+        new Set(
+          fixtures
+            .map((fixture) => Number(fixture.round))
+            .filter((round) => Number.isFinite(round)),
+        ),
+      ).sort((a, b) => a - b);
+
+      const nextRound =
+        availableRounds.find((round) => !closedRounds.has(round)) ??
+        availableRounds[0] ??
+        1;
 
       const existingLineup = me
         ? lineups.find(
-            (lineup) =>
-              lineup.uid === me.uid && lineup.round === validNextRound,
+            (lineup) => lineup.uid === me.uid && lineup.round === nextRound,
           )
         : undefined;
 
@@ -61,9 +72,9 @@ export class LineupComponent {
 
       return {
         me,
-        round: validNextRound,
-        locked: isRoundLocked(fixtures, validNextRound),
-        deadline: roundDeadline(fixtures, validNextRound),
+        round: nextRound,
+        locked: isRoundLocked(fixtures, nextRound),
+        deadline: roundDeadline(fixtures, nextRound),
         existingLineup,
       };
     }),

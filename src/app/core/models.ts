@@ -1,5 +1,7 @@
 import { Timestamp } from "@angular/fire/firestore";
+
 export type Role = "player" | "admin";
+
 export interface AppUser {
   uid: string;
   username: string;
@@ -10,16 +12,15 @@ export interface AppUser {
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
+
 export interface Fixture {
   id: string;
   round: number;
   homeTeam: string;
   awayTeam: string;
   kickoffAt: Timestamp;
-  status: "scheduled" | "live" | "finished";
-  homeGoals?: number;
-  awayGoals?: number;
 }
+
 export interface Lineup {
   id: string;
   uid: string;
@@ -67,4 +68,11 @@ export interface LeagueMatch {
   awayUid: string;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
+}
+
+export interface RoundSetting {
+  id: string;
+  round: number;
+  status: "open" | "closed";
+  closedAt?: Timestamp;
 }

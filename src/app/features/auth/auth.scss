@@ -39,7 +39,7 @@
 .register-summary-item {
     padding: 10px 8px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, .06);
+    background: var(--bg-card);
     text-align: center;
 }
 
@@ -90,7 +90,7 @@
     gap: 10px;
     padding: 8px 10px;
     border-radius: 14px;
-    background: rgba(255, 255, 255, .07);
+    background: var(--bg-card);
     color: var(--text);
     border: 1px solid var(--border);
     text-align: left;
@@ -106,8 +106,8 @@
 }
 
 .register-team-card.selected {
-    background: rgba(52, 211, 153, .16);
-    border-color: rgba(52, 211, 153, .45);
+    background: var(--bg-success);
+    border-color: var(--border-success);
 }
 
 .register-team-card.disabled {
@@ -122,10 +122,10 @@
     border-radius: 999px;
     object-fit: contain;
     padding: 4px;
-    background: rgba(255, 255, 255, .92);
+    background: var(--bg-card);
     box-shadow:
-        0 0 0 1px rgba(255, 255, 255, .14),
-        0 6px 12px rgba(0, 0, 0, .18);
+        0 0 0 1px var(--border),
+        0 6px 12px var(--shadow);
     transition:
         background .18s ease,
         box-shadow .18s ease;
@@ -134,8 +134,8 @@
 .register-team-card.selected .register-team-logo {
     background: var(--primary);
     box-shadow:
-        0 0 0 2px rgba(52, 211, 153, .32),
-        0 6px 12px rgba(0, 0, 0, .22);
+        0 0 0 2px var(--border-primary),
+        0 6px 12px var(--shadow);
 }
 
 .register-team-name {
@@ -175,8 +175,8 @@
     border-radius: 24px;
     display: grid;
     place-items: center;
-    background: rgba(52, 211, 153, .16);
-    border: 1px solid rgba(52, 211, 153, .35);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
     color: var(--primary);
 }
 
@@ -214,9 +214,9 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: rgba(52, 211, 153, .18);
-    color: var(--primary);
-    border: 1px solid rgba(52, 211, 153, .34);
+    background: var(--bg-success);
+    color: var(--success);
+    border: 1px solid var(--border-success);
     text-decoration: none;
 }
 
@@ -227,9 +227,9 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: rgba(252, 211, 77, .18);
+    background: var(--bg-accent);
     color: var(--accent);
-    border: 1px solid rgba(252, 211, 77, .18);
+    border: 1px solid var(--border-accent);
     text-decoration: none;
 }
 
@@ -254,7 +254,7 @@
     border-radius: 999px;
     display: grid;
     place-items: center;
-    background: rgba(255, 255, 255, .08);
+    background: var(--card);
     border: 1px solid var(--border);
     font-size: 12px;
     font-weight: 1000;
@@ -270,8 +270,8 @@
 }
 
 .register-step.active span {
-    background: rgba(252, 211, 77, .18);
-    border-color: rgba(252, 211, 77, .45);
+    background: var(--bg-accent);
+    border-color: var(--border-accent);
     color: var(--accent);
 }
 
@@ -280,15 +280,15 @@
 }
 
 .register-step.done span {
-    background: rgba(52, 211, 153, .18);
-    border-color: rgba(52, 211, 153, .45);
+    background: var(--bg-primary);
+    border-color: var(--border-primary);
     color: var(--primary);
 }
 
 .register-step-line {
     height: 2px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, .12);
+    background: var(--border);
 }
 
 .register-step-panel {
@@ -311,7 +311,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, .08);
+    background: var(--card);
     color: var(--text);
 }
 
@@ -424,4 +424,13 @@ button:disabled,
 .register-step-panel>.btn.warn {
     margin-top: 2px;
     flex-shrink: 0;
+}
+
+.register-field-counter {
+    display: block;
+    margin: -4px 4px 2px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    text-align: right;
 }

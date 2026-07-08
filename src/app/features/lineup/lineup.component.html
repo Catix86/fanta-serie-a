@@ -3,20 +3,8 @@
     <app-section-header
       icon="assignment"
       [title]="'Giornata ' + vm.round"
-      [subtitle]="'Scegli ' + size + ' squadre e il capitano'"
+      [subtitle]="'Scadenza formazione tra: ' + countdown(vm.deadline)"
     />
-
-    <section class="lineup-deadline-pill">
-      <div class="lineup-deadline-left">
-        <span class="material-symbols-rounded"> schedule </span>
-
-        <strong>Scadenza tra:</strong>
-      </div>
-
-      <strong class="lineup-deadline-countdown">
-        {{ countdown(vm.deadline) }}
-      </strong>
-    </section>
 
     <section class="card lineup-panel">
       <div class="selected-summary">

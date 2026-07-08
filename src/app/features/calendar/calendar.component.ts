@@ -1,5 +1,6 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { combineLatest, map } from "rxjs";
 
 import { DataService } from "../../core/services/data.service";
@@ -16,48 +17,70 @@ export class CalendarComponent {
   private data = inject(DataService);
 
   selectedRound = signal<number | null>(null);
+  private selectedRound$ = toObservable(this.selectedRound);
 
   vm$ = combineLatest([
     this.data.users$(),
-    this.data.fixtures$(),
     this.data.lineups$(),
     this.data.events$(),
     this.data.leagueMatches$(),
+    this.data.roundSettings$(),
+    this.selectedRound$,
   ]).pipe(
-    map(([users, fixtures, lineups, events, leagueMatches]) => {
-      const usersMap = new Map(users.map((user) => [user.uid, user]));
+    map(
+      ([
+        users,
+        lineups,
+        events,
+        leagueMatches,
+        roundSettings,
+        selectedRound,
+      ]) => {
+        const usersMap = new Map(users.map((user) => [user.uid, user]));
 
-      const rounds = Array.from(
-        new Set(fixtures.map((fixture) => fixture.round)),
-      ).sort((a, b) => a - b);
+        const rounds = Array.from(
+          new Set(
+            leagueMatches
+              .map((match) => Number(match.round))
+              .filter((round) => Number.isFinite(round)),
+          ),
+        ).sort((a, b) => a - b);
 
-      const firstAvailableRound = rounds[0] ?? null;
+        const firstRound = rounds[0] ?? null;
 
-      if (this.selectedRound() === null && firstAvailableRound !== null) {
-        this.selectedRound.set(firstAvailableRound);
-      }
+        const currentRound =
+          selectedRound !== null && rounds.includes(selectedRound)
+            ? selectedRound
+            : firstRound;
 
-      const currentRound = this.selectedRound() ?? firstAvailableRound;
+        const roundSetting = roundSettings.find(
+          (setting) => Number(setting.round) === currentRound,
+        );
 
-      const matches = leagueMatches
-        .filter((match) => match.round === currentRound)
-        .map((match) => {
-          const result = leagueMatchResult(match, lineups, events);
+        const isClosed = roundSetting?.status === "closed";
 
-          return {
-            ...match,
-            homeUser: usersMap.get(match.homeUid),
-            awayUser: usersMap.get(match.awayUid),
-            ...result,
-          };
-        });
+        const matches = leagueMatches
+          .filter((match) => Number(match.round) === currentRound)
+          .sort((a, b) => a.id.localeCompare(b.id))
+          .map((match) => {
+            const result = leagueMatchResult(match, lineups, events);
 
-      return {
-        rounds,
-        currentRound,
-        matches,
-      };
-    }),
+            return {
+              ...match,
+              homeUser: usersMap.get(match.homeUid),
+              awayUser: usersMap.get(match.awayUid),
+              ...result,
+            };
+          });
+
+        return {
+          rounds,
+          currentRound,
+          isClosed,
+          matches,
+        };
+      },
+    ),
   );
 
   selectRound(round: number): void {

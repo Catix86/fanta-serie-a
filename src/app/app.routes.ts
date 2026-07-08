@@ -40,13 +40,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: "profilo",
-        loadComponent: () =>
-          import("./features/profile/profile.component").then(
-            (m) => m.ProfileComponent,
-          ),
-      },
-      {
         path: "calendario",
         loadComponent: () =>
           import("./features/calendar/calendar.component").then(

@@ -33,7 +33,7 @@
 
       <button
         type="button"
-        class="btn warn"
+        class="btn primary-button"
         [disabled]="importingCalendar()"
         (click)="importCalendarCsv()"
       >
@@ -63,7 +63,7 @@
       <button
         type="button"
         [class.active]="eventScope === 'match'"
-        (click)="eventScope = 'match'"
+        (click)="setEventScope('match')"
       >
         Evento partita
       </button>
@@ -71,7 +71,7 @@
       <button
         type="button"
         [class.active]="eventScope === 'seasonal'"
-        (click)="eventScope = 'seasonal'"
+        (click)="setEventScope('seasonal')"
       >
         Evento stagionale
       </button>
@@ -143,27 +143,72 @@
         <div>
           <label class="muted">Bonus/Malus</label>
 
-          <div class="rules-picker">
-            @for (rule of rules; track rule.id) {
-              <button
-                type="button"
-                class="rule-choice"
-                [class.selected]="ruleIds.includes(rule.id)"
-                (click)="toggle(rule.id)"
-              >
-                <span
-                  class="rule-points"
-                  [class.positive]="rule.points > 0"
-                  [class.negative]="rule.points < 0"
-                >
-                  {{ rule.points > 0 ? "+" : "" }}{{ rule.points }}
-                </span>
+          <div class="rules-columns">
+            <section class="rules-column">
+              <div class="rules-column-header bonus">
+                <span class="material-symbols-rounded"> add_circle </span>
 
-                <span class="rule-label">
-                  {{ rule.label }}
-                </span>
-              </button>
-            }
+                <strong>Bonus</strong>
+              </div>
+
+              <div class="rules-picker">
+                @if (filteredBonusRules().length === 0) {
+                  <p class="muted empty-rules-message">
+                    Nessun bonus disponibile.
+                  </p>
+                }
+
+                @for (rule of filteredBonusRules(); track rule.id) {
+                  <button
+                    type="button"
+                    class="rule-choice"
+                    [class.selected]="ruleIds.includes(rule.id)"
+                    (click)="toggle(rule.id)"
+                  >
+                    <span class="rule-points positive">
+                      +{{ rule.points }}
+                    </span>
+
+                    <span class="rule-label">
+                      {{ rule.label }}
+                    </span>
+                  </button>
+                }
+              </div>
+            </section>
+
+            <section class="rules-column">
+              <div class="rules-column-header malus">
+                <span class="material-symbols-rounded"> remove_circle </span>
+
+                <strong>Malus</strong>
+              </div>
+
+              <div class="rules-picker">
+                @if (filteredMalusRules().length === 0) {
+                  <p class="muted empty-rules-message">
+                    Nessun malus disponibile.
+                  </p>
+                }
+
+                @for (rule of filteredMalusRules(); track rule.id) {
+                  <button
+                    type="button"
+                    class="rule-choice"
+                    [class.selected]="ruleIds.includes(rule.id)"
+                    (click)="toggle(rule.id)"
+                  >
+                    <span class="rule-points negative">
+                      {{ rule.points }}
+                    </span>
+
+                    <span class="rule-label">
+                      {{ rule.label }}
+                    </span>
+                  </button>
+                }
+              </div>
+            </section>
           </div>
 
           <p class="muted selected-rules-count">
@@ -171,121 +216,14 @@
           </p>
         </div>
 
-        <button type="button" class="btn warn" (click)="addEvents()">
+        <button type="button" class="btn primary-button" (click)="addEvents()">
           Inserisci Bonus/Malus
         </button>
       </div>
     </div>
   </details>
 
-  <!-- GESTIONE RISULTATI -->
-  <details class="card admin-accordion">
-    <summary>
-      <div class="admin-accordion-summary-content">
-        <strong>Gestione risultati</strong>
-        <span class="muted"
-          >Inserisci il risultato ufficiale delle partite</span
-        >
-      </div>
-
-      <span class="material-symbols-rounded admin-accordion-expand-icon">
-        expand_more
-      </span>
-    </summary>
-
-    <div class="admin-accordion-content">
-      <p class="muted">
-        Quando salvi il risultato, la partita viene considerata
-        <strong>terminata</strong>.
-      </p>
-
-      @if (fixtures$ | async; as fixtures) {
-        @if (fixtures.length === 0) {
-          <section class="card match-admin-card">
-            <p class="muted">
-              Nessuna partita presente. Importa prima il calendario.
-            </p>
-          </section>
-        }
-
-        <div class="match-admin-list">
-          @for (fixture of fixtures; track fixture.id) {
-            <section class="card match-admin-card">
-              <div class="match-admin-topline">
-                <div>
-                  <strong>
-                    G{{ fixture.round }} · {{ fixture.homeTeam }} -
-                    {{ fixture.awayTeam }}
-                  </strong>
-
-                  <p class="muted match-date">
-                    {{ fixtureDate(fixture) | date: "dd MMM HH:mm" }}
-                  </p>
-                </div>
-
-                <span
-                  class="status-badge"
-                  [class.status-scheduled]="fixture.status === 'scheduled'"
-                  [class.status-live]="fixture.status === 'live'"
-                  [class.status-finished]="fixture.status === 'finished'"
-                >
-                  @if (fixture.status === "scheduled") {
-                    Programmata
-                  } @else if (fixture.status === "live") {
-                    In corso
-                  } @else {
-                    Terminata
-                  }
-                </span>
-              </div>
-
-              @if (fixture.status === "finished") {
-                <p class="official-result">
-                  Risultato attuale:
-                  <strong>
-                    {{ fixture.homeGoals }}-{{ fixture.awayGoals }}
-                  </strong>
-                </p>
-              }
-
-              <div class="result-row">
-                <input
-                  class="input result-input"
-                  inputmode="numeric"
-                  min="0"
-                  max="30"
-                  [(ngModel)]="home"
-                />
-
-                <strong>-</strong>
-
-                <input
-                  class="input result-input"
-                  inputmode="numeric"
-                  min="0"
-                  max="30"
-                  [(ngModel)]="away"
-                />
-
-                <button
-                  type="button"
-                  class="btn save-result-btn"
-                  (click)="result(fixture)"
-                >
-                  Salva
-                </button>
-              </div>
-            </section>
-          }
-        </div>
-      } @else {
-        <section class="card match-admin-card">
-          <p class="muted">Caricamento partite...</p>
-        </section>
-      }
-    </div>
-  </details>
-
+  <!-- CALENDARIO INCONTRI -->
   <details class="card admin-accordion">
     <summary>
       <div class="admin-accordion-summary-content">
@@ -307,7 +245,7 @@
 
       <button
         type="button"
-        class="btn warn"
+        class="btn primary-button"
         [disabled]="generatingLeagueCalendar()"
         (click)="generateLeagueCalendar()"
       >
@@ -317,6 +255,89 @@
           Genera calendario incontri
         }
       </button>
+    </div>
+  </details>
+
+  <!-- GESTIONE GIORNATE -->
+  <details class="card admin-accordion">
+    <summary>
+      <div class="admin-accordion-summary-content">
+        <strong>Gestione giornate</strong>
+        <span class="muted">
+          Chiudi o riapri le giornate valide per le classifiche
+        </span>
+      </div>
+
+      <span class="material-symbols-rounded admin-accordion-expand-icon">
+        expand_more
+      </span>
+    </summary>
+
+    <div class="admin-accordion-content">
+      <p class="muted">
+        Chiudi una giornata quando hai inserito tutti i bonus/malus. Solo le
+        giornate chiuse vengono considerate nelle classifiche.
+      </p>
+
+      @if (roundsVm$ | async; as rounds) {
+        @if (rounds.length === 0) {
+          <p class="muted">
+            Nessuna giornata disponibile. Importa prima il calendario Serie A.
+          </p>
+        }
+
+        <div class="admin-rounds-list">
+          @for (round of rounds; track round.round) {
+            <article class="admin-round-card">
+              <div class="admin-round-info">
+                <strong> Giornata {{ round.round }} </strong>
+
+                <span
+                  class="admin-round-status"
+                  [class.closed]="round.status === 'closed'"
+                  [class.open]="round.status === 'open'"
+                >
+                  @if (round.status === "closed") {
+                    Chiusa
+                  } @else {
+                    Aperta
+                  }
+                </span>
+              </div>
+
+              <div class="admin-round-actions">
+                @if (round.status === "closed") {
+                  <button
+                    type="button"
+                    class="admin-round-button secondary"
+                    [disabled]="updatingRound() === round.round"
+                    (click)="reopenRound(round.round)"
+                  >
+                    @if (updatingRound() === round.round) {
+                      Riapertura...
+                    } @else {
+                      Riapri
+                    }
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="admin-round-button"
+                    [disabled]="updatingRound() === round.round"
+                    (click)="closeRound(round.round)"
+                  >
+                    @if (updatingRound() === round.round) {
+                      Chiusura...
+                    } @else {
+                      Chiudi
+                    }
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
     </div>
   </details>
 </main>

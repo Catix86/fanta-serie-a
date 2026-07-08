@@ -1,8 +1,10 @@
-export type RuleCategory = "attack" | "goal" | "defense" | "pop" | "malus" | "table";
+export type RuleCategory = 'bonus' | 'malus';
+export type RuleScope = 'match' | 'seasonal';
 
 export interface BonusRule {
   id: string;
   category: RuleCategory;
+  scope: RuleScope;
   points: number;
   label: string;
   description: string;
@@ -11,140 +13,160 @@ export interface BonusRule {
 export const BONUS_RULES: BonusRule[] = [
   {
     id: "muso-corto",
-    category: "attack",
+    category: "bonus",
+    scope: "match",
     points: 2,
     label: "Muso corto",
     description: "Vittoria con un solo gol di scarto.",
   },
   {
     id: "goleada",
-    category: "attack",
+    category: "bonus",
+    scope: "match",
     points: 10,
     label: "Goleada",
     description: "La squadra segna con 3 o più gol di scarto.",
   },
   {
     id: "panchinaro-oro",
-    category: "attack",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Panchinaro d’oro",
     description: "Gol segnato da un subentrato dalla panchina.",
   },
   {
     id: "bolide",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Bolide",
     description: "Gol da fuori area.",
   },
   {
     id: "incornata",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Incornata",
     description: "Gol di testa.",
   },
   {
     id: "bastardone",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Bastardone",
     description: "Gol a porta vuota.",
   },
   {
     id: "pennellata-vincente",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 10,
     label: "Pennellata vincente",
     description: "Gol segnato direttamente da calcio punizione o angolo.",
   },
   {
     id: "rovesciata",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 10,
     label: "Rovesciata",
     description: "Gol in rovesciata.",
   },
   {
     id: "doppietta",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 20,
     label: "Doppietta",
     description: "Due gol segnati in una sola partita.",
   },
   {
     id: "tripletta",
-    category: "goal",
+    category: "bonus",
+    scope: "match",
     points: 30,
     label: "Tripletta",
     description: "Tre gol o più segnati in una sola partita.",
   },
   {
     id: "rigore-procurato",
-    category: "attack",
+    category: "bonus",
+    scope: "match",
     points: 3,
     label: "Rigore procurato",
     description: "Alla squadra viene assegnato un rigore.",
   },
   {
     id: "clean-sheet",
-    category: "defense",
+    category: "bonus",
+    scope: "match",
     points: 10,
     label: "Porta inviolata",
     description: "La squadra non subisce gol.",
   },
   {
     id: "rigore-parato",
-    category: "defense",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Ipnotizzatore",
     description: "Il portiere para un rigore.",
   },
   {
-    id: "senza-sconfitte",
-    category: "defense",
-    points: 20,
-    label: "Senza sconfitte",
-    description: "La squadra non perde per 10 partite di fila.",
-  },
-  {
     id: "sorpresa",
-    category: "pop",
+    category: "bonus",
+    scope: "match",
     points: 15,
     label: "Sorpresa",
     description: "La squadra vince contro un avversario che ha più di 15 punti.",
   },
   {
     id: "legno",
-    category: "pop",
+    category: "bonus",
+    scope: "match",
     points: 3,
     label: "Il legno",
     description: "Un giocatore colpisce il palo o la traversa.",
   },
   {
     id: "esultanza-trash",
-    category: "pop",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Esultanza trash",
     description: "Esultanza memorabile o volgare.",
   },
   {
     id: "gioco-pulito",
-    category: "pop",
+    category: "bonus",
+    scope: "match",
     points: 5,
     label: "Gioco pulito",
     description: "La squadra non riceve ammonizioni o espulsioni.",
   },
   {
+    id: "senza-sconfitte",
+    category: "bonus",
+    scope: "seasonal",
+    points: 20,
+    label: "Senza sconfitte",
+    description: "La squadra non perde per 10 partite di fila.",
+  },
+  {
     id: "campione-di-inverno",
-    category: "pop",
+    category: "bonus",
+    scope: "seasonal",
     points: 50,
     label: "Campione di inverno",
     description: "La squadra è in testa dopo il girone d'andata.",
   },
   {
     id: "striscia-vincente",
-    category: "pop",
+    category: "bonus",
+    scope: "seasonal",
     points: 30,
     label: "Striscia vincente",
     description: "La squadra vince 10 partite di fila.",
@@ -152,6 +174,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "noia-mortale",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Noia mortale",
     description: "La squadra pareggia 0-0.",
@@ -159,6 +182,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "sconfitta",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Sconfitta",
     description: "La squadra perde.",
@@ -166,6 +190,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "autogol",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Autogol",
     description: "Autogol di un proprio giocatore.",
@@ -173,6 +198,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "imbarcata",
     category: "malus",
+    scope: "match",
     points: -10,
     label: "Imbarcata",
     description: "La squadra perde subendo 3 o più gol.",
@@ -180,6 +206,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "rosso",
     category: "malus",
+    scope: "match",
     points: -10,
     label: "Rosso",
     description: "Cartellino rosso diretto a un giocatore.",
@@ -187,6 +214,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "recidivo",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Recidivo",
     description: "Cartellino rosso per somma di ammonizioni a un giocatore.",
@@ -194,6 +222,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "ct-espulso",
     category: "malus",
+    scope: "match",
     points: -15,
     label: "Allenatore espulso",
     description: "Espulsione dell’allenatore.",
@@ -201,6 +230,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "rigore-fallito",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Rigore fallito",
     description: "Rigore sbagliato o parato.",
@@ -208,6 +238,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "illusione-var",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Illusione VAR",
     description: "Gol annullato dopo verifica al monitor VAR dell'arbitro.",
@@ -215,6 +246,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "invasione",
     category: "malus",
+    scope: "match",
     points: -25,
     label: "Invasione di campo",
     description: "Tifoso in campo con maglia o bandiera.",
@@ -222,6 +254,7 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "cagata-difensiva",
     category: "malus",
+    scope: "match",
     points: -5,
     label: "Cagata difensiva",
     description: "Errore difensivo che porta al gol gli avversari.",
@@ -229,9 +262,34 @@ export const BONUS_RULES: BonusRule[] = [
   {
     id: "nervi-tesi",
     category: "malus",
+    scope: "match",
     points: -10,
     label: "Nervi tesi",
     description: "Si verifica una rissa tra le due squadre in campo.",
+  },
+  {
+    id: "senza-vittorie",
+    category: "malus",
+    scope: "seasonal",
+    points: -20,
+    label: "Senza vittorie",
+    description: "La squadra non vince da 10 partite di fila.",
+  },
+  {
+    id: "caprone-di-inverno",
+    category: "malus",
+    scope: "seasonal",
+    points: -50,
+    label: "Caprone di inverno",
+    description: "La squadra è ultima dopo il girone d'andata.",
+  },
+  {
+    id: "striscia-perdente",
+    category: "malus",
+    scope: "seasonal",
+    points: -30,
+    label: "Striscia perdente",
+    description: "La squadra perde 10 partite di fila.",
   },
 ];
 

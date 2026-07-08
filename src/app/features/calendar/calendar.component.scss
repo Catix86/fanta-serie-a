@@ -16,16 +16,16 @@
     min-width: 48px;
     height: 42px;
     border-radius: 15px;
-    background: rgba(255, 255, 255, .08);
-    color: var(--muted);
-    border: 1px solid rgba(255, 255, 255, .10);
+    background: var(--bg-primary);
+    color: var(--primary);
+    border-color: var(--border-primary);
     font-weight: 1000;
 }
 
 .round-selector button.active {
-    background: rgba(52, 211, 153, .16);
-    color: var(--primary);
-    border-color: rgba(52, 211, 153, .38);
+    background: var(--bg-accent);
+    color: var(--accent);
+    border-color: var(--border-accent);
 }
 
 .calendar-matches-card {
@@ -64,9 +64,9 @@
     gap: 10px;
     background:
         linear-gradient(135deg,
-            rgba(255, 255, 255, .10),
-            rgba(255, 255, 255, .05));
-    border: 1px solid rgba(255, 255, 255, .10);
+            var(--grad-a),
+            var(--grad-b));
+    border: 1px solid var(--grad-a);
 }
 
 .league-player {
@@ -99,7 +99,7 @@
     border-radius: 16px;
     display: grid;
     place-items: center;
-    background: rgba(2, 6, 23, .58);
+    background: var(--bg-shadow);
     color: var(--accent);
 }
 

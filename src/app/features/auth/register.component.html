@@ -31,7 +31,12 @@
             class="input"
             placeholder="Username"
             formControlName="username"
+            [attr.maxlength]="maxUsernameLength"
           />
+
+          <small class="register-field-counter">
+            {{ form.controls.username.value.length }}/{{ maxUsernameLength }}
+          </small>
 
           <input
             class="input"
@@ -80,7 +85,12 @@
             class="input"
             placeholder="Nome team"
             formControlName="teamName"
+            [attr.maxlength]="maxTeamNameLength"
           />
+
+          <small class="register-field-counter">
+            {{ form.controls.teamName.value.length }}/{{ maxTeamNameLength }}
+          </small>
 
           <section class="register-summary">
             <div class="register-summary-item">

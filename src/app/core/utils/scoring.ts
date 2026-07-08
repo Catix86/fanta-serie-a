@@ -3,6 +3,7 @@ import {
   Fixture,
   LeagueMatch,
   Lineup,
+  RoundSetting,
   StandingRow,
   TeamEvent,
 } from "../models";
@@ -72,14 +73,13 @@ export function standings(
   lineups: Lineup[],
   events: TeamEvent[],
   leagueMatches: LeagueMatch[] = [],
+  roundSettings: RoundSetting[] = [],
 ): StandingRow[] {
-  const finishedRounds = [
-    ...new Set(
-      fixtures
-        .filter((fixture) => fixture.status === "finished")
-        .map((fixture) => fixture.round),
-    ),
-  ].sort((a, b) => a - b);
+  const closedRounds = roundSettings
+    .filter((roundSetting) => roundSetting.status === "closed")
+    .map((roundSetting) => Number(roundSetting.round))
+    .filter((round) => Number.isFinite(round))
+    .sort((a, b) => a - b);
 
   const rows = new Map(
     users.map((user) => [
@@ -107,7 +107,7 @@ export function standings(
       continue;
     }
 
-    const roundFantasyPoints = finishedRounds.reduce(
+    const roundFantasyPoints = closedRounds.reduce(
       (total, round) =>
         total + lineupFantasyRoundScore(user.uid, round, lineups, events),
       0,
@@ -118,9 +118,9 @@ export function standings(
     row.fantasyPoints = roundFantasyPoints + seasonalPoints;
   }
 
-  for (const round of finishedRounds) {
+  for (const round of closedRounds) {
     const roundLeagueMatches = leagueMatches.filter(
-      (match) => match.round === round,
+      (leagueMatch) => Number(leagueMatch.round) === round,
     );
 
     const matchesToUse =

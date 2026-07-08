@@ -1,5 +1,5 @@
 .leaderboard-content {
-    padding: 16px;
+    padding: 10px;
     display: grid;
     gap: 12px;
 }
@@ -18,17 +18,17 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    background: rgba(255, 255, 255, .08);
-    color: var(--muted);
-    border: 1px solid rgba(255, 255, 255, .10);
+    background: var(--bg-primary);
+    color: var(--primary);
+    border: 1px solid var(--border-primary);
     font-size: 13px;
     font-weight: 1000;
 }
 
 .leaderboard-tabs button.active {
-    background: rgba(52, 211, 153, .16);
-    color: var(--primary);
-    border-color: rgba(52, 211, 153, .35);
+    background: var(--bg-accent);
+    color: var(--accent);
+    border-color: var(--border-accent);
 }
 
 .leaderboard-tabs .material-symbols-rounded {
@@ -77,15 +77,15 @@
     gap: 10px;
     padding: 10px;
     border-radius: 18px;
-    background: rgba(255, 255, 255, .06);
-    border: 1px solid rgba(255, 255, 255, .08);
+    background: var(--grad-b);
+    border: 1px solid var(--card);
 }
 
 .leaderboard-row.podium,
 .league-row.podium {
     background:
-        linear-gradient(135deg, rgba(252, 211, 77, .12), rgba(52, 211, 153, .08));
-    border-color: rgba(252, 211, 77, .22);
+        linear-gradient(135deg, var(--grad-a-accent), var(--grad-b-accent), );
+    border-color: var(--border-accent);
 }
 
 .rank-badge {
@@ -94,7 +94,7 @@
     border-radius: 14px;
     display: grid;
     place-items: center;
-    background: rgba(2, 6, 23, .72);
+    background: var(--bg-shadow);
     color: var(--accent);
     font-size: 18px;
     font-weight: 1000;
@@ -102,9 +102,9 @@
 
 .leaderboard-row.podium .rank-badge,
 .league-row.podium .rank-badge {
-    background: rgba(252, 211, 77, .18);
+    background: var(--bg-accent);
     color: var(--accent);
-    box-shadow: 0 0 0 1px rgba(252, 211, 77, .22);
+    box-shadow: 0 0 0 1px var(--border-accent);
 }
 
 .leaderboard-team-info {
@@ -163,6 +163,7 @@
 .league-table-card {
     display: grid;
     gap: 12px;
+    padding: 10px;
 }
 
 .league-table {
@@ -197,8 +198,8 @@
 .league-table-row {
     padding: 9px 8px;
     border-radius: 16px;
-    background: rgba(255, 255, 255, .06);
-    border: 1px solid rgba(255, 255, 255, .08);
+    background: var(--grad-b);
+    border: 1px solid var(--card);
     font-size: 12px;
     font-weight: 900;
 }
@@ -206,9 +207,9 @@
 .league-table-row.podium {
     background:
         linear-gradient(135deg,
-            rgba(252, 211, 77, .12),
-            rgba(52, 211, 153, .08));
-    border-color: rgba(252, 211, 77, .22);
+            var(--grad-a-accent),
+            var(--grad-b-accent));
+    border-color: var(--border-accent);
 }
 
 .league-table-row>span:not(.league-team) {
@@ -221,16 +222,16 @@
     border-radius: 10px;
     display: grid;
     place-items: center;
-    background: rgba(2, 6, 23, .72);
+    background: var(--bg-shadow);
     color: var(--accent);
     font-size: 12px;
     font-weight: 1000;
 }
 
 .league-table-row.podium .league-position {
-    background: rgba(252, 211, 77, .18);
+    background: var(--bg-accent);
     color: var(--accent);
-    box-shadow: 0 0 0 1px rgba(252, 211, 77, .22);
+    box-shadow: 0 0 0 1px var(--border-accent);
 }
 
 .league-team {

@@ -1,149 +1,194 @@
 <main class="home-content">
   @if (vm$ | async; as vm) {
-    <app-section-header
-      icon="home"
-      [title]="vm.me?.teamName || 'Home'"
-      subtitle="Riepilogo della tua stagione"
-    />
+    @if (vm.me; as user) {
+      <app-section-header
+        icon="home"
+        [title]="user.teamName || 'Home'"
+        [subtitle]="user.username + ' - Riepilogo della tua stagione'"
+      />
 
-    <section class="home-ranking-summary">
-      <article class="home-ranking-card fantasy">
-        <div class="home-ranking-icon">
-          <span class="material-symbols-rounded"> workspace_premium </span>
+      <!-- CLASSIFICHE -->
+      <section class="home-ranking-summary">
+        <article class="home-ranking-card fantasy">
+          <div>
+            <span>Classifica fantasy</span>
+
+            <strong> {{ vm.myFantasyStanding?.fantasyPoints || 0 }} pt </strong>
+
+            <p>
+              @if (vm.fantasyPosition) {
+                #{{ vm.fantasyPosition }} posizione
+              } @else {
+                Posizione non disponibile
+              }
+            </p>
+          </div>
+        </article>
+
+        <article class="home-ranking-card league">
+          <div>
+            <span>Classifica incontri</span>
+
+            <strong> {{ vm.myLeagueStanding?.leaguePoints || 0 }} pt </strong>
+
+            <p>
+              @if (vm.leaguePosition) {
+                #{{ vm.leaguePosition }} posizione
+              } @else {
+                Posizione non disponibile
+              }
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- PROSSIMA FORMAZIONE -->
+      <section class="card deadline-card">
+        <div class="deadline-header">
+          <div>
+            <span>Prossima scadenza formazione</span>
+
+            <h2>
+              @if (vm.nextRound) {
+                Giornata {{ vm.nextRound }}
+              } @else {
+                Nessuna giornata
+              }
+            </h2>
+          </div>
+
+          <span class="material-symbols-rounded deadline-icon">
+            hourglass_top
+          </span>
         </div>
 
-        <div>
-          <span>Classifica fantasy</span>
+        @if (vm.deadline) {
+          @let timer = countdown(vm.deadline);
 
-          <strong> {{ vm.myFantasyStanding?.fantasyPoints || 0 }} pt </strong>
+          <div class="countdown-grid">
+            <div>
+              <strong>{{ timer.days }}</strong>
+              <span>giorni</span>
+            </div>
 
-          <p>
-            @if (vm.fantasyPosition) {
-              #{{ vm.fantasyPosition }} posizione
+            <div>
+              <strong>{{ timer.hours }}</strong>
+              <span>ore</span>
+            </div>
+
+            <div>
+              <strong>{{ timer.minutes }}</strong>
+              <span>min</span>
+            </div>
+
+            <div>
+              <strong>{{ timer.seconds }}</strong>
+              <span>sec</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn home-lineup-button"
+            (click)="goToLineup()"
+          >
+            <span class="material-symbols-rounded"> assignment </span>
+
+            @if (vm.hasLineup) {
+              Vedi formazione
             } @else {
-              Posizione non disponibile
+              Imposta formazione
             }
+          </button>
+        } @else {
+          <p class="muted no-deadline">
+            Non ci sono giornate future disponibili.
           </p>
-        </div>
-      </article>
-
-      <article class="home-ranking-card league">
-        <div class="home-ranking-icon">
-          <span class="material-symbols-rounded"> sports_score </span>
-        </div>
-
-        <div>
-          <span>Classifica incontri</span>
-
-          <strong> {{ vm.myLeagueStanding?.leaguePoints || 0 }} pt </strong>
-
-          <p>
-            @if (vm.leaguePosition) {
-              #{{ vm.leaguePosition }} posizione
-            } @else {
-              Posizione non disponibile
-            }
-          </p>
-        </div>
-      </article>
-    </section>
-
-    <section class="card deadline-card">
-      <div class="deadline-header">
-        <div>
-          <span>Prossima scadenza formazione</span>
-
-          <h2>
-            @if (vm.nextRound) {
-              Giornata {{ vm.nextRound }}
-            } @else {
-              Nessuna giornata
-            }
-          </h2>
-        </div>
-
-        <span class="material-symbols-rounded deadline-icon">
-          hourglass_top
-        </span>
-      </div>
-
-      @if (vm.deadline) {
-        @let timer = countdown(vm.deadline);
-
-        <div class="countdown-grid">
-          <div>
-            <strong>{{ timer.days }}</strong>
-            <span>giorni</span>
-          </div>
-
-          <div>
-            <strong>{{ timer.hours }}</strong>
-            <span>ore</span>
-          </div>
-
-          <div>
-            <strong>{{ timer.minutes }}</strong>
-            <span>min</span>
-          </div>
-
-          <div>
-            <strong>{{ timer.seconds }}</strong>
-            <span>sec</span>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          class="btn home-lineup-button"
-          (click)="goToLineup()"
-        >
-          <span class="material-symbols-rounded"> assignment </span>
-
-          @if (vm.hasLineup) {
-            Vedi formazione
-          } @else {
-            Imposta formazione
-          }
-        </button>
-      } @else {
-        <p class="muted no-deadline">
-          Non ci sono giornate future disponibili.
-        </p>
-      }
-    </section>
-
-    <section class="card last-round-card">
-      <div class="section-title-row">
-        <div>
-          <span class="muted">Risultati</span>
-
-          <h2>
-            @if (vm.lastFinishedRound > 0) {
-              Ultima giornata conclusa
-            } @else {
-              Nessun risultato
-            }
-          </h2>
-        </div>
-
-        <span class="material-symbols-rounded">sports_soccer</span>
-      </div>
-
-      @if (vm.lastFinishedRound > 0 && vm.lastRoundFixtures.length > 0) {
-        @for (fixture of vm.lastRoundFixtures; track fixture.id) {
-          <div class="result-row">
-            <span>{{ fixture.homeTeam }}</span>
-
-            <strong> {{ fixture.homeGoals }}-{{ fixture.awayGoals }} </strong>
-
-            <span>{{ fixture.awayTeam }}</span>
-          </div>
         }
-      } @else {
-        <p class="muted empty-results">
-          I risultati appariranno qui quando l’admin inizierà a inserirli.
+      </section>
+
+      <!-- LA TUA ROSA -->
+      <section class="card deadline-card">
+        <div class="deadline-header">
+          <div>
+            <h2>La tua rosa</h2>
+          </div>
+
+          <div class="profile-roster-budget">
+            <strong>99/100</strong>
+            <span>Fanta crediti</span>
+          </div>
+        </div>
+
+        <!-- ELENCO SQUADRE -->
+        <div class="profile-roster-list">
+          @for (teamName of user.roster; track teamName) {
+            <article class="profile-team-card">
+              <img
+                class="profile-team-logo"
+                [src]="teamLogo(teamName)"
+                [alt]="teamName"
+                loading="lazy"
+              />
+
+              <div class="profile-team-info">
+                <strong>
+                  {{ teamName }}
+                </strong>
+              </div>
+
+              <strong class="profile-team-price">
+                {{ teamPrice(teamName) }} FC
+              </strong>
+            </article>
+          }
+        </div>
+      </section>
+
+      <button
+        type="button"
+        class="btn logout-button"
+        (click)="openLogoutConfirm()"
+      >
+        <span class="material-symbols-rounded"> logout </span>
+        Esci
+      </button>
+    }
+  }
+
+  <!-- MODALE LOGOUT -->
+  @if (logoutConfirmOpen()) {
+    <div class="logout-modal-backdrop" (click)="closeLogoutConfirm()">
+      <section class="card logout-modal" (click)="$event.stopPropagation()">
+        <div class="logout-modal-icon">
+          <span class="material-symbols-rounded"> logout </span>
+        </div>
+
+        <h2>Vuoi uscire?</h2>
+
+        <p class="muted">
+          Verrai disconnesso dal tuo account e dovrai effettuare nuovamente il
+          login per accedere.
         </p>
-      }
-    </section>
+
+        <div class="logout-modal-actions">
+          <button
+            type="button"
+            class="btn secondary"
+            (click)="closeLogoutConfirm()"
+          >
+            Annulla
+          </button>
+
+          <button
+            type="button"
+            class="btn logout-confirm-button"
+            (click)="confirmLogout()"
+          >
+            Esci
+          </button>
+        </div>
+      </section>
+    </div>
   }
 </main>
