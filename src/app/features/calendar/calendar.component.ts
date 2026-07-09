@@ -1,11 +1,20 @@
 import { AsyncPipe } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { combineLatest, map, tap } from "rxjs";
+
+import { AppUser, LeagueMatch, Lineup, TeamEvent } from "../../core/models";
 import { AuthService } from "../../core/services/auth.service";
 import { DataService } from "../../core/services/data.service";
-import { LeagueMatch } from "../../core/models";
-import { leagueMatchResult } from "../../core/utils/scoring";
+import { effectiveLineup, leagueMatchResult } from "../../core/utils/scoring";
+import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
+
+interface CalendarLineupTeamView {
+  teamName: string;
+  logoUrl: string;
+  points: number;
+  isCaptain: boolean;
+}
 
 interface CalendarMatchView extends LeagueMatch {
   homeTeamName: string;
@@ -16,6 +25,8 @@ interface CalendarMatchView extends LeagueMatch {
   awayPoints: number;
   homeGoals: number;
   awayGoals: number;
+  homeLineupTeams: CalendarLineupTeamView[];
+  awayLineupTeams: CalendarLineupTeamView[];
   isCurrentUserMatch: boolean;
   resultClass: "home-win" | "away-win" | "draw";
 }
@@ -36,7 +47,10 @@ interface CalendarRoundGroup {
 export class CalendarComponent {
   private auth = inject(AuthService);
   private data = inject(DataService);
+
   private hasAutoScrolledToNextOpenRound = false;
+
+  selectedMatch = signal<CalendarMatchView | null>(null);
 
   vm$ = combineLatest([
     this.auth.appUser$,
@@ -65,6 +79,8 @@ export class CalendarComponent {
         ).sort((a, b) => a - b);
 
         const groups: CalendarRoundGroup[] = rounds.map((round) => {
+          const isClosed = closedRounds.has(round);
+
           const matches = leagueMatches
             .filter((match) => Number(match.round) === round)
             .sort((a, b) => a.id.localeCompare(b.id))
@@ -84,6 +100,18 @@ export class CalendarComponent {
                 awayPoints: result.awayPoints,
                 homeGoals: result.homeGoals,
                 awayGoals: result.awayGoals,
+                homeLineupTeams: this.buildLineupTeams(
+                  match.homeUid,
+                  round,
+                  lineups,
+                  events,
+                ),
+                awayLineupTeams: this.buildLineupTeams(
+                  match.awayUid,
+                  round,
+                  lineups,
+                  events,
+                ),
                 isCurrentUserMatch:
                   match.homeUid === currentUser?.uid ||
                   match.awayUid === currentUser?.uid,
@@ -97,7 +125,7 @@ export class CalendarComponent {
           return {
             round,
             serieARound: round,
-            isClosed: closedRounds.has(round),
+            isClosed,
             matches,
           };
         });
@@ -125,6 +153,14 @@ export class CalendarComponent {
     }),
   );
 
+  openMatch(match: CalendarMatchView): void {
+    this.selectedMatch.set(match);
+  }
+
+  closeMatch(): void {
+    this.selectedMatch.set(null);
+  }
+
   roundTitle(round: number): string {
     return `${round}ª Giornata`;
   }
@@ -144,6 +180,41 @@ export class CalendarComponent {
       behavior: "smooth",
       block: "start",
     });
+  }
+
+  private buildLineupTeams(
+    uid: string,
+    round: number,
+    lineups: Lineup[],
+    events: TeamEvent[],
+  ): CalendarLineupTeamView[] {
+    const lineup = effectiveLineup(uid, round, lineups);
+
+    if (!lineup) {
+      return [];
+    }
+
+    return lineup.teams.map((teamName) => ({
+      teamName,
+      logoUrl: getSerieATeamLogo(teamName),
+      points: this.teamRoundPoints(teamName, round, events),
+      isCaptain: lineup.captainTeam === teamName,
+    }));
+  }
+
+  private teamRoundPoints(
+    teamName: string,
+    round: number,
+    events: TeamEvent[],
+  ): number {
+    return events
+      .filter(
+        (event) =>
+          event.scope !== "seasonal" &&
+          Number(event.round) === round &&
+          event.teamName === teamName,
+      )
+      .reduce((total, event) => total + event.points, 0);
   }
 
   private resultClass(

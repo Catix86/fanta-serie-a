@@ -268,3 +268,279 @@
         font-size: 9px;
     }
 }
+
+.calendar-match-card {
+    cursor: pointer;
+}
+
+.calendar-match-card:active {
+    transform: scale(.99);
+}
+
+/* MODAL DETTAGLIO INCONTRO */
+
+.match-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    padding: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: var(--bg-shadow);
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+}
+
+.match-modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+    overflow: auto;
+    display: grid;
+    gap: 14px;
+    background:
+        linear-gradient(135deg,
+            var(--grad-a),
+            var(--grad-b));
+    border: 1px solid var(--grad-a);
+}
+
+.match-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.match-modal-header h2 {
+    margin: 2px 0 0;
+    font-size: 23px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.match-modal-close {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--grad-a);
+}
+
+.match-modal-close .material-symbols-rounded {
+    font-size: 22px;
+}
+
+.match-modal-scoreboard {
+    padding: 12px;
+    border-radius: 22px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-shadow);
+    border: 1px solid var(--card);
+}
+
+.match-modal-side {
+    min-width: 0;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+.match-modal-side strong {
+    max-width: 100%;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.1;
+    font-weight: 1000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.match-modal-side span {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.match-modal-team-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: var(--primary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+}
+
+.match-modal-team-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.match-modal-team-logo .material-symbols-rounded {
+    font-size: 28px;
+}
+
+.match-modal-score {
+    min-width: 74px;
+    height: 52px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    background: var(--card);
+    border: 1px solid var(--border-accent);
+}
+
+.match-modal-score strong {
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 1000;
+    white-space: nowrap;
+}
+
+.match-lineups-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.match-lineup-column {
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 8px;
+}
+
+.match-lineup-column h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.1;
+    font-weight: 1000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty-lineup {
+    margin: 0;
+    font-size: 12px;
+}
+
+.match-lineup-team {
+    min-height: 52px;
+    padding: 8px;
+    border-radius: 16px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 7px;
+    background:
+        linear-gradient(135deg,
+            var(--grad-a),
+            var(--grad-b));
+    border: 1px solid var(--card);
+}
+
+.match-lineup-team-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    object-fit: contain;
+    padding: 4px;
+    background: var(--bg-card);
+}
+
+.match-lineup-team div {
+    min-width: 0;
+}
+
+.match-lineup-team strong {
+    display: block;
+    max-width: 100%;
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.1;
+    font-weight: 1000;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.captain-note {
+    display: block;
+    margin-top: 3px;
+    color: var(--accent);
+    font-size: 9px;
+    line-height: 1;
+    font-weight: 900;
+}
+
+.match-lineup-points {
+    min-width: 30px;
+    padding: 4px 6px;
+    border-radius: 999px;
+    text-align: center;
+    color: var(--muted);
+    background: var(--card);
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 1000;
+}
+
+.match-lineup-points.positive {
+    color: var(--success);
+    background: var(--bg-success);
+}
+
+.match-lineup-points.negative {
+    color: var(--danger);
+    background: var(--bg-danger);
+}
+
+.match-modal-note {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+@media (max-width: 380px) {
+    .match-lineups-grid {
+        gap: 8px;
+    }
+
+    .match-lineup-team {
+        padding: 7px;
+        gap: 6px;
+    }
+
+    .match-lineup-team-logo {
+        width: 30px;
+        height: 30px;
+    }
+
+    .match-lineup-team strong {
+        font-size: 10px;
+    }
+
+    .match-lineup-points {
+        min-width: 28px;
+        font-size: 10px;
+    }
+}

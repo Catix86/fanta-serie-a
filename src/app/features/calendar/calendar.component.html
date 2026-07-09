@@ -48,6 +48,7 @@
                 <article
                   class="calendar-match-card"
                   [class.current-user]="match.isCurrentUserMatch"
+                  (click)="openMatch(match)"
                 >
                   <div class="calendar-team home">
                     <div class="calendar-team-logo">
@@ -106,5 +107,152 @@
         }
       </section>
     }
+  }
+
+  <!-- DETAIL MATCH -->
+  @if (selectedMatch(); as match) {
+    <div class="match-modal-backdrop" (click)="closeMatch()">
+      <section class="card match-modal" (click)="$event.stopPropagation()">
+        <div class="match-modal-header">
+          <div>
+            <span class="muted"> Dettaglio incontro </span>
+
+            <h2>Giornata {{ match.round }}</h2>
+          </div>
+
+          <button
+            type="button"
+            class="match-modal-close"
+            aria-label="Chiudi"
+            (click)="closeMatch()"
+          >
+            <span class="material-symbols-rounded"> close </span>
+          </button>
+        </div>
+
+        <div class="match-modal-scoreboard">
+          <div class="match-modal-side">
+            <div class="match-modal-team-logo">
+              @if (match.homeLogoUrl) {
+                <img [src]="match.homeLogoUrl" [alt]="match.homeTeamName" />
+              } @else {
+                <span class="material-symbols-rounded"> shield </span>
+              }
+            </div>
+
+            <strong>
+              {{ match.homeTeamName }}
+            </strong>
+
+            <span> {{ match.homePoints }} pt </span>
+          </div>
+
+          <div class="match-modal-score">
+            <strong> {{ match.homeGoals }} - {{ match.awayGoals }} </strong>
+          </div>
+
+          <div class="match-modal-side">
+            <div class="match-modal-team-logo">
+              @if (match.awayLogoUrl) {
+                <img [src]="match.awayLogoUrl" [alt]="match.awayTeamName" />
+              } @else {
+                <span class="material-symbols-rounded"> shield </span>
+              }
+            </div>
+
+            <strong>
+              {{ match.awayTeamName }}
+            </strong>
+
+            <span> {{ match.awayPoints }} pt </span>
+          </div>
+        </div>
+
+        <div class="match-lineups-grid">
+          <section class="match-lineup-column">
+            <h3>
+              {{ match.homeTeamName }}
+            </h3>
+
+            @if (match.homeLineupTeams.length === 0) {
+              <p class="muted empty-lineup">Formazione non disponibile.</p>
+            }
+
+            @for (team of match.homeLineupTeams; track team.teamName) {
+              <article class="match-lineup-team">
+                <img
+                  class="match-lineup-team-logo"
+                  [src]="team.logoUrl"
+                  [alt]="team.teamName"
+                  loading="lazy"
+                />
+
+                <div>
+                  <strong>
+                    {{ team.teamName }}
+                  </strong>
+
+                  @if (team.isCaptain) {
+                    <span class="captain-note">Capitano</span>
+                  }
+                </div>
+
+                <span
+                  class="match-lineup-points"
+                  [class.positive]="team.points > 0"
+                  [class.negative]="team.points < 0"
+                >
+                  {{ team.points > 0 ? "+" : "" }}{{ team.points }}
+                </span>
+              </article>
+            }
+          </section>
+
+          <section class="match-lineup-column">
+            <h3>
+              {{ match.awayTeamName }}
+            </h3>
+
+            @if (match.awayLineupTeams.length === 0) {
+              <p class="muted empty-lineup">Formazione non disponibile.</p>
+            }
+
+            @for (team of match.awayLineupTeams; track team.teamName) {
+              <article class="match-lineup-team">
+                <img
+                  class="match-lineup-team-logo"
+                  [src]="team.logoUrl"
+                  [alt]="team.teamName"
+                  loading="lazy"
+                />
+
+                <div>
+                  <strong>
+                    {{ team.teamName }}
+                  </strong>
+
+                  @if (team.isCaptain) {
+                    <span class="captain-note"> Capitano fantasy </span>
+                  }
+                </div>
+
+                <span
+                  class="match-lineup-points"
+                  [class.positive]="team.points > 0"
+                  [class.negative]="team.points < 0"
+                >
+                  {{ team.points > 0 ? "+" : "" }}{{ team.points }}
+                </span>
+              </article>
+            }
+          </section>
+        </div>
+
+        <p class="muted match-modal-note">
+          Nota: per gli incontri diretti il capitano non raddoppia. Il capitano
+          raddoppia solo nella classifica fantasy.
+        </p>
+      </section>
+    </div>
   }
 </main>
