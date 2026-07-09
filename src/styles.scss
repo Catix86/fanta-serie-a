@@ -291,6 +291,11 @@ button {
     }
 }
 
+.card-button {
+    width: calc(100% - 20px);
+    margin: 0 10px 12px;
+}
+
 .action-button:disabled {
     opacity: .44;
     cursor: not-allowed;

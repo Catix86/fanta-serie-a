@@ -13,7 +13,26 @@ import {
   standings,
   toDate,
   teamPrice,
+  leagueMatchResult,
+  AppUser,
+  LeagueMatch,
+  Lineup,
+  TeamEvent,
 } from "../../core";
+
+interface HomeLeagueMatchView {
+  round: number;
+  homeTeamName: string;
+  awayTeamName: string;
+  homeLogoUrl: string;
+  awayLogoUrl: string;
+  homeGoals: number;
+  awayGoals: number;
+  homePoints: number;
+  awayPoints: number;
+  isCurrentUserHome: boolean;
+  isClosed: boolean;
+}
 
 @Component({
   standalone: true,
@@ -84,11 +103,13 @@ export class HomeComponent {
         const myLeagueStanding =
           myLeagueIndex >= 0 ? leagueTable[myLeagueIndex] : undefined;
 
-        const closedRounds = new Set(
-          roundSettings
-            .filter((setting) => setting.status === "closed")
-            .map((setting) => Number(setting.round)),
-        );
+        const closedRoundNumbers = roundSettings
+          .filter((setting) => setting.status === "closed")
+          .map((setting) => Number(setting.round))
+          .filter((round) => Number.isFinite(round))
+          .sort((a, b) => a - b);
+
+        const closedRounds = new Set(closedRoundNumbers);
 
         const availableRounds = Array.from(
           new Set(
@@ -97,6 +118,11 @@ export class HomeComponent {
               .filter((round) => Number.isFinite(round)),
           ),
         ).sort((a, b) => a - b);
+
+        const previousRound =
+          closedRoundNumbers.length > 0
+            ? closedRoundNumbers[closedRoundNumbers.length - 1]
+            : null;
 
         const nextRound =
           availableRounds.find((round) => !closedRounds.has(round)) ?? null;
@@ -110,35 +136,48 @@ export class HomeComponent {
             (lineup) => lineup.uid === me?.uid && lineup.round === nextRound,
           );
 
-        const closedRoundNumbers = roundSettings
-          .filter((setting) => setting.status === "closed")
-          .map((setting) => Number(setting.round))
-          .filter((round) => Number.isFinite(round))
-          .sort((a, b) => a - b);
+        const usersMap = new Map(users.map((user) => [user.uid, user]));
 
-        const lastClosedRound =
-          closedRoundNumbers.length > 0
-            ? closedRoundNumbers[closedRoundNumbers.length - 1]
-            : 0;
+        const previousLeagueMatch =
+          me && previousRound
+            ? this.buildUserMatchView(
+                me.uid,
+                previousRound,
+                usersMap,
+                leagueMatches,
+                lineups,
+                events,
+                true,
+              )
+            : null;
 
-        const lastRoundFixtures = fixtures
-          .filter((fixture) => Number(fixture.round) === lastClosedRound)
-          .sort(
-            (a, b) =>
-              toDate(a.kickoffAt).getTime() - toDate(b.kickoffAt).getTime(),
-          );
+        const nextLeagueMatch =
+          me && nextRound
+            ? this.buildUserMatchView(
+                me.uid,
+                nextRound,
+                usersMap,
+                leagueMatches,
+                lineups,
+                events,
+                false,
+              )
+            : null;
 
         return {
           me,
           myFantasyStanding,
           myLeagueStanding,
           fantasyPosition: myFantasyStanding?.position ?? null,
+          fantasyPoints: myFantasyStanding?.fantasyPoints ?? 0,
           leaguePosition: myLeagueIndex >= 0 ? myLeagueIndex + 1 : null,
+          leaguePoints: myLeagueStanding?.leaguePoints ?? 0,
+          previousRound,
           nextRound,
           deadline,
           hasLineup,
-          lastClosedRound,
-          lastRoundFixtures,
+          previousLeagueMatch,
+          nextLeagueMatch,
         };
       },
     ),
@@ -183,8 +222,51 @@ export class HomeComponent {
     };
   }
 
+  private buildUserMatchView(
+    uid: string,
+    round: number,
+    usersMap: Map<string, AppUser>,
+    leagueMatches: LeagueMatch[],
+    lineups: Lineup[],
+    events: TeamEvent[],
+    isClosed: boolean,
+  ): HomeLeagueMatchView | null {
+    const match = leagueMatches.find(
+      (item) =>
+        Number(item.round) === round &&
+        (item.homeUid === uid || item.awayUid === uid),
+    );
+
+    if (!match) {
+      return null;
+    }
+
+    const homeUser = usersMap.get(match.homeUid);
+    const awayUser = usersMap.get(match.awayUid);
+
+    const result = leagueMatchResult(match, lineups, events);
+
+    return {
+      round,
+      homeTeamName: homeUser?.teamName || "Utente",
+      awayTeamName: awayUser?.teamName || "Utente",
+      homeLogoUrl: homeUser?.teamLogoUrl || "",
+      awayLogoUrl: awayUser?.teamLogoUrl || "",
+      homeGoals: result.homeGoals,
+      awayGoals: result.awayGoals,
+      homePoints: result.homePoints,
+      awayPoints: result.awayPoints,
+      isCurrentUserHome: match.homeUid === uid,
+      isClosed,
+    };
+  }
+
   goToLineup(): void {
     this.router.navigateByUrl("/formazione");
+  }
+
+  goToCalendar(): void {
+    this.router.navigateByUrl("/calendario");
   }
 
   async logout(): Promise<void> {

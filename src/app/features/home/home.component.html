@@ -8,102 +8,209 @@
       />
 
       <!-- CLASSIFICHE -->
-      <section class="home-ranking-summary">
-        <article class="home-ranking-card fantasy">
-          <div>
-            <span>Classifica fantasy</span>
+      <section class="home-ranking-strip">
+        <article>
+          <strong>
+            @if (vm.leaguePosition) {
+              {{ vm.leaguePosition }}ª
+            } @else {
+              -
+            }
+          </strong>
 
-            <strong> {{ vm.myFantasyStanding?.fantasyPoints || 0 }} pt </strong>
-
-            <p>
-              @if (vm.fantasyPosition) {
-                #{{ vm.fantasyPosition }} posizione
-              } @else {
-                Posizione non disponibile
-              }
-            </p>
-          </div>
+          <span>Pos. incontri</span>
         </article>
 
-        <article class="home-ranking-card league">
-          <div>
-            <span>Classifica incontri</span>
+        <article>
+          <strong>{{ vm.leaguePoints }}</strong>
+          <span>Pt. incontri</span>
+        </article>
 
-            <strong> {{ vm.myLeagueStanding?.leaguePoints || 0 }} pt </strong>
+        <article>
+          <strong>
+            @if (vm.fantasyPosition) {
+              {{ vm.fantasyPosition }}ª
+            } @else {
+              -
+            }
+          </strong>
 
-            <p>
-              @if (vm.leaguePosition) {
-                #{{ vm.leaguePosition }} posizione
-              } @else {
-                Posizione non disponibile
-              }
-            </p>
-          </div>
+          <span>Pos. fantasy</span>
+        </article>
+
+        <article>
+          <strong>{{ vm.fantasyPoints }}</strong>
+          <span>Pt. fantasy</span>
         </article>
       </section>
 
-      <!-- PROSSIMA FORMAZIONE -->
-      <section class="card deadline-card">
-        <div class="deadline-header">
-          <div>
-            <span>Prossima scadenza formazione</span>
+      <!-- GIORNATA PRECEDENTE -->
+      <section class="card home-round-card">
+        <div class="home-round-card-header">
+          <strong>Giornata precedente</strong>
 
-            <h2>
-              @if (vm.nextRound) {
-                Giornata {{ vm.nextRound }}
-              } @else {
-                Nessuna giornata
-              }
-            </h2>
-          </div>
-
-          <span class="material-symbols-rounded deadline-icon">
-            hourglass_top
-          </span>
+          @if (vm.previousRound) {
+            <span>
+              {{ vm.previousRound }}ª di Lega · {{ vm.previousRound }}ª di Serie
+              A
+            </span>
+          }
         </div>
 
-        @if (vm.deadline) {
-          @let timer = countdown(vm.deadline);
+        @if (vm.previousLeagueMatch) {
+          <div class="home-match-row">
+            <div class="home-match-team">
+              <div class="home-match-logo">
+                @if (vm.previousLeagueMatch.homeLogoUrl) {
+                  <img
+                    [src]="vm.previousLeagueMatch.homeLogoUrl"
+                    [alt]="vm.previousLeagueMatch.homeTeamName"
+                  />
+                } @else {
+                  <span class="material-symbols-rounded">shield</span>
+                }
+              </div>
 
-          <div class="countdown-grid">
-            <div>
-              <strong>{{ timer.days }}</strong>
-              <span>giorni</span>
+              <strong>
+                {{ vm.previousLeagueMatch.homeTeamName }}
+              </strong>
             </div>
 
-            <div>
-              <strong>{{ timer.hours }}</strong>
-              <span>ore</span>
+            <div class="home-match-score">
+              <strong>
+                {{ vm.previousLeagueMatch.homeGoals }}
+                -
+                {{ vm.previousLeagueMatch.awayGoals }}
+              </strong>
+
+              <span>
+                {{ vm.previousLeagueMatch.homePoints }}
+                ·
+                {{ vm.previousLeagueMatch.awayPoints }}
+              </span>
             </div>
 
-            <div>
-              <strong>{{ timer.minutes }}</strong>
-              <span>min</span>
-            </div>
+            <div class="home-match-team">
+              <div class="home-match-logo">
+                @if (vm.previousLeagueMatch.awayLogoUrl) {
+                  <img
+                    [src]="vm.previousLeagueMatch.awayLogoUrl"
+                    [alt]="vm.previousLeagueMatch.awayTeamName"
+                  />
+                } @else {
+                  <span class="material-symbols-rounded">shield</span>
+                }
+              </div>
 
-            <div>
-              <strong>{{ timer.seconds }}</strong>
-              <span>sec</span>
+              <strong>
+                {{ vm.previousLeagueMatch.awayTeamName }}
+              </strong>
             </div>
           </div>
+        } @else {
+          <p class="muted home-empty-text">
+            Nessun incontro disponibile per la giornata precedente.
+          </p>
+        }
 
+        <button
+          type="button"
+          class="btn action-button primary card-button"
+          (click)="goToCalendar()"
+        >
+          <span class="material-symbols-rounded">calendar_month</span>
+          Vedi giornata
+        </button>
+      </section>
+
+      <!-- GIORNATA CORRENTE / SUCCESSIVA -->
+      <section class="card home-round-card current">
+        <div class="home-round-card-header">
+          <strong>
+            @if (vm.nextRound) {
+              Giornata corrente
+            } @else {
+              Prossima giornata
+            }
+          </strong>
+
+          @if (vm.nextRound) {
+            <span>
+              {{ vm.nextRound }}ª di Lega · {{ vm.nextRound }}ª di Serie A
+            </span>
+          }
+        </div>
+
+        @if (vm.nextLeagueMatch) {
+          <div class="home-match-row">
+            <div class="home-match-team">
+              <div class="home-match-logo">
+                @if (vm.nextLeagueMatch.homeLogoUrl) {
+                  <img
+                    [src]="vm.nextLeagueMatch.homeLogoUrl"
+                    [alt]="vm.nextLeagueMatch.homeTeamName"
+                  />
+                } @else {
+                  <span class="material-symbols-rounded">shield</span>
+                }
+              </div>
+
+              <strong>
+                {{ vm.nextLeagueMatch.homeTeamName }}
+              </strong>
+            </div>
+
+            <div class="home-match-score upcoming">
+              <strong>VS</strong>
+
+              @if (vm.deadline) {
+                @let timer = countdown(vm.deadline);
+
+                <span>
+                  {{ timer.days }}g {{ timer.hours }}h {{ timer.minutes }}m
+                </span>
+              } @else {
+                <span>Da giocare</span>
+              }
+            </div>
+
+            <div class="home-match-team">
+              <div class="home-match-logo">
+                @if (vm.nextLeagueMatch.awayLogoUrl) {
+                  <img
+                    [src]="vm.nextLeagueMatch.awayLogoUrl"
+                    [alt]="vm.nextLeagueMatch.awayTeamName"
+                  />
+                } @else {
+                  <span class="material-symbols-rounded">shield</span>
+                }
+              </div>
+
+              <strong>
+                {{ vm.nextLeagueMatch.awayTeamName }}
+              </strong>
+            </div>
+          </div>
+        } @else {
+          <p class="muted home-empty-text">
+            Nessun incontro generato per la prossima giornata.
+          </p>
+        }
+
+        @if (vm.nextRound) {
           <button
             type="button"
-            class="btn action-button primary"
+            class="btn action-button primary card-button"
             (click)="goToLineup()"
           >
-            <span class="material-symbols-rounded"> assignment </span>
+            <span class="material-symbols-rounded">assignment</span>
 
             @if (vm.hasLineup) {
-              Vedi formazione
+              Aggiorna formazione
             } @else {
               Imposta formazione
             }
           </button>
-        } @else {
-          <p class="muted no-deadline">
-            Non ci sono giornate future disponibili.
-          </p>
         }
       </section>
 
@@ -157,6 +264,7 @@
         </div>
       </section>
 
+      <!-- LOGOUT -->
       <button
         type="button"
         class="btn action-button danger"
