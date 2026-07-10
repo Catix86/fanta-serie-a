@@ -339,4 +339,69 @@
       }
     </div>
   </details>
+
+  <!-- MERCATO DI RIPARAZIONE -->
+  <details class="card admin-accordion">
+    <summary>
+      <div class="admin-accordion-summary-content">
+        <strong>Mercato di riparazione</strong>
+        <span class="muted">
+          Apri o chiudi una sessione mercato per tutti gli utenti
+        </span>
+      </div>
+
+      <span class="material-symbols-rounded admin-accordion-expand-icon">
+        expand_more
+      </span>
+    </summary>
+
+    <div class="admin-accordion-content">
+      @if (repairMarketSettings$ | async; as market) {
+        <div class="admin-market-status-card">
+          <div>
+            <span
+              class="admin-market-status"
+              [class.open]="market.isOpen"
+              [class.closed]="!market.isOpen"
+            >
+              @if (market.isOpen) {
+                Mercato Aperto
+              } @else {
+                Mercato Chiuso
+              }
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="btn action-button"
+            [class.success]="!market.isOpen"
+            [class.danger]="market.isOpen"
+            [disabled]="updatingRepairMarket()"
+            (click)="toggleRepairMarket(market)"
+          >
+            @if (market.isOpen) {
+              <span class="material-symbols-rounded">lock</span>
+            } @else {
+              <span class="material-symbols-rounded">lock_open_right</span>
+            }
+            @if (updatingRepairMarket()) {
+              Aggiornamento...
+            } @else {
+              @if (market.isOpen) {
+                Chiudi mercato
+              } @else {
+                Apri Mercato
+              }
+            }
+          </button>
+        </div>
+
+        <p class="muted admin-market-help">
+          Ogni nuova apertura crea una nuova sessione. In ogni sessione ogni
+          utente può effettuare al massimo 4 cambi.
+        </p>
+      }
+    </div>
+  </details>
 </main>

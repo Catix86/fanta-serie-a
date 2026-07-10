@@ -7,23 +7,28 @@ import {
   addDoc,
   collection,
   collectionData,
-  deleteField,
   doc,
+  docData,
+  getDoc,
   getDocs,
   serverTimestamp,
   setDoc,
+  updateDoc,
   writeBatch,
 } from "@angular/fire/firestore";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import {
   AppUser,
   Fixture,
   LeagueMatch,
   Lineup,
+  RepairMarketChange,
+  RepairMarketSettings,
   RoundSetting,
   TeamEvent,
 } from "../models";
 import { ruleById } from "../constants/bonus-rules";
+import { INITIAL_BUDGET, rosterCost } from "../constants/serie-a-teams";
 import { SERIE_A_2026_27_SEED } from "../seed/serie-a-2026-27.seed";
 
 export interface FixtureImportRow {
@@ -365,5 +370,117 @@ export class DataService {
       },
       { merge: true },
     );
+  }
+
+  repairMarketSettings$(): Observable<RepairMarketSettings> {
+    return docData(doc(this.db, "settings/repairMarket"), {
+      idField: "id",
+    }).pipe(
+      map((settings) => {
+        const data = settings as Partial<RepairMarketSettings> | undefined;
+
+        return {
+          id: "repairMarket",
+          isOpen: data?.isOpen ?? false,
+          sessionId: data?.sessionId ?? "",
+          openedAt: data?.openedAt,
+          closedAt: data?.closedAt,
+          updatedAt: data?.updatedAt,
+        };
+      }),
+    );
+  }
+
+  repairMarketChanges$(): Observable<RepairMarketChange[]> {
+    return collectionData(collection(this.db, "repairMarketChanges"), {
+      idField: "id",
+    }) as Observable<RepairMarketChange[]>;
+  }
+
+  async openRepairMarket(): Promise<void> {
+    const sessionId = `repair-${Date.now()}`;
+
+    await setDoc(
+      doc(this.db, "settings/repairMarket"),
+      {
+        isOpen: true,
+        sessionId,
+        openedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+  }
+
+  async closeRepairMarket(): Promise<void> {
+    await setDoc(
+      doc(this.db, "settings/repairMarket"),
+      {
+        isOpen: false,
+        closedAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+  }
+
+  async saveRepairMarketRoster(
+    uid: string,
+    currentRoster: string[],
+    newRoster: string[],
+    sessionId: string,
+  ): Promise<void> {
+    if (!sessionId) {
+      throw new Error("SESSIONE_MERCATO_NON_VALIDA");
+    }
+
+    if (newRoster.length !== 10) {
+      throw new Error("ROSA_NON_VALIDA");
+    }
+
+    const newCost = rosterCost(newRoster);
+
+    if (newCost > INITIAL_BUDGET) {
+      throw new Error("BUDGET_SUPERATO");
+    }
+
+    const changeId = `${sessionId}_${uid}`;
+    const changeRef = doc(this.db, `repairMarketChanges/${changeId}`);
+    const changeSnapshot = await getDoc(changeRef);
+
+    const originalRoster = changeSnapshot.exists()
+      ? (changeSnapshot.data()["originalRoster"] as string[])
+      : currentRoster;
+
+    const changesUsed = originalRoster.filter(
+      (teamName) => !newRoster.includes(teamName),
+    ).length;
+
+    if (changesUsed > 4) {
+      throw new Error("LIMITE_CAMBI_SUPERATO");
+    }
+
+    const batch = writeBatch(this.db);
+
+    batch.update(doc(this.db, `users/${uid}`), {
+      roster: newRoster,
+      budgetUsed: newCost,
+      updatedAt: serverTimestamp(),
+    });
+
+    batch.set(
+      changeRef,
+      {
+        sessionId,
+        uid,
+        originalRoster,
+        currentRoster: newRoster,
+        changesUsed,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+
+    await batch.commit();
   }
 }

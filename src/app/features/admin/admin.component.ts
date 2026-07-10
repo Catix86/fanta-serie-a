@@ -3,11 +3,11 @@ import { AsyncPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DataService } from "../../core/services/data.service";
 import { BONUS_RULES } from "../../core/constants/bonus-rules";
-import { Fixture } from "../../core/models";
+import { Fixture, RepairMarketSettings } from "../../core/models";
 import { ToastService } from "../../core/services/toast.service";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import { SERIE_A_TEAMS } from "../../core/constants/serie-a-teams";
-import { combineLatest, map } from "rxjs";
+import { combineLatest, map, Observable } from "rxjs";
 
 @Component({
   standalone: true,
@@ -30,6 +30,10 @@ export class AdminComponent {
   eventScope: "match" | "seasonal" = "match";
   seasonalTeam = "";
   teamsList = SERIE_A_TEAMS.map((team) => team.name);
+
+  repairMarketSettings$: Observable<RepairMarketSettings> =
+    this.data.repairMarketSettings$();
+  updatingRepairMarket = signal(false);
 
   updatingRound = signal<number | null>(null);
 
@@ -292,5 +296,27 @@ export class AdminComponent {
 
   filteredMalusRules() {
     return this.filteredRules().filter((rule) => rule.category === "malus");
+  }
+
+  async toggleRepairMarket(settings: RepairMarketSettings): Promise<void> {
+    this.updatingRepairMarket.set(true);
+
+    try {
+      if (settings.isOpen) {
+        await this.data.closeRepairMarket();
+
+        this.toast.show("Mercato di riparazione chiuso.", "success", 3000);
+      } else {
+        await this.data.openRepairMarket();
+
+        this.toast.show("Mercato di riparazione aperto.", "success", 3000);
+      }
+    } catch (error) {
+      console.error("Errore mercato riparazione:", error);
+
+      this.toast.show("Operazione mercato non riuscita.", "error", 3000);
+    } finally {
+      this.updatingRepairMarket.set(false);
+    }
   }
 }

@@ -77,3 +77,22 @@ export interface RoundSetting {
   status: "open" | "closed";
   closedAt?: Timestamp;
 }
+
+export interface RepairMarketSettings {
+  id: string;
+  isOpen: boolean;
+  sessionId: string;
+  openedAt?: Timestamp;
+  closedAt?: Timestamp;
+  updatedAt?: Timestamp;
+}
+
+export interface RepairMarketChange {
+  id: string;
+  sessionId: string;
+  uid: string;
+  originalRoster: string[];
+  currentRoster: string[];
+  changesUsed: number;
+  updatedAt?: Timestamp;
+}

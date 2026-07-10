@@ -367,3 +367,51 @@
   margin: 8px 0 0;
   font-size: 12px;
 }
+
+.admin-market-status-card {
+  padding: 12px;
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  background:
+    linear-gradient(135deg,
+      var(--grad-a),
+      var(--grad-b));
+  border: 1px solid var(--border);
+}
+
+.admin-market-status-card strong {
+  display: block;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 1000;
+}
+
+.admin-market-status {
+  width: fit-content;
+  margin-top: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  display: block;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.admin-market-status.open {
+  color: var(--success);
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+}
+
+.admin-market-status.closed {
+  color: var(--danger);
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+}
+
+.admin-market-help {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+}

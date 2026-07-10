@@ -264,6 +264,17 @@
         </div>
       </section>
 
+      @if (vm.repairMarketSettings.isOpen) {
+        <button
+          type="button"
+          class="btn action-button primary"
+          (click)="openRepairMarketModal(user)"
+        >
+          <span class="material-symbols-rounded"> sync_alt </span>
+          Mercato riparazione
+        </button>
+      }
+
       <!-- LOGOUT -->
       <button
         type="button"
@@ -310,5 +321,114 @@
         </div>
       </section>
     </div>
+  }
+
+  <!-- MODALE RIPARAZIONE MERCATO -->
+  @if (repairMarketModalOpen()) {
+    @if (vm$ | async; as vm) {
+      @if (vm.me; as user) {
+        @let originalRoster =
+          vm.currentRepairMarketChange?.originalRoster || user.roster;
+
+        <div class="repair-market-backdrop" (click)="closeRepairMarketModal()">
+          <section
+            class="card repair-market-modal"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="repair-market-header">
+              <div>
+                <h2>Mercato di riparazione</h2>
+              </div>
+
+              <button
+                type="button"
+                class="repair-market-close"
+                (click)="closeRepairMarketModal()"
+              >
+                <span class="material-symbols-rounded"> close </span>
+              </button>
+            </div>
+
+            <section class="repair-market-summary">
+              <div>
+                <strong> {{ repairChangesUsed(originalRoster) }}/4 </strong>
+                <span>Cambi</span>
+              </div>
+
+              <div>
+                <strong> {{ repairRoster().length }}/10 </strong>
+                <span>Squadre</span>
+              </div>
+
+              <div
+                [class.border-over-budget]="repairRosterCost() > initialBudget"
+              >
+                <strong
+                  [class.over-budget]="repairRosterCost() > initialBudget"
+                >
+                  {{ repairRosterCost() }}/{{ initialBudget }}
+                </strong>
+                <span>FC usati</span>
+              </div>
+            </section>
+
+            <div class="repair-market-teams">
+              @for (team of marketTeams; track team.name) {
+                <button
+                  type="button"
+                  class="repair-team-card"
+                  [class.kept]="isKeptRepairTeam(team.name, originalRoster)"
+                  [class.removed]="
+                    isRemovedRepairTeam(team.name, originalRoster)
+                  "
+                  [class.added]="isAddedRepairTeam(team.name, originalRoster)"
+                  [class.disabled]="
+                    !isRepairTeamSelected(team.name) &&
+                    !isOriginalRepairTeam(team.name, originalRoster) &&
+                    repairRoster().length >= 10
+                  "
+                  (click)="toggleRepairTeam(team.name, originalRoster)"
+                >
+                  <img
+                    class="repair-team-logo"
+                    [src]="teamLogo(team.name)"
+                    [alt]="team.name"
+                  />
+
+                  <span>
+                    {{ team.name }}
+                  </span>
+
+                  <strong> {{ team.price }} FC </strong>
+                </button>
+              }
+            </div>
+
+            <button
+              type="button"
+              class="btn action-button primary"
+              [disabled]="
+                !canSaveRepairMarket(originalRoster) || repairMarketSaving()
+              "
+              (click)="
+                saveRepairMarket(
+                  user,
+                  vm.repairMarketSettings.sessionId,
+                  originalRoster
+                )
+              "
+            >
+              <span class="material-symbols-rounded"> save </span>
+
+              @if (repairMarketSaving()) {
+                Salvataggio...
+              } @else {
+                Salva cambi
+              }
+            </button>
+          </section>
+        </div>
+      }
+    }
   }
 </main>

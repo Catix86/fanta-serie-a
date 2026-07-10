@@ -577,3 +577,198 @@
     font-size: 11px;
   }
 }
+
+.repair-market-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  padding: 12px;
+  padding-top: calc(12px + env(safe-area-inset-top));
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--bg-shadow);
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+}
+
+.repair-market-modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100dvh - 24px - env(safe-area-inset-top));
+  overflow: auto;
+  display: grid;
+  gap: 14px;
+  background:
+    linear-gradient(135deg,
+      var(--grad-a),
+      var(--grad-b));
+  border: 1px solid var(--border);
+}
+
+.repair-market-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.repair-market-header h2 {
+  margin: 2px 0 0;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.repair-market-close {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.repair-market-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.repair-market-summary>div {
+  padding: 10px 6px;
+  border-radius: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.repair-market-summary strong {
+  color: var(--primary);
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.over-budget {
+  color: var(--danger) !important;
+}
+
+.border-over-budget {
+  border: 1px solid var(--danger) !important;
+}
+
+.repair-market-summary span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.repair-market-teams {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.repair-team-card {
+  min-height: 64px;
+  padding: 9px;
+  border-radius: 18px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "logo name"
+    "price price";
+  align-items: center;
+  gap: 7px 9px;
+  color: var(--text);
+  background:
+    linear-gradient(135deg,
+      var(--grad-a),
+      var(--grad-b));
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.repair-team-card.kept {
+  border-color: var(--border-primary);
+  background:
+    linear-gradient(135deg,
+      var(--grad-a-primary),
+      var(--grad-b-primary));
+}
+
+.repair-team-card.removed {
+  border-color: var(--border-danger);
+  background:
+    linear-gradient(135deg,
+      rgba(251, 113, 133, .22),
+      rgba(251, 113, 133, .06));
+}
+
+.repair-team-card.added {
+  border-color: var(--border-success);
+  background:
+    linear-gradient(135deg,
+      var(--grad-a-success),
+      var(--grad-b-success));
+}
+
+.repair-team-card.disabled {
+  opacity: .42;
+  cursor: not-allowed;
+}
+
+.repair-team-card.removed.disabled {
+  opacity: .75;
+}
+
+.repair-team-logo {
+  grid-area: logo;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  object-fit: contain;
+  padding: 4px;
+  background: var(--bg-card);
+}
+
+.repair-team-card span {
+  grid-area: name;
+  min-width: 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 1000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repair-team-card strong {
+  grid-area: price;
+  justify-self: end;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.repair-team-card.kept .repair-team-logo {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.repair-team-card.removed .repair-team-logo {
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+}
+
+.repair-team-card.added .repair-team-logo {
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+}

@@ -1,7 +1,7 @@
 import { AsyncPipe } from "@angular/common";
 import { Component, DestroyRef, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { interval, combineLatest, map } from "rxjs";
+import { interval, combineLatest, map, Observable } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import {
@@ -18,6 +18,10 @@ import {
   LeagueMatch,
   Lineup,
   TeamEvent,
+  RepairMarketSettings,
+  ToastService,
+  INITIAL_BUDGET,
+  SERIE_A_TEAMS,
 } from "../../core";
 
 interface HomeLeagueMatchView {
@@ -43,11 +47,23 @@ interface HomeLeagueMatchView {
 export class HomeComponent {
   private auth = inject(AuthService);
   private data = inject(DataService);
+  private toast = inject(ToastService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   logoutConfirmOpen = signal(false);
 
+  repairMarketModalOpen = signal(false);
+  repairMarketSaving = signal(false);
+  repairRoster = signal<string[]>([]);
+
+  repairMarketSettings$: Observable<RepairMarketSettings> =
+    this.data.repairMarketSettings$();
+  updatingRepairMarket = signal(false);
+
   now = signal(Date.now());
+
+  marketTeams = SERIE_A_TEAMS;
+  initialBudget = INITIAL_BUDGET;
 
   vm$ = combineLatest([
     this.auth.appUser$,
@@ -57,6 +73,8 @@ export class HomeComponent {
     this.data.events$(),
     this.data.leagueMatches$(),
     this.data.roundSettings$(),
+    this.data.repairMarketSettings$(),
+    this.data.repairMarketChanges$(),
   ]).pipe(
     map(
       ([
@@ -67,6 +85,8 @@ export class HomeComponent {
         events,
         leagueMatches,
         roundSettings,
+        repairMarketSettings,
+        repairMarketChanges,
       ]) => {
         const fantasyTable = standings(
           users,
@@ -164,6 +184,15 @@ export class HomeComponent {
               )
             : null;
 
+        const currentRepairMarketChange =
+          me && repairMarketSettings.sessionId
+            ? (repairMarketChanges.find(
+                (change) =>
+                  change.uid === me.uid &&
+                  change.sessionId === repairMarketSettings.sessionId,
+              ) ?? null)
+            : null;
+
         return {
           me,
           myFantasyStanding,
@@ -178,6 +207,8 @@ export class HomeComponent {
           hasLineup,
           previousLeagueMatch,
           nextLeagueMatch,
+          repairMarketSettings,
+          currentRepairMarketChange,
         };
       },
     ),
@@ -305,5 +336,147 @@ export class HomeComponent {
   async confirmLogout(): Promise<void> {
     this.logoutConfirmOpen.set(false);
     await this.logout();
+  }
+
+  async toggleRepairMarket(settings: RepairMarketSettings): Promise<void> {
+    this.updatingRepairMarket.set(true);
+
+    try {
+      if (settings.isOpen) {
+        await this.data.closeRepairMarket();
+
+        this.toast.show("Mercato di riparazione chiuso.", "success", 3000);
+      } else {
+        await this.data.openRepairMarket();
+
+        this.toast.show("Mercato di riparazione aperto.", "success", 3000);
+      }
+    } catch (error) {
+      console.error("Errore mercato riparazione:", error);
+
+      this.toast.show("Operazione mercato non riuscita.", "error", 3000);
+    } finally {
+      this.updatingRepairMarket.set(false);
+    }
+  }
+
+  openRepairMarketModal(user: AppUser): void {
+    this.repairRoster.set([...user.roster]);
+    this.repairMarketModalOpen.set(true);
+  }
+
+  closeRepairMarketModal(): void {
+    this.repairMarketModalOpen.set(false);
+  }
+
+  isRepairTeamSelected(teamName: string): boolean {
+    return this.repairRoster().includes(teamName);
+  }
+
+  repairRosterCost(): number {
+    return rosterCost(this.repairRoster());
+  }
+
+  repairChangesUsed(originalRoster: string[]): number {
+    return originalRoster.filter(
+      (teamName) => !this.repairRoster().includes(teamName),
+    ).length;
+  }
+  
+  toggleRepairTeam(teamName: string, originalRoster: string[]): void {
+    const currentRoster = this.repairRoster();
+    const isSelected = currentRoster.includes(teamName);
+    const isOriginal = originalRoster.includes(teamName);
+
+    if (isSelected) {
+      const candidateRoster = currentRoster.filter((team) => team !== teamName);
+
+      const changesUsed = originalRoster.filter(
+        (team) => !candidateRoster.includes(team),
+      ).length;
+
+      if (changesUsed > 4) {
+        this.toast.show(
+          "Hai già raggiunto il limite massimo di 4 cambi.",
+          "error",
+          3000,
+        );
+
+        return;
+      }
+
+      this.repairRoster.set(candidateRoster);
+      return;
+    }
+
+    if (!isSelected && !isOriginal && currentRoster.length >= 10) {
+      this.toast.show(
+        "Devi prima rimuovere una squadra dalla tua rosa.",
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    this.repairRoster.set([...currentRoster, teamName]);
+  }
+
+  canSaveRepairMarket(originalRoster: string[]): boolean {
+    return (
+      this.repairRoster().length === 10 &&
+      this.repairRosterCost() <= 100 &&
+      this.repairChangesUsed(originalRoster) <= 4
+    );
+  }
+
+  async saveRepairMarket(
+    user: AppUser,
+    sessionId: string,
+    originalRoster: string[],
+  ): Promise<void> {
+    if (!this.canSaveRepairMarket(originalRoster)) {
+      return;
+    }
+
+    this.repairMarketSaving.set(true);
+
+    try {
+      await this.data.saveRepairMarketRoster(
+        user.uid,
+        user.roster,
+        this.repairRoster(),
+        sessionId,
+      );
+
+      this.closeRepairMarketModal();
+    } finally {
+      this.repairMarketSaving.set(false);
+    }
+  }
+
+  isOriginalRepairTeam(teamName: string, originalRoster: string[]): boolean {
+    return originalRoster.includes(teamName);
+  }
+
+  isKeptRepairTeam(teamName: string, originalRoster: string[]): boolean {
+    return (
+      this.isOriginalRepairTeam(teamName, originalRoster) &&
+      this.isRepairTeamSelected(teamName)
+    );
+  }
+
+  isRemovedRepairTeam(teamName: string, originalRoster: string[]): boolean {
+    return (
+      this.isOriginalRepairTeam(teamName, originalRoster) &&
+      !this.isRepairTeamSelected(teamName)
+    );
+  }
+
+  isAddedRepairTeam(teamName: string, originalRoster: string[]): boolean {
+    return (
+      !this.isOriginalRepairTeam(teamName, originalRoster) &&
+      this.isRepairTeamSelected(teamName)
+    );
   }
 }
