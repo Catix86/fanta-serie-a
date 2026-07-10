@@ -65,10 +65,21 @@ export class LineupComponent {
           )
         : undefined;
 
+      const roster = me?.roster || [];
+
       if (existingLineup && this.selected.length === 0) {
-        this.selected = existingLineup.teams;
-        this.captain = existingLineup.captainTeam;
+        const validSelectedTeams = existingLineup.teams.filter((teamName) =>
+          roster.includes(teamName),
+        );
+
+        this.selected = validSelectedTeams;
+
+        this.captain = validSelectedTeams.includes(existingLineup.captainTeam)
+          ? existingLineup.captainTeam
+          : "";
       }
+
+      this.normalizeSelectedTeamsForRoster(roster);
 
       return {
         me,
@@ -184,9 +195,13 @@ export class LineupComponent {
     return `${days}g ${hours}h ${minutes}m ${seconds}s`;
   }
 
-  canSave(locked: boolean): boolean {
+  canSave(locked: boolean, roster: string[] = []): boolean {
     return (
-      !locked && this.selected.length === this.size && Boolean(this.captain)
+      !locked &&
+      this.selected.length === this.size &&
+      this.selected.every((teamName) => roster.includes(teamName)) &&
+      Boolean(this.captain) &&
+      this.selected.includes(this.captain)
     );
   }
 
@@ -212,6 +227,20 @@ export class LineupComponent {
       this.toast.show("Formazione non salvata.", "error", 3000);
     } finally {
       this.saving.set(false);
+    }
+  }
+
+  private normalizeSelectedTeamsForRoster(roster: string[]): void {
+    const validSelectedTeams = this.selected.filter((teamName) =>
+      roster.includes(teamName),
+    );
+
+    if (validSelectedTeams.length !== this.selected.length) {
+      this.selected = validSelectedTeams;
+    }
+
+    if (this.captain && !validSelectedTeams.includes(this.captain)) {
+      this.captain = "";
     }
   }
 }

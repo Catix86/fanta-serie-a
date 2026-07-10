@@ -55,7 +55,7 @@
         <button
           type="button"
           class="btn action-button primary"
-          [disabled]="!canSave(vm.locked) || saving()"
+          [disabled]="!canSave(vm.locked, vm.me?.roster || []) || saving()"
           (click)="save(vm.round)"
         >
           <span class="material-symbols-rounded"> save </span>

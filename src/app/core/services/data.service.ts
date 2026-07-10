@@ -11,9 +11,10 @@ import {
   docData,
   getDoc,
   getDocs,
+  query,
   serverTimestamp,
   setDoc,
-  updateDoc,
+  where,
   writeBatch,
 } from "@angular/fire/firestore";
 import { map, Observable } from "rxjs";
@@ -482,5 +483,72 @@ export class DataService {
     );
 
     await batch.commit();
+    await this.sanitizeOpenLineupsAfterRosterChange(uid, newRoster);
+  }
+
+  private async sanitizeOpenLineupsAfterRosterChange(
+    uid: string,
+    newRoster: string[],
+  ): Promise<void> {
+    const lineupsSnapshot = await getDocs(
+      query(collection(this.db, "lineups"), where("uid", "==", uid)),
+    );
+
+    const roundSettingsSnapshot = await getDocs(
+      collection(this.db, "roundSettings"),
+    );
+
+    const closedRounds = new Set(
+      roundSettingsSnapshot.docs
+        .filter((document) => document.data()["status"] === "closed")
+        .map((document) => Number(document.data()["round"])),
+    );
+
+    let batch = writeBatch(this.db);
+    let operations = 0;
+
+    for (const lineupDocument of lineupsSnapshot.docs) {
+      const lineup = lineupDocument.data() as Lineup;
+      const round = Number(lineup.round);
+
+      if (closedRounds.has(round)) {
+        continue;
+      }
+
+      const sanitizedTeams = lineup.teams.filter((teamName) =>
+        newRoster.includes(teamName),
+      );
+
+      const sanitizedCaptain = sanitizedTeams.includes(lineup.captainTeam)
+        ? lineup.captainTeam
+        : "";
+
+      const shouldUpdate =
+        sanitizedTeams.length !== lineup.teams.length ||
+        sanitizedCaptain !== lineup.captainTeam;
+
+      if (!shouldUpdate) {
+        continue;
+      }
+
+      batch.update(lineupDocument.ref, {
+        teams: sanitizedTeams,
+        captainTeam: sanitizedCaptain,
+        updatedAt: serverTimestamp(),
+      });
+
+      operations += 1;
+
+      if (operations === 450) {
+        await batch.commit();
+
+        batch = writeBatch(this.db);
+        operations = 0;
+      }
+    }
+
+    if (operations > 0) {
+      await batch.commit();
+    }
   }
 }
