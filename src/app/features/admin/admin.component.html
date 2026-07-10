@@ -5,12 +5,14 @@
     subtitle="Gestione calendario, risultati e bonus/malus"
   />
 
-  <!-- IMPORT CALENDARIO CSV -->
+  <!-- GESTIONE GIORNATE -->
   <details class="card admin-accordion">
     <summary>
       <div class="admin-accordion-summary-content">
-        <strong>Import calendario Serie A</strong>
-        <span class="muted">Importa o aggiorna le partite da CSV</span>
+        <strong>Gestione giornate</strong>
+        <span class="muted">
+          Chiudi o riapri le giornate valide per le classifiche
+        </span>
       </div>
 
       <span class="material-symbols-rounded admin-accordion-expand-icon">
@@ -19,31 +21,65 @@
     </summary>
 
     <div class="admin-accordion-content">
-      <p class="muted">
-        Incolla un CSV con colonne:
-        <strong>id, round, homeTeam, awayTeam, kickoffAtIso</strong>
-      </p>
-
-      <textarea
-        class="input calendar-import-textarea"
-        rows="10"
-        [(ngModel)]="calendarCsv"
-        placeholder="id,round,homeTeam,awayTeam,kickoffAtIso"
-      ></textarea>
-
-      <button
-        type="button"
-        class="btn action-button primary"
-        [disabled]="importingCalendar()"
-        (click)="importCalendarCsv()"
-      >
-        <span class="material-symbols-rounded">calendar_month</span>
-        @if (importingCalendar()) {
-          Import in corso...
-        } @else {
-          Importa calendario
+      @if (roundsVm$ | async; as rounds) {
+        @if (rounds.length === 0) {
+          <p class="muted">
+            Nessuna giornata disponibile. Importa prima il calendario Serie A.
+          </p>
         }
-      </button>
+
+        <div class="admin-rounds-list">
+          @for (round of rounds; track round.round) {
+            <article class="admin-round-card">
+              <div class="admin-round-info">
+                <strong> Giornata {{ round.round }} </strong>
+
+                <span
+                  class="admin-round-status"
+                  [class.closed]="round.status === 'closed'"
+                  [class.open]="round.status === 'open'"
+                >
+                  @if (round.status === "closed") {
+                    Chiusa
+                  } @else {
+                    Aperta
+                  }
+                </span>
+              </div>
+
+              <div class="admin-round-actions">
+                @if (round.status === "closed") {
+                  <button
+                    type="button"
+                    class="btn action-button mini success"
+                    [disabled]="updatingRound() === round.round"
+                    (click)="reopenRound(round.round)"
+                  >
+                    @if (updatingRound() === round.round) {
+                      Riapertura...
+                    } @else {
+                      Riapri
+                    }
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn action-button mini danger"
+                    [disabled]="updatingRound() === round.round"
+                    (click)="closeRound(round.round)"
+                  >
+                    @if (updatingRound() === round.round) {
+                      Chiusura...
+                    } @else {
+                      Chiudi
+                    }
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      }
     </div>
   </details>
 
@@ -221,26 +257,52 @@
     </div>
   </details>
 
-  <!-- CALENDARIO INCONTRI -->
-  <details class="card admin-accordion">
-    <summary>
-      <div class="admin-accordion-summary-content">
-        <strong>Calendario incontri</strong>
-        <span class="muted">Genera gli scontri tra utenti per giornata</span>
-      </div>
-
-      <span class="material-symbols-rounded admin-accordion-expand-icon">
-        expand_more
+  <!-- IMPORT CALENDARIO CSV -->
+  <section class="card admin-accordion">
+    <div class="admin-accordion-summary-content">
+      <strong>Import calendario Serie A</strong>
+      <span class="muted">
+        Importa o aggiorna le partite da CSV incollando il testo di un CSV con
+        relative colonne
       </span>
-    </summary>
+    </div>
 
     <div class="admin-accordion-content">
-      <p class="muted">
-        Il calendario viene generato usando le giornate Serie A attualmente
-        presenti. Se aggiungi nuove giornate in futuro, premi di nuovo questo
-        pulsante.
-      </p>
+      <textarea
+        class="input calendar-import-textarea"
+        rows="10"
+        [(ngModel)]="calendarCsv"
+        placeholder="id,round,homeTeam,awayTeam,kickoffAtIso"
+      ></textarea>
 
+      <button
+        type="button"
+        class="btn action-button primary"
+        [disabled]="importingCalendar()"
+        (click)="importCalendarCsv()"
+      >
+        <span class="material-symbols-rounded">calendar_month</span>
+        @if (importingCalendar()) {
+          Import in corso...
+        } @else {
+          Importa calendario
+        }
+      </button>
+    </div>
+  </section>
+
+  <!-- CALENDARIO INCONTRI -->
+  <section class="card admin-accordion">
+    <div class="admin-accordion-summary-content">
+      <strong>Calendario incontri</strong>
+      <span class="muted"
+        >Genera gli scontri tra utenti per giornata. Il calendario viene
+        generato usando le giornate Serie A attualmente presenti. Se aggiungi
+        nuove giornate in futuro, premi di nuovo questo pulsante.</span
+      >
+    </div>
+
+    <div class="admin-accordion-content">
       <button
         type="button"
         class="btn action-button primary"
@@ -255,153 +317,57 @@
         }
       </button>
     </div>
-  </details>
-
-  <!-- GESTIONE GIORNATE -->
-  <details class="card admin-accordion">
-    <summary>
-      <div class="admin-accordion-summary-content">
-        <strong>Gestione giornate</strong>
-        <span class="muted">
-          Chiudi o riapri le giornate valide per le classifiche
-        </span>
-      </div>
-
-      <span class="material-symbols-rounded admin-accordion-expand-icon">
-        expand_more
-      </span>
-    </summary>
-
-    <div class="admin-accordion-content">
-      <p class="muted">
-        Chiudi una giornata quando hai inserito tutti i bonus/malus. Solo le
-        giornate chiuse vengono considerate nelle classifiche.
-      </p>
-
-      @if (roundsVm$ | async; as rounds) {
-        @if (rounds.length === 0) {
-          <p class="muted">
-            Nessuna giornata disponibile. Importa prima il calendario Serie A.
-          </p>
-        }
-
-        <div class="admin-rounds-list">
-          @for (round of rounds; track round.round) {
-            <article class="admin-round-card">
-              <div class="admin-round-info">
-                <strong> Giornata {{ round.round }} </strong>
-
-                <span
-                  class="admin-round-status"
-                  [class.closed]="round.status === 'closed'"
-                  [class.open]="round.status === 'open'"
-                >
-                  @if (round.status === "closed") {
-                    Chiusa
-                  } @else {
-                    Aperta
-                  }
-                </span>
-              </div>
-
-              <div class="admin-round-actions">
-                @if (round.status === "closed") {
-                  <button
-                    type="button"
-                    class="btn action-button mini success"
-                    [disabled]="updatingRound() === round.round"
-                    (click)="reopenRound(round.round)"
-                  >
-                    @if (updatingRound() === round.round) {
-                      Riapertura...
-                    } @else {
-                      Riapri
-                    }
-                  </button>
-                } @else {
-                  <button
-                    type="button"
-                    class="btn action-button mini danger"
-                    [disabled]="updatingRound() === round.round"
-                    (click)="closeRound(round.round)"
-                  >
-                    @if (updatingRound() === round.round) {
-                      Chiusura...
-                    } @else {
-                      Chiudi
-                    }
-                  </button>
-                }
-              </div>
-            </article>
-          }
-        </div>
-      }
-    </div>
-  </details>
+  </section>
 
   <!-- MERCATO DI RIPARAZIONE -->
-  <details class="card admin-accordion">
-    <summary>
-      <div class="admin-accordion-summary-content">
-        <strong>Mercato di riparazione</strong>
-        <span class="muted">
-          Apri o chiudi una sessione mercato per tutti gli utenti
+  <section class="card admin-accordion">
+    <div class="admin-accordion-summary-content">
+      <strong>Mercato di riparazione</strong>
+      @if (repairMarketSettings$ | async; as market) {
+        <span class="muted line-2">
+          Apri o chiudi una sessione mercato per tutti gli utenti. Lo stato
+          attuale del mercato è
+          <strong
+            class="market-status"
+            [class.open]="market.isOpen"
+            [class.closed]="!market.isOpen"
+          >
+            @if (market.isOpen) {
+              aperto
+            } @else {
+              chiuso
+            }
+          </strong>
         </span>
-      </div>
-
-      <span class="material-symbols-rounded admin-accordion-expand-icon">
-        expand_more
-      </span>
-    </summary>
+      }
+    </div>
 
     <div class="admin-accordion-content">
       @if (repairMarketSettings$ | async; as market) {
-        <div class="admin-market-status-card">
-          <div>
-            <span
-              class="admin-market-status"
-              [class.open]="market.isOpen"
-              [class.closed]="!market.isOpen"
-            >
-              @if (market.isOpen) {
-                Mercato Aperto
-              } @else {
-                Mercato Chiuso
-              }
-            </span>
-          </div>
-
-          <button
-            type="button"
-            class="btn action-button"
-            [class.success]="!market.isOpen"
-            [class.danger]="market.isOpen"
-            [disabled]="updatingRepairMarket()"
-            (click)="toggleRepairMarket(market)"
-          >
+        <button
+          type="button"
+          class="btn action-button"
+          [class.success]="!market.isOpen"
+          [class.danger]="market.isOpen"
+          [disabled]="updatingRepairMarket()"
+          (click)="toggleRepairMarket(market)"
+        >
+          @if (market.isOpen) {
+            <span class="material-symbols-rounded">lock</span>
+          } @else {
+            <span class="material-symbols-rounded">lock_open_right</span>
+          }
+          @if (updatingRepairMarket()) {
+            Aggiornamento...
+          } @else {
             @if (market.isOpen) {
-              <span class="material-symbols-rounded">lock</span>
+              Chiudi mercato
             } @else {
-              <span class="material-symbols-rounded">lock_open_right</span>
+              Apri Mercato
             }
-            @if (updatingRepairMarket()) {
-              Aggiornamento...
-            } @else {
-              @if (market.isOpen) {
-                Chiudi mercato
-              } @else {
-                Apri Mercato
-              }
-            }
-          </button>
-        </div>
-
-        <p class="muted admin-market-help">
-          Ogni nuova apertura crea una nuova sessione. In ogni sessione ogni
-          utente può effettuare al massimo 4 cambi.
-        </p>
+          }
+        </button>
       }
     </div>
-  </details>
+  </section>
 </main>

@@ -216,23 +216,106 @@ button {
 .toast {
     position: fixed;
     left: 50%;
-    top: calc(12px + env(safe-area-inset-top));
-    transform: translate(-50%, -20px);
-    opacity: 0;
+    top: calc(14px + env(safe-area-inset-top));
     z-index: 200;
-    max-width: 92%;
-    padding: 10px 14px;
-    border-radius: 999px;
-    font-weight: 900;
-    background: var(--bg);
+    width: calc(100% - 32px);
+    max-width: 440px;
+    min-height: 46px;
+    padding: 10px 12px;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 9px;
+    color: var(--text);
+    background:
+        linear-gradient(135deg,
+            rgba(255, 255, 255, .12),
+            rgba(255, 255, 255, .06));
     border: 1px solid var(--border);
-    transition: .22s;
-    pointer-events: none
+    box-shadow: 0 14px 34px var(--shadow);
+    backdrop-filter: blur(16px);
+    transform: translate(-50%, -16px) scale(.98);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity .18s ease,
+        transform .18s ease;
 }
 
 .toast.visible {
     opacity: 1;
-    transform: translate(-50%, 0)
+    transform: translate(-50%, 0) scale(1);
+}
+
+.toast.success {
+    border-color: var(--border-success);
+    background:
+        linear-gradient(135deg,
+            var(--grad-a-success),
+            var(--grad-b-success)),
+        var(--bg-shadow);
+}
+
+.toast.error {
+    border-color: var(--border-danger);
+    background:
+        linear-gradient(135deg,
+            rgba(251, 113, 133, .22),
+            rgba(251, 113, 133, .06)),
+        var(--bg-shadow);
+}
+
+.toast-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    line-height: 1;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 800,
+        'GRAD' 0,
+        'opsz' 24;
+}
+
+.toast.success .toast-icon {
+    color: var(--success);
+    background: var(--bg-success);
+    border: 1px solid var(--border-success);
+}
+
+.toast.error .toast-icon {
+    color: var(--danger);
+    background: var(--bg-danger);
+    border: 1px solid var(--border-danger);
+}
+
+.toast-message {
+    min-width: 0;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.25;
+    font-weight: 800;
+}
+
+.toast {
+    min-height: 42px;
+    padding: 8px 10px;
+    border-radius: 16px;
+}
+
+.toast-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 18px;
+}
+
+.toast-message {
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .success {
