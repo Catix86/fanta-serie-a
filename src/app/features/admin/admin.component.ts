@@ -2,7 +2,12 @@ import { Component, inject, signal } from "@angular/core";
 import { AsyncPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DataService } from "../../core/services/data.service";
-import { BONUS_RULES } from "../../core/constants/bonus-rules";
+import {
+  BONUS_RULES,
+  BonusRule,
+  RuleCategory,
+  RuleScope,
+} from "../../core/constants/bonus-rules";
 import { Fixture, RepairMarketSettings } from "../../core/models";
 import { ToastService } from "../../core/services/toast.service";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
@@ -27,9 +32,11 @@ export class AdminComponent {
   calendarCsv = "";
   importingCalendar = signal(false);
   generatingLeagueCalendar = signal(false);
-  eventScope: "match" | "seasonal" = "match";
+  eventScope: RuleScope = "match";
   seasonalTeam = "";
   teamsList = SERIE_A_TEAMS.map((team) => team.name);
+  selectedRound: number | null = null;
+  selectedRuleCategory: RuleCategory | null = null;
 
   repairMarketSettings$: Observable<RepairMarketSettings> =
     this.data.repairMarketSettings$();
@@ -99,23 +106,35 @@ export class AdminComponent {
   }
 
   async addEvents(): Promise<void> {
-    if (this.ruleIds.length === 0) {
-      this.toast.show("Seleziona almeno un bonus o malus.", "error", 3000);
+    if (!this.canSelectRules() || this.ruleIds.length === 0) {
+      this.toast.show("Completa tutte le selezioni richieste.", "error", 3000);
 
       return;
     }
 
     const selectedRules = this.ruleIds
       .map((ruleId) => this.rules.find((rule) => rule.id === ruleId))
-      .filter((rule) => rule !== undefined);
+      .filter((rule): rule is BonusRule => Boolean(rule));
 
-    const hasInvalidScope = selectedRules.some(
-      (rule) => rule?.scope !== this.eventScope,
+    const hasInvalidRule = selectedRules.some(
+      (rule) =>
+        rule.scope !== this.eventScope ||
+        rule.category !== this.selectedRuleCategory,
     );
 
-    if (hasInvalidScope) {
+    if (hasInvalidRule) {
       this.toast.show(
-        "Sono presenti bonus o malus non compatibili con il tipo di evento.",
+        "La selezione contiene regole non compatibili.",
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    if (this.eventScope === "seasonal" && this.ruleIds.length > 1) {
+      this.toast.show(
+        "Per un evento squadra puoi selezionare un solo bonus o malus.",
         "error",
         3000,
       );
@@ -124,14 +143,10 @@ export class AdminComponent {
     }
 
     try {
+      const insertedEvents = this.ruleIds.length;
+
       if (this.eventScope === "match") {
         if (!this.selFixture || !this.selTeam) {
-          this.toast.show(
-            "Seleziona una partita e una squadra.",
-            "error",
-            3000,
-          );
-
           return;
         }
 
@@ -140,27 +155,21 @@ export class AdminComponent {
           this.selTeam,
           this.ruleIds,
         );
-
-        this.toast.show(
-          `${this.ruleIds.length} bonus/malus inseriti.`,
-          "success",
-          3000,
-        );
       } else {
         if (!this.seasonalTeam) {
-          this.toast.show("Seleziona una squadra.", "error", 3000);
-
           return;
         }
 
         await this.data.addSeasonalTeamEvents(this.seasonalTeam, this.ruleIds);
-
-        this.toast.show(
-          `${this.ruleIds.length} bonus/malus stagionali inseriti.`,
-          "success",
-          3000,
-        );
       }
+
+      this.toast.show(
+        insertedEvents === 1
+          ? "Evento inserito correttamente."
+          : `${insertedEvents} eventi inseriti correttamente.`,
+        "success",
+        3000,
+      );
 
       this.ruleIds = [];
     } catch (error) {
@@ -283,25 +292,31 @@ export class AdminComponent {
     }
   }
 
-  filteredRules() {
-    return this.rules.filter((rule) => rule.scope === this.eventScope);
+  filteredRules(): BonusRule[] {
+    if (!this.selectedRuleCategory) {
+      return [];
+    }
+
+    return this.rules.filter(
+      (rule) =>
+        rule.scope === this.eventScope &&
+        rule.category === this.selectedRuleCategory,
+    );
   }
 
-  setEventScope(scope: "match" | "seasonal"): void {
+  setEventScope(scope: RuleScope): void {
     if (this.eventScope === scope) {
       return;
     }
 
     this.eventScope = scope;
-    this.ruleIds = [];
 
-    if (scope === "match") {
-      this.seasonalTeam = "";
-      return;
-    }
-
+    this.selectedRound = null;
     this.selFixture = undefined;
     this.selTeam = "";
+    this.seasonalTeam = "";
+    this.selectedRuleCategory = null;
+    this.ruleIds = [];
   }
 
   filteredBonusRules() {
@@ -338,11 +353,38 @@ export class AdminComponent {
     return this.ruleIds.filter((id) => id === ruleId).length;
   }
 
+  selectRule(ruleId: string): void {
+    if (!this.canSelectRules()) {
+      this.toast.show(
+        "Completa prima tutte le selezioni richieste.",
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    if (this.eventScope === "seasonal") {
+      this.ruleIds = [ruleId];
+      return;
+    }
+
+    this.ruleIds = [...this.ruleIds, ruleId];
+  }
+
   incrementRule(ruleId: string): void {
     this.ruleIds = [...this.ruleIds, ruleId];
   }
 
   decrementRule(ruleId: string): void {
+    if (this.eventScope !== "match") {
+      if (this.ruleIds.includes(ruleId)) {
+        this.ruleIds = [];
+      }
+
+      return;
+    }
+
     const ruleIndex = this.ruleIds.lastIndexOf(ruleId);
 
     if (ruleIndex < 0) {
@@ -353,7 +395,7 @@ export class AdminComponent {
   }
 
   isRuleSelected(ruleId: string): boolean {
-    return this.ruleQuantity(ruleId) > 0;
+    return this.ruleIds.includes(ruleId);
   }
 
   selectedRulesCount(): number {
@@ -362,5 +404,123 @@ export class AdminComponent {
 
   selectedDistinctRulesCount(): number {
     return new Set(this.ruleIds).size;
+  }
+
+  openRoundsVm$ = combineLatest([
+    this.fixtures$,
+    this.data.roundSettings$(),
+  ]).pipe(
+    map(([fixtures, roundSettings]) => {
+      const closedRounds = new Set(
+        roundSettings
+          .filter((setting) => setting.status === "closed")
+          .map((setting) => Number(setting.round)),
+      );
+
+      const rounds = Array.from(
+        new Set(
+          fixtures
+            .map((fixture) => Number(fixture.round))
+            .filter((round) => Number.isFinite(round)),
+        ),
+      )
+        .filter((round) => !closedRounds.has(round))
+        .sort((a, b) => a - b);
+
+      return rounds.map((round) => {
+        const roundFixtures = fixtures
+          .filter((fixture) => Number(fixture.round) === round)
+          .sort(
+            (a, b) =>
+              this.fixtureDate(a).getTime() - this.fixtureDate(b).getTime(),
+          );
+
+        return {
+          round,
+          firstKickoff: roundFixtures[0]
+            ? this.fixtureDate(roundFixtures[0])
+            : null,
+        };
+      });
+    }),
+  );
+
+  roundOptionLabel(round: number, firstKickoff: Date | null): string {
+    const roundLabel = `${round}ª giornata`;
+
+    if (!firstKickoff) {
+      return roundLabel;
+    }
+
+    const dateLabel = new Intl.DateTimeFormat("it-IT", {
+      day: "2-digit",
+      month: "short",
+    })
+      .format(firstKickoff)
+      .replace(".", "");
+
+    return `${roundLabel} - ${dateLabel}`;
+  }
+
+  fixturesForSelectedRound(fixtures: Fixture[]): Fixture[] {
+    if (this.selectedRound === null) {
+      return [];
+    }
+
+    return fixtures
+      .filter((fixture) => Number(fixture.round) === this.selectedRound)
+      .sort(
+        (a, b) => this.fixtureDate(a).getTime() - this.fixtureDate(b).getTime(),
+      );
+  }
+
+  onRoundChange(round: number | null): void {
+    this.selectedRound = round;
+    this.selFixture = undefined;
+    this.selTeam = "";
+    this.selectedRuleCategory = null;
+    this.ruleIds = [];
+  }
+
+  onFixtureChange(fixture: Fixture | undefined): void {
+    this.selFixture = fixture;
+    this.selTeam = "";
+    this.selectedRuleCategory = null;
+    this.ruleIds = [];
+  }
+
+  onMatchTeamChange(teamName: string): void {
+    this.selTeam = teamName;
+    this.selectedRuleCategory = null;
+    this.ruleIds = [];
+  }
+
+  onSeasonalTeamChange(teamName: string): void {
+    this.seasonalTeam = teamName;
+    this.selectedRuleCategory = null;
+    this.ruleIds = [];
+  }
+
+  setRuleCategory(category: RuleCategory): void {
+    if (this.selectedRuleCategory === category) {
+      return;
+    }
+
+    this.selectedRuleCategory = category;
+    this.ruleIds = [];
+  }
+
+  canSelectRules(): boolean {
+    if (!this.selectedRuleCategory) {
+      return false;
+    }
+
+    if (this.eventScope === "match") {
+      return Boolean(
+        this.selectedRound !== null && this.selFixture && this.selTeam,
+      );
+    }
+
+    return Boolean(this.seasonalTeam);
   }
 }
