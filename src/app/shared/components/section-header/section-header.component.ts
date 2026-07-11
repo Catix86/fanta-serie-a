@@ -14,6 +14,7 @@ export interface SectionHeaderAction {
 })
 export class SectionHeaderComponent {
   icon = input.required<string>();
+  iconSrc = input<string>('');
   title = input.required<string>();
   subtitle = input<string>("");
   actions = input<SectionHeaderAction[]>([]);

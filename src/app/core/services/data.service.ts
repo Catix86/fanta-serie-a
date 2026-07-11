@@ -100,7 +100,7 @@ export class DataService {
     const user = this.auth.currentUser;
 
     if (!user) {
-      throw new Error("No user");
+      throw new Error("USER_NOT_AUTHENTICATED");
     }
 
     await Promise.all(
@@ -108,7 +108,7 @@ export class DataService {
         const rule = ruleById(ruleId);
 
         if (!rule) {
-          throw new Error("Rule not found");
+          throw new Error(`RULE_NOT_FOUND: ${ruleId}`);
         }
 
         return addDoc(collection(this.db, "teamEvents"), {

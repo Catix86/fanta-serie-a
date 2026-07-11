@@ -99,50 +99,23 @@ export class AdminComponent {
   }
 
   async addEvents(): Promise<void> {
-    if (this.eventScope === "match") {
-      if (!this.selFixture || !this.selTeam || !this.ruleIds.length) {
-        this.toast.show(
-          "Seleziona partita, squadra e bonus/malus.",
-          "error",
-          3000,
-        );
-
-        return;
-      }
-
-      const selectedRules = this.rules.filter((rule) =>
-        this.ruleIds.includes(rule.id),
-      );
-
-      const hasInvalidScope = selectedRules.some(
-        (rule) => rule.scope !== this.eventScope,
-      );
-
-      if (hasInvalidScope) {
-        this.toast.show(
-          "Hai selezionato bonus/malus non compatibili con il tipo di evento.",
-          "error",
-          3000,
-        );
-
-        return;
-      }
-
-      await this.data.addTeamEvents(
-        this.selFixture,
-        this.selTeam,
-        this.ruleIds,
-      );
-
-      this.toast.show("Bonus/Malus partita inseriti.", "success", 3000);
-      this.ruleIds = [];
+    if (this.ruleIds.length === 0) {
+      this.toast.show("Seleziona almeno un bonus o malus.", "error", 3000);
 
       return;
     }
 
-    if (!this.seasonalTeam || !this.ruleIds.length) {
+    const selectedRules = this.ruleIds
+      .map((ruleId) => this.rules.find((rule) => rule.id === ruleId))
+      .filter((rule) => rule !== undefined);
+
+    const hasInvalidScope = selectedRules.some(
+      (rule) => rule?.scope !== this.eventScope,
+    );
+
+    if (hasInvalidScope) {
       this.toast.show(
-        "Seleziona squadra e bonus/malus stagionali.",
+        "Sono presenti bonus o malus non compatibili con il tipo di evento.",
         "error",
         3000,
       );
@@ -150,10 +123,51 @@ export class AdminComponent {
       return;
     }
 
-    await this.data.addSeasonalTeamEvents(this.seasonalTeam, this.ruleIds);
+    try {
+      if (this.eventScope === "match") {
+        if (!this.selFixture || !this.selTeam) {
+          this.toast.show(
+            "Seleziona una partita e una squadra.",
+            "error",
+            3000,
+          );
 
-    this.toast.show("Bonus/Malus stagionali inseriti.", "success", 3000);
-    this.ruleIds = [];
+          return;
+        }
+
+        await this.data.addTeamEvents(
+          this.selFixture,
+          this.selTeam,
+          this.ruleIds,
+        );
+
+        this.toast.show(
+          `${this.ruleIds.length} bonus/malus inseriti.`,
+          "success",
+          3000,
+        );
+      } else {
+        if (!this.seasonalTeam) {
+          this.toast.show("Seleziona una squadra.", "error", 3000);
+
+          return;
+        }
+
+        await this.data.addSeasonalTeamEvents(this.seasonalTeam, this.ruleIds);
+
+        this.toast.show(
+          `${this.ruleIds.length} bonus/malus stagionali inseriti.`,
+          "success",
+          3000,
+        );
+      }
+
+      this.ruleIds = [];
+    } catch (error) {
+      console.error("Errore inserimento bonus/malus:", error);
+
+      this.toast.show("Inserimento bonus/malus non riuscito.", "error", 3000);
+    }
   }
 
   private parseFixturesCsv(csv: string) {
@@ -318,5 +332,35 @@ export class AdminComponent {
     } finally {
       this.updatingRepairMarket.set(false);
     }
+  }
+
+  ruleQuantity(ruleId: string): number {
+    return this.ruleIds.filter((id) => id === ruleId).length;
+  }
+
+  incrementRule(ruleId: string): void {
+    this.ruleIds = [...this.ruleIds, ruleId];
+  }
+
+  decrementRule(ruleId: string): void {
+    const ruleIndex = this.ruleIds.lastIndexOf(ruleId);
+
+    if (ruleIndex < 0) {
+      return;
+    }
+
+    this.ruleIds = this.ruleIds.filter((_, index) => index !== ruleIndex);
+  }
+
+  isRuleSelected(ruleId: string): boolean {
+    return this.ruleQuantity(ruleId) > 0;
+  }
+
+  selectedRulesCount(): number {
+    return this.ruleIds.length;
+  }
+
+  selectedDistinctRulesCount(): number {
+    return new Set(this.ruleIds).size;
   }
 }

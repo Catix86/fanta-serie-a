@@ -2,7 +2,8 @@
   @if (vm$ | async; as vm) {
     @if (vm.me; as user) {
       <app-section-header
-        icon="home"
+        icon=""
+        iconSrc="assets/favicon.svg"
         [title]="user.teamName || 'Home'"
         [subtitle]="user.username + ' - Riepilogo della tua stagione'"
       />

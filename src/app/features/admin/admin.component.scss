@@ -416,3 +416,150 @@
 .line-2 {
   line-height: 2;
 }
+
+.rule-choice {
+  width: 100%;
+  min-width: 0;
+  min-height: 78px;
+  padding: 8px;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "points content"
+    "quantity quantity";
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  background:
+    linear-gradient(135deg,
+      var(--grad-a),
+      var(--grad-b));
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.rule-choice.selected {
+  background:
+    linear-gradient(135deg,
+      var(--grad-a-primary),
+      var(--grad-b-primary));
+  border-color: var(--border-primary);
+}
+
+.rule-points {
+  grid-area: points;
+  min-width: 38px;
+  padding: 5px 7px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.rule-points.positive {
+  color: var(--success);
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+}
+
+.rule-points.negative {
+  color: var(--danger);
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+}
+
+.rule-content {
+  grid-area: content;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.rule-label {
+  display: block;
+  min-width: 0;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.1;
+  font-weight: 1000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rule-description {
+  display: -webkit-box;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.2;
+  font-weight: 700;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rule-quantity {
+  grid-area: quantity;
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 7px;
+}
+
+.rule-quantity>strong {
+  text-align: center;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.rule-quantity-button {
+  width: 32px;
+  height: 30px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: var(--danger);
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+}
+
+.rule-quantity-button.add {
+  color: var(--success);
+  background: var(--bg-success);
+  border-color: var(--border-success);
+}
+
+.rule-quantity-button:disabled {
+  opacity: .32;
+  cursor: not-allowed;
+}
+
+.rule-quantity-button .material-symbols-rounded {
+  font-size: 18px;
+}
+
+.selected-rules-summary {
+  margin-top: 8px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.selected-rules-summary span,
+.selected-rules-summary strong {
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.selected-rules-summary strong {
+  color: var(--primary);
+}

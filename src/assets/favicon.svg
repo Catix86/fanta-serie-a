@@ -1,1 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="30" fill="#020617"/><circle cx="64" cy="50" r="32" fill="#34d399"/><text x="64" y="112" text-anchor="middle" font-family="Arial" font-size="22" font-weight="900" fill="#fff">SA</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Fanta Serie A icon">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#0f2b54"/>
+      <stop offset="58%" stop-color="#061224"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="70" y1="80" x2="430" y2="430" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="45%" stop-color="#0280b5"/>
+      <stop offset="100%" stop-color="#0f4bc9"/>
+    </linearGradient>
+    <linearGradient id="fFill" x1="174" y1="100" x2="360" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#e5e7eb"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </linearGradient>
+    <linearGradient id="fStroke" x1="150" y1="110" x2="365" y2="405" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0057a8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="334" y1="273" x2="438" y2="393" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#fff7ad"/>
+      <stop offset="42%" stop-color="#fcd34d"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="256" r="238" fill="url(#ring)"/>
+  <circle cx="256" cy="256" r="221" fill="url(#bgGlow)" stroke="#0b3f8f" stroke-width="5"/>
+
+  <path d="M74 255C107 143 190 83 315 76" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round" opacity="0.65"/>
+  <path d="M88 330C176 434 335 438 425 327" fill="none" stroke="#fcd34d" stroke-width="9" stroke-linecap="round" opacity="0.75"/>
+  <path d="M92 301C127 205 196 149 300 128" fill="none" stroke="#0280b5" stroke-width="6" stroke-linecap="round" opacity="0.65"/>
+
+  <g filter="url(#shadow)">
+    <path d="M236 96h176l-20 76H272l-17 54h105l-19 72H233l-45 118h-80l98-244h-56l24-76h62z" fill="url(#fStroke)" opacity="0.98"/>
+    <path d="M249 112h145l-12 47H261l-30 83h107l-11 43H219l-43 113h-44l92-226h-56l14-60h67z" fill="url(#fFill)"/>
+  </g>
+
+  <g transform="translate(93 230)" filter="url(#shadow)">
+    <circle cx="74" cy="74" r="70" fill="#f8fafc" stroke="#38bdf8" stroke-width="5"/>
+    <path d="M74 24l29 21-11 34H56L45 45z" fill="#020617"/>
+    <path d="M31 60l25 19-9 31-31-2-11-28z" fill="#020617"/>
+    <path d="M117 60l26 20-12 28-30 2-9-31z" fill="#020617"/>
+    <path d="M54 111h40l14 28-34 20-34-20z" fill="#020617"/>
+    <path d="M26 40l19 5M103 45l20-6M16 108l24 3M132 108l-24 3M74 24v-18" fill="none" stroke="#475569" stroke-width="4" opacity="0.7"/>
+    <circle cx="74" cy="74" r="69" fill="none" stroke="#ffffff" stroke-width="3" opacity="0.85"/>
+  </g>
+
+  <g transform="translate(329 276)" filter="url(#softGlow)">
+    <path d="M54 0l16 38 41 3-31 27 10 40-36-21-36 21 10-40-31-27 41-3z" fill="url(#gold)" stroke="#fde68a" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M54 0v87M18 108l36-70 36 70M0 41l54-3 57 3" fill="none" stroke="#fff7ad" stroke-width="2" opacity="0.8"/>
+  </g>
+</svg>

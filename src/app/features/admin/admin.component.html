@@ -194,20 +194,49 @@
                 }
 
                 @for (rule of filteredBonusRules(); track rule.id) {
-                  <button
-                    type="button"
+                  <article
                     class="rule-choice"
-                    [class.selected]="ruleIds.includes(rule.id)"
-                    (click)="toggle(rule.id)"
+                    [class.selected]="isRuleSelected(rule.id)"
                   >
                     <span class="rule-points positive">
                       +{{ rule.points }}
                     </span>
 
-                    <span class="rule-label">
-                      {{ rule.label }}
-                    </span>
-                  </button>
+                    <div class="rule-content">
+                      <strong class="rule-label">
+                        {{ rule.label }}
+                      </strong>
+
+                      <span class="rule-description">
+                        {{ rule.description }}
+                      </span>
+                    </div>
+
+                    <div class="rule-quantity">
+                      <button
+                        type="button"
+                        class="rule-quantity-button"
+                        [disabled]="ruleQuantity(rule.id) === 0"
+                        [attr.aria-label]="'Rimuovi ' + rule.label"
+                        (click)="decrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> remove </span>
+                      </button>
+
+                      <strong>
+                        {{ ruleQuantity(rule.id) }}
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="rule-quantity-button add"
+                        [attr.aria-label]="'Aggiungi ' + rule.label"
+                        (click)="incrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> add </span>
+                      </button>
+                    </div>
+                  </article>
                 }
               </div>
             </section>
@@ -221,28 +250,61 @@
                 }
 
                 @for (rule of filteredMalusRules(); track rule.id) {
-                  <button
-                    type="button"
+                  <article
                     class="rule-choice"
-                    [class.selected]="ruleIds.includes(rule.id)"
-                    (click)="toggle(rule.id)"
+                    [class.selected]="isRuleSelected(rule.id)"
                   >
                     <span class="rule-points negative">
                       {{ rule.points }}
                     </span>
 
-                    <span class="rule-label">
-                      {{ rule.label }}
-                    </span>
-                  </button>
+                    <div class="rule-content">
+                      <strong class="rule-label">
+                        {{ rule.label }}
+                      </strong>
+
+                      <span class="rule-description">
+                        {{ rule.description }}
+                      </span>
+                    </div>
+
+                    <div class="rule-quantity">
+                      <button
+                        type="button"
+                        class="rule-quantity-button"
+                        [disabled]="ruleQuantity(rule.id) === 0"
+                        [attr.aria-label]="'Rimuovi ' + rule.label"
+                        (click)="decrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> remove </span>
+                      </button>
+
+                      <strong>
+                        {{ ruleQuantity(rule.id) }}
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="rule-quantity-button add"
+                        [attr.aria-label]="'Aggiungi ' + rule.label"
+                        (click)="incrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> add </span>
+                      </button>
+                    </div>
+                  </article>
                 }
               </div>
             </section>
           </div>
 
-          <p class="muted selected-rules-count">
-            {{ ruleIds.length }} bonus/malus selezionati
-          </p>
+          <div class="selected-rules-summary">
+            <span class="muted">
+              {{ selectedDistinctRulesCount() }} tipologie
+            </span>
+
+            <strong> {{ selectedRulesCount() }} eventi totali </strong>
+          </div>
         </div>
 
         <button
