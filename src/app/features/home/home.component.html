@@ -215,60 +215,11 @@
         }
       </section>
 
-      <!-- LA TUA ROSA -->
-      <section class="card deadline-card">
-        <div class="deadline-header">
-          <div class="profile-roster-title">
-            @if (vm.me.teamLogoUrl) {
-              <img
-                class="home-team-logo"
-                [src]="vm.me.teamLogoUrl"
-                alt="Logo team"
-              />
-            } @else {
-              <span class="material-symbols-rounded home-team-logo-placeholder">
-                shield
-              </span>
-            }
-
-            <h2>La tua rosa</h2>
-          </div>
-
-          <div class="profile-roster-budget">
-            <strong>{{ rosterCost(vm.me.roster || []) }}/100</strong>
-            <span>Fanta crediti</span>
-          </div>
-        </div>
-
-        <!-- ELENCO SQUADRE -->
-        <div class="profile-roster-list">
-          @for (teamName of user.roster; track teamName) {
-            <article class="profile-team-card">
-              <img
-                class="profile-team-logo"
-                [src]="teamLogo(teamName)"
-                [alt]="teamName"
-                loading="lazy"
-              />
-
-              <div class="profile-team-info">
-                <strong>
-                  {{ teamName }}
-                </strong>
-              </div>
-
-              <strong class="profile-team-price">
-                {{ teamPrice(teamName) }} FC
-              </strong>
-            </article>
-          }
-        </div>
-      </section>
-
+      <!-- MERCATO DI RIPARAZIONE -->
       @if (vm.repairMarketSettings.isOpen) {
         <button
           type="button"
-          class="btn action-button primary"
+          class="btn action-button success"
           (click)="openRepairMarketModal(user)"
         >
           <span class="material-symbols-rounded"> sync_alt </span>

@@ -2,103 +2,360 @@
   <app-section-header
     icon="groups"
     title="Squadre"
-    subtitle="Rosa di tutti i partecipanti"
+    subtitle="Rose Fanta e statistiche Serie A"
   />
 
+  <nav class="squads-view-toggle" aria-label="Tipo di squadre">
+    <button
+      type="button"
+      [class.active]="viewMode() === 'fanta'"
+      (click)="setViewMode('fanta')"
+    >
+      <span class="material-symbols-rounded"> wand_stars </span>
+
+      Fanta
+    </button>
+
+    <button
+      type="button"
+      [class.active]="viewMode() === 'serieA'"
+      (click)="setViewMode('serieA')"
+    >
+      <span class="material-symbols-rounded"> sports_soccer </span>
+
+      Serie A
+    </button>
+  </nav>
+
   @if (vm$ | async; as vm) {
-    @if (vm.otherUsers.length === 0) {
-      <section class="card empty-squads-card">
-        <p class="muted">Non ci sono ancora altre squadre disponibili.</p>
+    <!-- MODALITÀ FANTA -->
+    @if (viewMode() === "fanta") {
+      @if (vm.otherUsers.length === 0) {
+        <section class="card empty-squads-card">
+          <p class="muted">Non ci sono ancora altre squadre disponibili.</p>
+        </section>
+      } @else {
+        <section class="squads-list">
+          @for (user of vm.otherUsers; track user.uid) {
+            @if (currentUser(); as cu) {
+              <button
+                type="button"
+                class="squad-user-card"
+                [class.accent]="user.uid === cu?.uid"
+                (click)="openUserSquad(user)"
+              >
+                <div class="squad-user-logo">
+                  @if (user.teamLogoUrl) {
+                    <img
+                      [src]="user.teamLogoUrl"
+                      [alt]="user.teamName"
+                      loading="lazy"
+                    />
+                  } @else {
+                    <span class="material-symbols-rounded"> shield </span>
+                  }
+                </div>
+
+                <div class="squad-user-info">
+                  <strong>
+                    {{ user.teamName }}
+                  </strong>
+
+                  <span>
+                    {{ user.username }}
+                  </span>
+                </div>
+
+                <div class="squad-user-budget">
+                  <strong>
+                    {{ rosterCost(user.roster) }}
+                  </strong>
+
+                  <span>FC</span>
+                </div>
+              </button>
+            }
+          }
+        </section>
+      }
+    }
+
+    <!-- MODALITÀ SERIE A -->
+    @if (viewMode() === "serieA") {
+      <section class="serie-a-teams-list">
+        @for (
+          team of vm.serieATeams;
+          track team.teamName;
+          let position = $index
+        ) {
+          <button
+            type="button"
+            class="serie-a-team-row"
+            (click)="openSerieATeam(team, vm.fixtures, vm.events)"
+          >
+            <span class="serie-a-team-position">
+              {{ position + 1 }}
+            </span>
+
+            <div class="serie-a-team-logo">
+              <img [src]="team.logoUrl" [alt]="team.teamName" loading="lazy" />
+            </div>
+
+            <div class="serie-a-team-info">
+              <strong>
+                {{ team.teamName }}
+              </strong>
+
+              <span>
+                {{ team.eventsCount }}
+                @if (team.eventsCount === 1) {
+                  evento
+                } @else {
+                  eventi
+                }
+              </span>
+            </div>
+
+            <div class="serie-a-team-points">
+              <strong
+                [class.positive]="team.totalPoints > 0"
+                [class.negative]="team.totalPoints < 0"
+              >
+                {{ eventPointsLabel(team.totalPoints) }}
+              </strong>
+
+              <span>punti</span>
+            </div>
+
+            <span class="material-symbols-rounded serie-a-team-arrow">
+              chevron_right
+            </span>
+          </button>
+        }
       </section>
     }
 
-    <section class="squads-list">
-      @for (user of vm.otherUsers; track user.uid) {
-        <button
-          type="button"
-          class="squad-user-card"
-          (click)="openUserSquad(user)"
-        >
-          <div class="squad-user-logo">
-            @if (user.teamLogoUrl) {
-              <img
-                [src]="user.teamLogoUrl"
-                [alt]="user.teamName"
-                loading="lazy"
-              />
-            } @else {
-              <span class="material-symbols-rounded"> shield </span>
-            }
-          </div>
-
-          <div class="squad-user-info">
-            <strong>
-              {{ user.teamName }}
-            </strong>
-
-            <span> Allenatore: {{ user.username }} </span>
-          </div>
-
-          <div class="squad-user-budget">
-            <strong>
-              {{ rosterCost(user.roster) }}
-            </strong>
-
-            <span>FC</span>
-          </div>
-        </button>
-      }
-    </section>
-  }
-
-  <!-- SQUAD MODAL -->
-  @if (selectedUser(); as user) {
-    <div class="squad-modal-backdrop" (click)="closeUserSquad()">
-      <section class="card squad-modal" (click)="$event.stopPropagation()">
-        <div class="squad-modal-header">
-          <div>
-            <h2>
-              {{ user.teamName }}
-            </h2>
-
-            <p class="muted">
-              {{ user.username }} · {{ rosterCost(user.roster) }}/100 FC
-            </p>
-          </div>
-
-          <button
-            type="button"
-            class="squad-modal-close"
-            aria-label="Chiudi"
-            (click)="closeUserSquad()"
-          >
-            <span class="material-symbols-rounded"> close </span>
-          </button>
-        </div>
-
-        <div class="squad-modal-roster">
-          @for (teamName of user.roster; track teamName) {
-            <article class="squad-team-card">
-              <img
-                class="squad-team-logo"
-                [src]="teamLogo(teamName)"
-                [alt]="teamName"
-                loading="lazy"
-              />
-
-              <div class="squad-team-info">
-                <strong>
-                  {{ teamName }}
-                </strong>
+    <!-- MODALE ROSA FANTA -->
+    @if (selectedUser(); as user) {
+      <div class="squad-modal-backdrop" (click)="closeUserSquad()">
+        <section class="card squad-modal" (click)="$event.stopPropagation()">
+          <div class="squad-modal-header">
+            <div class="squad-modal-title">
+              <div class="squad-modal-logo">
+                @if (user.teamLogoUrl) {
+                  <img [src]="user.teamLogoUrl" [alt]="user.teamName" />
+                } @else {
+                  <span class="material-symbols-rounded"> shield </span>
+                }
               </div>
 
-              <strong class="squad-team-price">
-                {{ teamPrice(teamName) }} FC
+              <div>
+                <h2>
+                  {{ user.teamName }}
+                </h2>
+
+                <p class="muted">
+                  {{ user.username }}
+                  ·
+                  {{ rosterCost(user.roster) }}/100 FC
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="squad-modal-close"
+              aria-label="Chiudi"
+              (click)="closeUserSquad()"
+            >
+              <span class="material-symbols-rounded"> close </span>
+            </button>
+          </div>
+
+          <div class="squad-modal-roster">
+            @for (teamName of user.roster; track teamName) {
+              <article class="squad-team-card">
+                <img
+                  class="squad-team-logo"
+                  [src]="teamLogo(teamName)"
+                  [alt]="teamName"
+                  loading="lazy"
+                />
+
+                <div class="squad-team-info">
+                  <strong>
+                    {{ teamName }}
+                  </strong>
+                </div>
+
+                <strong class="squad-team-price">
+                  {{ teamPrice(teamName) }} FC
+                </strong>
+              </article>
+            }
+          </div>
+        </section>
+      </div>
+    }
+
+    <!-- MODALE DETTAGLIO SQUADRA SERIE A -->
+    @if (selectedSerieATeam(); as team) {
+      <div class="squad-modal-backdrop" (click)="closeSerieATeam()">
+        <section
+          class="card squad-modal serie-a-events-modal"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="squad-modal-header">
+            <div class="serie-a-modal-heading">
+              <div class="serie-a-modal-logo">
+                <img [src]="team.logoUrl" [alt]="team.teamName" />
+              </div>
+
+              <div>
+                <h2>
+                  {{ team.teamName }}
+                </h2>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="squad-modal-close"
+              aria-label="Chiudi"
+              (click)="closeSerieATeam()"
+            >
+              <span class="material-symbols-rounded"> close </span>
+            </button>
+          </div>
+
+          <section class="serie-a-points-summary">
+            <div>
+              <strong
+                [class.positive]="team.matchPoints > 0"
+                [class.negative]="team.matchPoints < 0"
+              >
+                {{ eventPointsLabel(team.matchPoints) }}
               </strong>
-            </article>
-          }
-        </div>
-      </section>
-    </div>
+
+              <span>Partite</span>
+            </div>
+
+            <div>
+              <strong
+                [class.positive]="team.seasonalPoints > 0"
+                [class.negative]="team.seasonalPoints < 0"
+              >
+                {{ eventPointsLabel(team.seasonalPoints) }}
+              </strong>
+
+              <span>Stagionali</span>
+            </div>
+
+            <div>
+              <strong
+                [class.positive]="team.totalPoints > 0"
+                [class.negative]="team.totalPoints < 0"
+              >
+                {{ eventPointsLabel(team.totalPoints) }}
+              </strong>
+
+              <span>Totale</span>
+            </div>
+          </section>
+
+          <section class="serie-a-events-content">
+            @if (
+              team.matchGroups.length === 0 && team.seasonalEvents.length === 0
+            ) {
+              <p class="muted empty-serie-a-events">
+                La squadra non ha ancora ricevuto bonus o malus.
+              </p>
+            }
+
+            @for (matchGroup of team.matchGroups; track matchGroup.id) {
+              <article class="serie-a-match-events">
+                <div class="serie-a-match-events-header">
+                  <div>
+                    <span> Giornata {{ matchGroup.round }} </span>
+
+                    <strong>
+                      {{ matchGroup.fixtureTitle }}
+                    </strong>
+                  </div>
+
+                  <strong
+                    class="serie-a-match-total"
+                    [class.positive]="matchGroup.totalPoints > 0"
+                    [class.negative]="matchGroup.totalPoints < 0"
+                  >
+                    {{ eventPointsLabel(matchGroup.totalPoints) }}
+                  </strong>
+                </div>
+
+                <div class="serie-a-event-names">
+                  @for (event of matchGroup.events; track event.id) {
+                    <div
+                      class="serie-a-event-row"
+                      [class.bonus]="event.category === 'bonus'"
+                      [class.malus]="event.category === 'malus'"
+                    >
+                      <span class="serie-a-event-dot" aria-hidden="true"></span>
+
+                      <strong>
+                        {{ event.label }}
+                      </strong>
+
+                      <span>
+                        {{ eventPointsLabel(event.points) }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+
+            @if (team.seasonalEvents.length > 0) {
+              <article class="serie-a-match-events seasonal">
+                <div class="serie-a-match-events-header">
+                  <div>
+                    <span>Stagione</span>
+
+                    <strong> Bonus/Malus stagionali </strong>
+                  </div>
+
+                  <strong
+                    class="serie-a-match-total"
+                    [class.positive]="team.seasonalPoints > 0"
+                    [class.negative]="team.seasonalPoints < 0"
+                  >
+                    {{ eventPointsLabel(team.seasonalPoints) }}
+                  </strong>
+                </div>
+
+                <div class="serie-a-event-names">
+                  @for (event of team.seasonalEvents; track event.id) {
+                    <div
+                      class="serie-a-event-row"
+                      [class.bonus]="event.category === 'bonus'"
+                      [class.malus]="event.category === 'malus'"
+                    >
+                      <span class="serie-a-event-dot" aria-hidden="true"></span>
+
+                      <strong>
+                        {{ event.label }}
+                      </strong>
+
+                      <span>
+                        {{ eventPointsLabel(event.points) }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </section>
+        </section>
+      </div>
+    }
   }
 </main>
