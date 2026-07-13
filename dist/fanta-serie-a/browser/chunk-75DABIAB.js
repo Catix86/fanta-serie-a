@@ -1,1 +1,0 @@
-import{c as o}from"./chunk-RGVWOA7F.js";import{a}from"./chunk-WGPIB6JD.js";import{B as e,T as r,p as t}from"./chunk-P5QXEQGO.js";var v=()=>{let i=r(a),m=r(o);return i.firebaseUser$.pipe(e(1),t(n=>n?!0:m.createUrlTree(["/login"])))};var U=()=>{let i=r(a),m=r(o);return i.appUser$.pipe(e(1),t(n=>n?.role==="admin"?!0:m.createUrlTree(["/home"])))};export{v as a,U as b};
