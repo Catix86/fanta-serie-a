@@ -384,3 +384,7 @@ button {
     cursor: not-allowed;
     filter: grayscale(.25);
 }
+
+.error-login-description {
+    color: var(--danger);
+}

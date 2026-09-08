@@ -8,9 +8,9 @@ import {
   TeamEvent,
 } from "../models";
 
-const FIRST_GOAL_THRESHOLD = 120;
-const POINTS_PER_GOAL = 55;
-const MAX_GOALS = 7;
+const FIRST_GOAL_THRESHOLD = 66;
+const POINTS_PER_GOAL = 25;
+const MAX_GOALS = 9;
 
 export function roundDeadline(fixtures: Fixture[], round: number): Date | null {
   const fs = fixtures

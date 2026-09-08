@@ -80,12 +80,10 @@ export class AuthService {
     }
   }
 
-  login(username: string, password: string) {
-    return signInWithEmailAndPassword(
-      this.auth,
-      this.email(username),
-      password,
-    );
+  async login(username: string, password: string): Promise<void> {
+    const normalizedUsername = username.trim().toLowerCase();
+
+    await signInWithEmailAndPassword(this.auth, this.email(normalizedUsername), password);
   }
 
   logout() {

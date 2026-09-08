@@ -24,5 +24,8 @@
         "serve": { "builder": "@angular/build:dev-server", "options": { "buildTarget": "fanta-serie-a:build" } }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

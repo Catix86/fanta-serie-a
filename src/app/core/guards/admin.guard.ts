@@ -21,7 +21,11 @@ export const guestGuard: CanActivateFn = () => {
   return authState(auth).pipe(
     take(1),
     map((firebaseUser) => {
-      return firebaseUser ? router.createUrlTree(["/home"]) : true;
+      if (firebaseUser) {
+        return router.createUrlTree(["/home"]);
+      }
+
+      return true;
     }),
   );
 };
