@@ -32,6 +32,7 @@ import {
 import { ruleById } from "../constants/bonus-rules";
 import { INITIAL_BUDGET, rosterCost } from "../constants/serie-a-teams";
 import { SERIE_A_2026_27_SEED } from "../seed/serie-a-2026-27.seed";
+import { normalizeSerieATeamName } from "../constants";
 
 export interface FixtureImportRow {
   id: string;
@@ -116,7 +117,7 @@ export class DataService {
           scope: "match",
           fixtureId: fixture.id,
           round: fixture.round,
-          teamName,
+          teamName: normalizeSerieATeamName(teamName),
           ruleId,
           label: rule.label,
           description: rule.description,
@@ -332,7 +333,7 @@ export class DataService {
 
         return addDoc(collection(this.db, "teamEvents"), {
           scope: "seasonal",
-          teamName,
+          teamName: normalizeSerieATeamName(teamName),
           ruleId,
           label: rule.label,
           description: rule.description,

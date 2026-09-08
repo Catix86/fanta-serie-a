@@ -7,10 +7,28 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
 import { AuthService } from "../../core/services/auth.service";
 import { DataService } from "../../core/services/data.service";
-import { LINEUP_SIZE, teamPrice } from "../../core/constants/serie-a-teams";
+import {
+  LINEUP_SIZE,
+  SERIE_A_TEAMS,
+  teamPrice,
+} from "../../core/constants/serie-a-teams";
+import {
+  normalizeSerieATeamName,
+  sameSerieATeam,
+} from "../../core/constants/serie-a-team-names";
 import { getSerieATeamLogo } from "../../core/constants/serie-a-team-logos";
 import { isRoundLocked, roundDeadline } from "../../core/utils/scoring";
 import { ToastService } from "../../core/services/toast.service";
+import { Fixture } from "../../core/models";
+
+interface LineupTeamMatchInfo {
+  opponent: string;
+  fixtureLabel: string;
+  venueLabel: "Casa" | "Trasferta";
+  difficulty: number;
+  difficultyLabel: string;
+  difficultyClass: "very-easy" | "easy" | "medium" | "hard" | "very-hard";
+}
 
 @Component({
   standalone: true,
@@ -87,6 +105,7 @@ export class LineupComponent {
         locked: isRoundLocked(fixtures, nextRound),
         deadline: roundDeadline(fixtures, nextRound),
         existingLineup,
+        fixtures,
       };
     }),
   );
@@ -241,6 +260,115 @@ export class LineupComponent {
 
     if (this.captain && !validSelectedTeams.includes(this.captain)) {
       this.captain = "";
+    }
+  }
+
+  teamMatchInfo(
+    teamName: string,
+    round: number,
+    fixtures: Fixture[],
+  ): LineupTeamMatchInfo | null {
+    const fixture = fixtures.find(
+      (item) =>
+        Number(item.round) === Number(round) &&
+        (sameSerieATeam(item.homeTeam, teamName) ||
+          sameSerieATeam(item.awayTeam, teamName)),
+    );
+
+    if (!fixture) {
+      return null;
+    }
+
+    const normalizedTeamName = normalizeSerieATeamName(teamName);
+
+    const normalizedHomeTeam = normalizeSerieATeamName(fixture.homeTeam);
+
+    const normalizedAwayTeam = normalizeSerieATeamName(fixture.awayTeam);
+
+    const isHome = normalizedHomeTeam === normalizedTeamName;
+
+    const opponent = isHome ? normalizedAwayTeam : normalizedHomeTeam;
+
+    const difficulty = this.calculateFixtureDifficulty(opponent, isHome);
+
+    return {
+      opponent,
+      fixtureLabel: `${normalizedHomeTeam} - ${normalizedAwayTeam}`,
+      venueLabel: isHome ? "Casa" : "Trasferta",
+      difficulty,
+      difficultyLabel: this.difficultyLabel(difficulty),
+      difficultyClass: this.difficultyClass(difficulty),
+    };
+  }
+
+  private calculateFixtureDifficulty(
+    opponentName: string,
+    isHome: boolean,
+  ): number {
+    const prices = SERIE_A_TEAMS.map((team) => Number(team.price));
+
+    const minimumPrice = Math.min(...prices);
+    const maximumPrice = Math.max(...prices);
+
+    const opponent = SERIE_A_TEAMS.find((team) => team.name === opponentName);
+
+    if (!opponent || maximumPrice === minimumPrice) {
+      return 3;
+    }
+
+    const normalizedOpponentStrength =
+      (Number(opponent.price) - minimumPrice) / (maximumPrice - minimumPrice);
+
+    const venueAdjustment = isHome ? -0.2 : 0.2;
+
+    const rawDifficulty = 1 + normalizedOpponentStrength * 4 + venueAdjustment;
+
+    return Math.max(1, Math.min(5, Math.round(rawDifficulty)));
+  }
+
+  private difficultyLabel(difficulty: number): string {
+    switch (difficulty) {
+      case 1:
+        return "Molto facile";
+
+      case 2:
+        return "Facile";
+
+      case 3:
+        return "Equilibrata";
+
+      case 4:
+        return "Difficile";
+
+      case 5:
+        return "Molto difficile";
+
+      default:
+        return "Equilibrata";
+    }
+  }
+
+  private difficultyClass(
+    difficulty: number,
+  ): LineupTeamMatchInfo["difficultyClass"] {
+    switch (difficulty) {
+      case 1:
+        return "very-easy";
+
+      case 2:
+        return "easy";
+
+      case 3:
+        return "medium";
+
+      case 4:
+        return "hard";
+
+      case 5:
+        return "very-hard";
+
+      default:
+        return "medium";
     }
   }
 }

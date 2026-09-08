@@ -23,6 +23,8 @@
       } @else {
         <div class="teams-list">
           @for (teamName of vm.me?.roster || []; track teamName) {
+            @let matchInfo = teamMatchInfo(teamName, vm.round, vm.fixtures);
+
             <button
               type="button"
               class="lineup-team-card"
@@ -38,7 +40,9 @@
               />
 
               <span class="team-info">
-                <strong>{{ teamName }}</strong>
+                <strong>
+                  {{ teamName }}
+                </strong>
               </span>
 
               <span
@@ -48,6 +52,57 @@
               >
                 <span class="material-symbols-rounded"> star </span>
               </span>
+
+              @if (matchInfo) {
+                <span class="team-match-summary">
+                  <span class="team-fixture">
+                    <span class="material-symbols-rounded">
+                      sports_soccer
+                    </span>
+
+                    <span class="team-fixture-name">
+                      {{ matchInfo.fixtureLabel }}
+                    </span>
+                  </span>
+
+                  <span class="team-match-separator" aria-hidden="true"></span>
+
+                  <span
+                    class="fixture-difficulty"
+                    [class.very-easy]="
+                      matchInfo.difficultyClass === 'very-easy'
+                    "
+                    [class.easy]="matchInfo.difficultyClass === 'easy'"
+                    [class.medium]="matchInfo.difficultyClass === 'medium'"
+                    [class.hard]="matchInfo.difficultyClass === 'hard'"
+                    [class.very-hard]="
+                      matchInfo.difficultyClass === 'very-hard'
+                    "
+                  >
+                    <span class="difficulty-label">
+                      {{ matchInfo.difficultyLabel }}
+                    </span>
+
+                    <span class="difficulty-dots">
+                      @for (level of [1, 2, 3, 4, 5]; track level) {
+                        <span
+                          [class.active]="level <= matchInfo.difficulty"
+                        ></span>
+                      }
+                    </span>
+                  </span>
+                </span>
+              } @else {
+                <span class="team-match-summary unavailable">
+                  <span class="team-fixture">
+                    <span class="material-symbols-rounded"> event_busy </span>
+
+                    <span class="team-fixture-name">
+                      Partita non disponibile
+                    </span>
+                  </span>
+                </span>
+              }
             </button>
           }
         </div>
