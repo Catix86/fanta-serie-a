@@ -14,6 +14,7 @@ import {
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
   writeBatch,
 } from "@angular/fire/firestore";
@@ -550,5 +551,30 @@ export class DataService {
     if (operations > 0) {
       await batch.commit();
     }
+  }
+
+  async updateTeamLogo(uid: string, teamLogoUrl: string): Promise<void> {
+    const currentUser = this.auth.currentUser;
+
+    if (!currentUser || currentUser.uid !== uid) {
+      throw new Error("USER_NOT_AUTHORIZED");
+    }
+
+    const normalizedLogo = teamLogoUrl.trim();
+
+    const isRemoteUrl =
+      normalizedLogo.startsWith("https://") ||
+      normalizedLogo.startsWith("http://");
+
+    const isImageDataUrl = normalizedLogo.startsWith("data:image/");
+
+    if (normalizedLogo && !isRemoteUrl && !isImageDataUrl) {
+      throw new Error("INVALID_TEAM_LOGO");
+    }
+
+    await updateDoc(doc(this.db, `users/${uid}`), {
+      teamLogoUrl: normalizedLogo,
+      updatedAt: serverTimestamp(),
+    });
   }
 }

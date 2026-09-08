@@ -50,27 +50,42 @@
 
         @for (row of vm.fantasy; track row.uid; let i = $index) {
           <article
-            class="leaderboard-row"
+            class="fantasy-ranking-row"
             [class.current-user]="row.uid === vm.currentUser?.uid"
             [class.podium]="i < 3"
           >
-            <div class="rank-badge">
+            <span class="fantasy-position">
               {{ i + 1 }}
+            </span>
+
+            <div class="leaderboard-team-logo">
+              @if (row.teamLogoUrl) {
+                <img
+                  [src]="row.teamLogoUrl"
+                  [alt]="row.teamName"
+                  loading="lazy"
+                />
+              } @else {
+                <span class="material-symbols-rounded"> shield </span>
+              }
             </div>
 
-            <div class="leaderboard-team-info">
+            <div class="fantasy-team-copy">
               <strong>
                 {{ row.teamName }}
               </strong>
 
-              <p>
+              <span>
                 {{ row.username }}
-              </p>
+              </span>
             </div>
 
-            <div class="leaderboard-score">
-              <strong>{{ row.fantasyPoints }}</strong>
-              <span>pt</span>
+            <div class="fantasy-ranking-points">
+              <strong>
+                {{ row.fantasyPoints }}
+              </strong>
+
+              <span>PT</span>
             </div>
           </article>
         }
@@ -115,7 +130,19 @@
                       {{ i + 1 }}
                     </span>
 
-                    <strong>
+                    <div class="leaderboard-team-logo">
+                      @if (row.teamLogoUrl) {
+                        <img
+                          [src]="row.teamLogoUrl"
+                          [alt]="row.teamName"
+                          loading="lazy"
+                        />
+                      } @else {
+                        <span class="material-symbols-rounded"> shield </span>
+                      }
+                    </div>
+
+                    <strong class="leaderboard-team-name">
                       {{ row.teamName }}
                     </strong>
                   </div>

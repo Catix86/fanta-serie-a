@@ -277,3 +277,388 @@
     line-height: 1;
     font-weight: 1000;
 }
+
+.leaderboard-team-logo {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  padding: 3px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.leaderboard-team-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.leaderboard-team-logo
+  .material-symbols-rounded {
+  font-size: 21px;
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 700,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+.league-team-left {
+  min-width: 0;
+  display: grid;
+  grid-template-columns:
+    28px
+    36px
+    minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.leaderboard-team-name {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.1;
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fantasy-ranking-row {
+  padding: 10px 12px;
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a),
+      var(--grad-b)
+    );
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 22px var(--shadow);
+}
+
+.fantasy-ranking-row.current-user {
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a-primary),
+      var(--grad-b-primary)
+    );
+  border-color: var(--border-primary);
+  box-shadow:
+    0 0 0 1px var(--border-primary),
+    0 12px 26px var(--shadow);
+}
+
+.fantasy-ranking-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fantasy-team-left {
+  min-width: 0;
+  display: grid;
+  grid-template-columns:
+    28px
+    36px
+    minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+}
+
+.fantasy-position {
+  width: 28px;
+  height: 28px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--bg-shadow);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.fantasy-team-copy {
+  min-width: 0;
+}
+
+.fantasy-team-copy strong {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.1;
+  font-weight: 1000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fantasy-team-copy span {
+  display: block;
+  max-width: 100%;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fantasy-ranking-points {
+  flex-shrink: 0;
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+}
+
+.fantasy-ranking-points strong {
+  color: var(--primary);
+  font-size: 21px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.fantasy-ranking-points span {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.league-compact-row.current-user
+  .leaderboard-team-logo,
+.fantasy-ranking-row.current-user
+  .leaderboard-team-logo {
+  background: var(--bg-success);
+  border-color: var(--border-success);
+  box-shadow:
+    0 0 0 2px var(--bg-success);
+}
+
+.fantasy-ranking-row {
+  width: 100%;
+  min-width: 0;
+  min-height: 86px;
+  padding: 10px 12px;
+  border-radius: 18px;
+
+  display: grid;
+  grid-template-columns:
+    40px
+    38px
+    minmax(0, 1fr)
+    auto;
+  align-items: center;
+  gap: 10px;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a),
+      var(--grad-b)
+    );
+
+  border: 1px solid var(--border-accent);
+  box-shadow: 0 10px 22px var(--shadow);
+}
+
+.fantasy-ranking-row.current-user {
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a-success),
+      var(--grad-b-success)
+    );
+
+  border-color: var(--border-success);
+
+  box-shadow:
+    0 0 0 1px var(--border-success),
+    0 12px 26px var(--shadow);
+}
+
+.fantasy-position {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+
+  display: grid;
+  place-items: center;
+
+  color: var(--accent);
+  background: var(--bg-accent);
+  border: 1px solid var(--border-accent);
+
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.fantasy-ranking-row.current-user .fantasy-position {
+  color: var(--success);
+  background: var(--bg-success);
+  border-color: var(--border-success);
+}
+
+.leaderboard-team-logo {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 3px;
+  border-radius: 13px;
+
+  display: grid;
+  place-items: center;
+
+  overflow: hidden;
+  color: var(--primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.leaderboard-team-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: contain;
+}
+
+.leaderboard-team-logo .material-symbols-rounded {
+  font-size: 21px;
+
+  font-variation-settings:
+    "FILL" 1,
+    "wght" 700,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+.fantasy-team-copy {
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+}
+
+.fantasy-team-copy strong {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  overflow: hidden;
+  color: var(--text);
+
+  font-size: 14px;
+  line-height: 1.1;
+  font-weight: 1000;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fantasy-team-copy span {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 5px;
+
+  overflow: hidden;
+  color: var(--muted);
+
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fantasy-ranking-points {
+  min-width: 48px;
+  flex-shrink: 0;
+
+  display: grid;
+  justify-items: end;
+  align-content: center;
+  gap: 4px;
+
+  text-align: right;
+}
+
+.fantasy-ranking-points strong {
+  color: var(--primary);
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.fantasy-ranking-points span {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 1000;
+  text-transform: uppercase;
+}
+
+.fantasy-ranking-row.current-user
+  .fantasy-ranking-points strong {
+  color: var(--success);
+}
+
+@media (max-width: 380px) {
+  .fantasy-ranking-row {
+    grid-template-columns:
+      36px
+      34px
+      minmax(0, 1fr)
+      auto;
+
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .fantasy-position {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .leaderboard-team-logo {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+  }
+
+  .fantasy-team-copy strong {
+    font-size: 13px;
+  }
+
+  .fantasy-ranking-points {
+    min-width: 42px;
+  }
+
+  .fantasy-ranking-points strong {
+    font-size: 20px;
+  }
+}

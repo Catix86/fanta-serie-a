@@ -1,21 +1,26 @@
 <section class="section-header">
   <div class="section-header-main">
-    @if (iconSrc()) {
-      <div class="">
+    <button
+      type="button"
+      class="section-header-icon"
+      [class.clickable]="iconClickable()"
+      [disabled]="!iconClickable()"
+      [attr.aria-label]="iconClickable() ? iconLabel() || 'Apri' : null"
+      (click)="onIconClick()"
+    >
+      @if (iconSrc()) {
         <img
           class="section-header-custom-icon"
           [src]="iconSrc()"
           alt=""
           aria-hidden="true"
         />
-      </div>
-    } @else {
-      <div class="section-header-icon">
+      } @else {
         <span class="material-symbols-rounded">
           {{ icon() }}
         </span>
-      </div>
-    }
+      }
+    </button>
 
     <div class="section-header-copy">
       <h1>

@@ -152,3 +152,49 @@
   object-fit: contain;
   display: block;
 }
+
+.section-header-icon {
+  padding: 0;
+  border: 0;
+}
+
+.section-header-icon:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.section-header-icon.clickable {
+  cursor: pointer;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+.section-header-icon.clickable:active {
+  transform: scale(.94);
+}
+
+.section-header-icon.clickable::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+}
+
+.section-header-icon {
+  position: relative;
+}
+
+.section-header-custom-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  border-radius: inherit;
+  object-fit: cover;
+}

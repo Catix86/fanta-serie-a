@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { interval, combineLatest, map, Observable } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { SectionHeaderComponent } from "../../shared/components/section-header/section-header.component";
+import { FormsModule } from "@angular/forms";
 import {
   AuthService,
   DataService,
@@ -40,7 +41,7 @@ interface HomeLeagueMatchView {
 
 @Component({
   standalone: true,
-  imports: [AsyncPipe, SectionHeaderComponent],
+  imports: [AsyncPipe, FormsModule,SectionHeaderComponent],
   templateUrl: "./home.component.html",
   styleUrl: "./home.component.scss",
 })
@@ -61,6 +62,15 @@ export class HomeComponent {
   updatingRepairMarket = signal(false);
 
   now = signal(Date.now());
+
+  teamLogoModalOpen = signal(false);
+  teamLogoSaving = signal(false);
+
+  teamLogoMode = signal<"url" | "file">("url");
+
+  teamLogoValue = signal("");
+  teamLogoPreview = signal("");
+  teamLogoError = signal("");
 
   marketTeams = SERIE_A_TEAMS;
   initialBudget = INITIAL_BUDGET;
@@ -382,7 +392,7 @@ export class HomeComponent {
       (teamName) => !this.repairRoster().includes(teamName),
     ).length;
   }
-  
+
   toggleRepairTeam(teamName: string, originalRoster: string[]): void {
     const currentRoster = this.repairRoster();
     const isSelected = currentRoster.includes(teamName);
@@ -478,5 +488,261 @@ export class HomeComponent {
       !this.isOriginalRepairTeam(teamName, originalRoster) &&
       this.isRepairTeamSelected(teamName)
     );
+  }
+
+  openTeamLogoModal(currentLogo: string): void {
+    const logo = currentLogo?.trim() ?? "";
+
+    this.teamLogoMode.set(logo.startsWith("data:image/") ? "file" : "url");
+
+    this.teamLogoValue.set(logo);
+    this.teamLogoPreview.set(logo);
+    this.teamLogoError.set("");
+    this.teamLogoModalOpen.set(true);
+  }
+
+  closeTeamLogoModal(): void {
+    if (this.teamLogoSaving()) {
+      return;
+    }
+
+    this.teamLogoModalOpen.set(false);
+    this.teamLogoError.set("");
+  }
+
+  setTeamLogoMode(mode: "url" | "file"): void {
+    this.teamLogoMode.set(mode);
+    this.teamLogoValue.set("");
+    this.teamLogoPreview.set("");
+    this.teamLogoError.set("");
+  }
+
+  onTeamLogoUrlChange(value: string): void {
+    const normalizedUrl = value.trim();
+
+    this.teamLogoValue.set(normalizedUrl);
+    this.teamLogoError.set("");
+
+    if (!normalizedUrl) {
+      this.teamLogoPreview.set("");
+      return;
+    }
+
+    if (!this.isValidRemoteLogoUrl(normalizedUrl)) {
+      this.teamLogoPreview.set("");
+      this.teamLogoError.set(
+        "Inserisci una URL che inizi con http:// o https://.",
+      );
+
+      return;
+    }
+
+    this.teamLogoPreview.set(normalizedUrl);
+  }
+
+  private isValidRemoteLogoUrl(value: string): boolean {
+    try {
+      const parsedUrl = new URL(value);
+
+      return parsedUrl.protocol === "https:" || parsedUrl.protocol === "http:";
+    } catch {
+      return false;
+    }
+  }
+
+  async onTeamLogoFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    input.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      this.teamLogoError.set("Il file selezionato non è un’immagine.");
+
+      this.toast.show("Seleziona un file immagine.", "error", 3000);
+
+      return;
+    }
+
+    const maximumInputSize = 8 * 1024 * 1024;
+
+    if (file.size > maximumInputSize) {
+      this.teamLogoError.set("L’immagine originale non può superare 8 MB.");
+
+      this.toast.show(
+        "Immagine troppo grande. Il limite è 8 MB.",
+        "error",
+        3000,
+      );
+
+      return;
+    }
+
+    try {
+      this.teamLogoError.set("");
+
+      const dataUrl = await this.compressTeamLogo(file);
+
+      const encodedSize = new Blob([dataUrl]).size;
+      const maximumEncodedSize = 180 * 1024;
+
+      if (encodedSize > maximumEncodedSize) {
+        throw new Error("COMPRESSED_IMAGE_TOO_LARGE");
+      }
+
+      this.teamLogoValue.set(dataUrl);
+      this.teamLogoPreview.set(dataUrl);
+    } catch (error) {
+      console.error("Errore elaborazione logo:", error);
+
+      this.teamLogoValue.set("");
+      this.teamLogoPreview.set("");
+      this.teamLogoError.set(
+        "Non è stato possibile elaborare l’immagine selezionata.",
+      );
+
+      this.toast.show(
+        "Immagine non utilizzabile. Provane un’altra.",
+        "error",
+        3000,
+      );
+    }
+  }
+
+  private compressTeamLogo(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      const objectUrl = URL.createObjectURL(file);
+
+      image.onload = () => {
+        try {
+          const maximumSide = 256;
+
+          const sourceWidth = image.naturalWidth;
+          const sourceHeight = image.naturalHeight;
+
+          const scale = Math.min(
+            1,
+            maximumSide / sourceWidth,
+            maximumSide / sourceHeight,
+          );
+
+          const targetWidth = Math.max(1, Math.round(sourceWidth * scale));
+
+          const targetHeight = Math.max(1, Math.round(sourceHeight * scale));
+
+          const canvas = document.createElement("canvas");
+
+          canvas.width = maximumSide;
+          canvas.height = maximumSide;
+
+          const context = canvas.getContext("2d");
+
+          if (!context) {
+            throw new Error("CANVAS_NOT_AVAILABLE");
+          }
+
+          context.fillStyle = "#020617";
+          context.fillRect(0, 0, maximumSide, maximumSide);
+
+          const offsetX = Math.round((maximumSide - targetWidth) / 2);
+
+          const offsetY = Math.round((maximumSide - targetHeight) / 2);
+
+          context.drawImage(image, offsetX, offsetY, targetWidth, targetHeight);
+
+          const dataUrl = canvas.toDataURL("image/webp", 0.72);
+
+          URL.revokeObjectURL(objectUrl);
+          resolve(dataUrl);
+        } catch (error) {
+          URL.revokeObjectURL(objectUrl);
+          reject(error);
+        }
+      };
+
+      image.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error("IMAGE_LOAD_FAILED"));
+      };
+
+      image.src = objectUrl;
+    });
+  }
+
+  onTeamLogoPreviewError(): void {
+    if (this.teamLogoMode() === "url") {
+      this.teamLogoPreview.set("");
+      this.teamLogoError.set(
+        "L’immagine non è raggiungibile. Controlla la URL.",
+      );
+    }
+  }
+
+  async saveTeamLogo(uid: string): Promise<void> {
+    const logoValue = this.teamLogoValue().trim();
+
+    if (!logoValue) {
+      this.teamLogoError.set("Inserisci una URL o seleziona un’immagine.");
+
+      return;
+    }
+
+    if (
+      this.teamLogoMode() === "url" &&
+      !this.isValidRemoteLogoUrl(logoValue)
+    ) {
+      this.teamLogoError.set("La URL inserita non è valida.");
+
+      return;
+    }
+
+    this.teamLogoSaving.set(true);
+
+    try {
+      await this.data.updateTeamLogo(uid, logoValue);
+
+      this.teamLogoModalOpen.set(false);
+
+      this.toast.show("Logo della squadra aggiornato.", "success", 3000);
+    } catch (error) {
+      console.error("Errore aggiornamento logo:", error);
+
+      this.toast.show(
+        "Non è stato possibile aggiornare il logo.",
+        "error",
+        3000,
+      );
+    } finally {
+      this.teamLogoSaving.set(false);
+    }
+  }
+
+  async removeTeamLogo(uid: string): Promise<void> {
+    this.teamLogoSaving.set(true);
+
+    try {
+      await this.data.updateTeamLogo(uid, "");
+
+      this.teamLogoValue.set("");
+      this.teamLogoPreview.set("");
+      this.teamLogoModalOpen.set(false);
+
+      this.toast.show("Logo personalizzato rimosso.", "success", 3000);
+    } catch (error) {
+      console.error("Errore rimozione logo:", error);
+
+      this.toast.show(
+        "Non è stato possibile rimuovere il logo.",
+        "error",
+        3000,
+      );
+    } finally {
+      this.teamLogoSaving.set(false);
+    }
   }
 }

@@ -13,13 +13,27 @@ export interface SectionHeaderAction {
   styleUrl: "./section-header.component.scss",
 })
 export class SectionHeaderComponent {
-  icon = input.required<string>();
-  iconSrc = input<string>('');
+  icon = input<string>("");
+  iconSrc = input<string>("");
+
+  iconClickable = input<boolean>(false);
+  iconLabel = input<string>("");
+
   title = input.required<string>();
   subtitle = input<string>("");
+
   actions = input<SectionHeaderAction[]>([]);
 
+  iconClick = output<void>();
   actionClick = output<string>();
+
+  onIconClick(): void {
+    if (!this.iconClickable()) {
+      return;
+    }
+
+    this.iconClick.emit();
+  }
 
   onActionClick(actionId: string): void {
     this.actionClick.emit(actionId);

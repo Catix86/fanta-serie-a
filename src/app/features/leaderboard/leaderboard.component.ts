@@ -48,23 +48,55 @@ export class LeaderboardComponent {
           roundSettings,
         );
 
-        return {
-          currentUser,
-          fantasy: rows,
-          league: [...rows].sort((a, b) => {
+        const usersMap = new Map(users.map((user) => [user.uid, user]));
+
+        const rowsWithLogo = rows.map((row) => ({
+          ...row,
+          teamLogoUrl: usersMap.get(row.uid)?.teamLogoUrl || "",
+        }));
+
+        const fantasy = [...rowsWithLogo]
+          .sort((a, b) => {
+            if (b.fantasyPoints !== a.fantasyPoints) {
+              return b.fantasyPoints - a.fantasyPoints;
+            }
+
+            return a.teamName.localeCompare(b.teamName, "it");
+          })
+          .map((row, index) => ({
+            ...row,
+            fantasyPosition: index + 1,
+          }));
+
+        const league = [...rowsWithLogo]
+          .sort((a, b) => {
             if (b.leaguePoints !== a.leaguePoints) {
               return b.leaguePoints - a.leaguePoints;
             }
 
-            const bGoalDifference = b.goalsFor - b.goalsAgainst;
-            const aGoalDifference = a.goalsFor - a.goalsAgainst;
+            const goalDifferenceA = a.goalsFor - a.goalsAgainst;
 
-            if (bGoalDifference !== aGoalDifference) {
-              return bGoalDifference - aGoalDifference;
+            const goalDifferenceB = b.goalsFor - b.goalsAgainst;
+
+            if (goalDifferenceB !== goalDifferenceA) {
+              return goalDifferenceB - goalDifferenceA;
             }
 
-            return b.goalsFor - a.goalsFor;
-          }),
+            if (b.goalsFor !== a.goalsFor) {
+              return b.goalsFor - a.goalsFor;
+            }
+
+            return a.teamName.localeCompare(b.teamName, "it");
+          })
+          .map((row, index) => ({
+            ...row,
+            leaguePosition: index + 1,
+          }));
+
+        return {
+          currentUser,
+          fantasy,
+          league,
         };
       },
     ),

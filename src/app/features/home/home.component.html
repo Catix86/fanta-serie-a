@@ -2,10 +2,12 @@
   @if (vm$ | async; as vm) {
     @if (vm.me; as user) {
       <app-section-header
-        icon=""
-        iconSrc="assets/favicon.svg"
+        [iconSrc]="user.teamLogoUrl || 'assets/favicon.svg'"
+        [iconClickable]="true"
+        iconLabel="Modifica logo squadra"
         [title]="user.teamName || 'Home'"
         [subtitle]="user.username + ' - Riepilogo della tua stagione'"
+        (iconClick)="openTeamLogoModal(user.teamLogoUrl || '')"
       />
 
       <!-- CLASSIFICHE -->
@@ -384,3 +386,144 @@
     }
   }
 </main>
+
+@if (teamLogoModalOpen()) {
+  @if (vm$ | async; as modalVm) {
+    @if (modalVm.me; as modalUser) {
+      <div class="team-logo-modal-backdrop" (click)="closeTeamLogoModal()">
+        <section
+          class="card team-logo-modal"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="team-logo-modal-header">
+            <div>
+              <span class="muted"> Personalizzazione </span>
+
+              <h2>Logo della squadra</h2>
+            </div>
+
+            <button
+              type="button"
+              class="team-logo-modal-close"
+              aria-label="Chiudi"
+              [disabled]="teamLogoSaving()"
+              (click)="closeTeamLogoModal()"
+            >
+              <span class="material-symbols-rounded"> close </span>
+            </button>
+          </div>
+
+          <div class="team-logo-edit-preview">
+            @if (teamLogoPreview()) {
+              <img
+                [src]="teamLogoPreview()"
+                alt="Anteprima logo squadra"
+                (error)="onTeamLogoPreviewError()"
+              />
+            } @else {
+              <span class="material-symbols-rounded"> shield </span>
+            }
+          </div>
+
+          <div class="team-logo-mode-toggle">
+            <button
+              type="button"
+              [class.active]="teamLogoMode() === 'url'"
+              (click)="setTeamLogoMode('url')"
+            >
+              <span class="material-symbols-rounded"> link </span>
+
+              URL
+            </button>
+
+            <button
+              type="button"
+              [class.active]="teamLogoMode() === 'file'"
+              (click)="setTeamLogoMode('file')"
+            >
+              <span class="material-symbols-rounded">
+                add_photo_alternate
+              </span>
+
+              Foto o file
+            </button>
+          </div>
+
+          @if (teamLogoMode() === "url") {
+            <div class="team-logo-field">
+              <label class="muted" for="team-logo-url">
+                URL pubblica dell’immagine
+              </label>
+
+              <input
+                id="team-logo-url"
+                class="input"
+                type="url"
+                placeholder="https://..."
+                [ngModel]="teamLogoValue()"
+                [ngModelOptions]="{
+                  standalone: true,
+                }"
+                (ngModelChange)="onTeamLogoUrlChange($event)"
+              />
+            </div>
+          } @else {
+            <label class="team-logo-file-picker">
+              <span class="material-symbols-rounded"> photo_camera </span>
+
+              <strong> Scegli una foto o un file </strong>
+
+              <span> JPG, PNG o WebP, massimo 8 MB </span>
+
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                (change)="onTeamLogoFileSelected($event)"
+              />
+            </label>
+          }
+
+          @if (teamLogoError()) {
+            <p class="team-logo-error">
+              <span class="material-symbols-rounded"> error </span>
+
+              {{ teamLogoError() }}
+            </p>
+          }
+
+          <div class="team-logo-modal-actions">
+            @if (modalUser.teamLogoUrl) {
+              <button
+                type="button"
+                class="btn action-button danger"
+                [disabled]="teamLogoSaving()"
+                (click)="removeTeamLogo(modalUser.uid)"
+              >
+                <span class="material-symbols-rounded"> delete </span>
+
+                Rimuovi
+              </button>
+            }
+
+            <button
+              type="button"
+              class="btn action-button primary"
+              [disabled]="
+                !teamLogoValue() || !!teamLogoError() || teamLogoSaving()
+              "
+              (click)="saveTeamLogo(modalUser.uid)"
+            >
+              <span class="material-symbols-rounded"> save </span>
+
+              @if (teamLogoSaving()) {
+                Salvataggio...
+              } @else {
+                Salva logo
+              }
+            </button>
+          </div>
+        </section>
+      </div>
+    }
+  }
+}
