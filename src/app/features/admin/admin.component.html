@@ -226,117 +226,247 @@
       </div>
     }
 
-    <!-- BONUS O MALUS -->
-    <div class="rule-category-toggle">
-      <button
-        type="button"
-        [class.active]="selectedRuleCategory === 'bonus'"
-        [class.bonus]="selectedRuleCategory === 'bonus'"
-        [disabled]="eventScope === 'match' ? !selTeam : !seasonalTeam"
-        (click)="setRuleCategory('bonus')"
-      >
-        <span class="material-symbols-rounded"> add_circle </span>
-
-        Bonus
-      </button>
-
-      <button
-        type="button"
-        [class.active]="selectedRuleCategory === 'malus'"
-        [class.malus]="selectedRuleCategory === 'malus'"
-        [disabled]="eventScope === 'match' ? !selTeam : !seasonalTeam"
-        (click)="setRuleCategory('malus')"
-      >
-        <span class="material-symbols-rounded"> remove_circle </span>
-
-        Malus
-      </button>
-    </div>
-
     <!-- ELENCO UNICO -->
-    <div class="rules-single-list" [class.disabled]="!canSelectRules()">
-      @if (!canSelectRules()) {
-        <p class="muted rules-placeholder">
-          Completa le selezioni precedenti per visualizzare bonus e malus.
-        </p>
-      } @else {
-        @if (filteredRules().length === 0) {
-          <p class="muted rules-placeholder">Nessuna regola disponibile.</p>
-        }
+    @if (eventScope === "match") {
+      <section class="match-rules-section" [class.disabled]="!canSelectRules()">
+        @if (!canSelectRules()) {
+          <p class="muted rules-placeholder">
+            Seleziona giornata, partita e squadra per inserire bonus e malus.
+          </p>
+        } @else {
+          <div class="match-rules-columns">
+            <!-- BONUS -->
+            <section class="match-rules-column bonus-column">
+              <div class="match-rules-column-header">
+                <span class="material-symbols-rounded"> add_circle </span>
 
-        @for (rule of filteredRules(); track rule.id) {
-          <article
-            class="rule-single-row"
-            [class.selected]="isRuleSelected(rule.id)"
-            [class.bonus]="rule.category === 'bonus'"
-            [class.malus]="rule.category === 'malus'"
-          >
-            <div class="rule-single-main">
-              <div class="rule-single-copy">
-                <strong class="rule-label">
-                  {{ rule.label }}
-                </strong>
+                <strong>Bonus</strong>
 
-                <span class="rule-description">
-                  {{ rule.description }}
+                <span class="rules-column-count">
+                  {{ selectedBonusCount() }}
                 </span>
               </div>
 
-              <strong
-                class="rule-points"
-                [class.positive]="rule.category === 'bonus'"
-                [class.negative]="rule.category === 'malus'"
-              >
-                {{ rule.points > 0 ? "+" : "" }}{{ rule.points }}
+              <div class="match-rules-list">
+                @for (rule of filteredBonusRules(); track rule.id) {
+                  <article
+                    class="match-rule-card bonus"
+                    [class.selected]="isRuleSelected(rule.id)"
+                  >
+                    <div class="match-rule-main">
+                      <div class="match-rule-copy">
+                        <strong class="match-rule-label" [title]="rule.label">
+                          {{ rule.label }}
+                        </strong>
+
+                        <span
+                          class="match-rule-description"
+                          [title]="rule.description"
+                        >
+                          {{ rule.description }}
+                        </span>
+                      </div>
+
+                      <strong class="match-rule-points">
+                        +{{ rule.points }}
+                      </strong>
+                    </div>
+
+                    <div class="match-rule-quantity">
+                      <button
+                        type="button"
+                        class="remove"
+                        [disabled]="ruleQuantity(rule.id) === 0"
+                        [attr.aria-label]="'Rimuovi ' + rule.label"
+                        (click)="decrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> remove </span>
+                      </button>
+
+                      <strong>
+                        {{ ruleQuantity(rule.id) }}
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="add"
+                        [attr.aria-label]="'Aggiungi ' + rule.label"
+                        (click)="incrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> add </span>
+                      </button>
+                    </div>
+                  </article>
+                }
+              </div>
+            </section>
+
+            <!-- MALUS -->
+            <section class="match-rules-column malus-column">
+              <div class="match-rules-column-header">
+                <span class="material-symbols-rounded"> remove_circle </span>
+
+                <strong>Malus</strong>
+
+                <span class="rules-column-count">
+                  {{ selectedMalusCount() }}
+                </span>
+              </div>
+
+              <div class="match-rules-list">
+                @for (rule of filteredMalusRules(); track rule.id) {
+                  <article
+                    class="match-rule-card malus"
+                    [class.selected]="isRuleSelected(rule.id)"
+                  >
+                    <div class="match-rule-main">
+                      <div class="match-rule-copy">
+                        <strong class="match-rule-label" [title]="rule.label">
+                          {{ rule.label }}
+                        </strong>
+
+                        <span
+                          class="match-rule-description"
+                          [title]="rule.description"
+                        >
+                          {{ rule.description }}
+                        </span>
+                      </div>
+
+                      <strong class="match-rule-points">
+                        {{ rule.points }}
+                      </strong>
+                    </div>
+
+                    <div class="match-rule-quantity">
+                      <button
+                        type="button"
+                        class="remove"
+                        [disabled]="ruleQuantity(rule.id) === 0"
+                        [attr.aria-label]="'Rimuovi ' + rule.label"
+                        (click)="decrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> remove </span>
+                      </button>
+
+                      <strong>
+                        {{ ruleQuantity(rule.id) }}
+                      </strong>
+
+                      <button
+                        type="button"
+                        class="add"
+                        [attr.aria-label]="'Aggiungi ' + rule.label"
+                        (click)="incrementRule(rule.id)"
+                      >
+                        <span class="material-symbols-rounded"> add </span>
+                      </button>
+                    </div>
+                  </article>
+                }
+              </div>
+            </section>
+          </div>
+
+          <div class="match-rules-summary">
+            <div>
+              <span>Bonus</span>
+              <strong>
+                {{ selectedBonusCount() }}
               </strong>
             </div>
 
-            @if (eventScope === "match") {
-              <div class="rule-compact-quantity">
-                <button
-                  type="button"
-                  class="rule-quantity-button remove"
-                  [disabled]="ruleQuantity(rule.id) === 0"
-                  [attr.aria-label]="'Rimuovi ' + rule.label"
-                  (click)="decrementRule(rule.id)"
-                >
-                  <span class="material-symbols-rounded"> remove </span>
-                </button>
+            <span class="match-rules-summary-separator"> + </span>
 
-                <strong class="rule-quantity-value">
-                  {{ ruleQuantity(rule.id) }}
-                </strong>
+            <div>
+              <span>Malus</span>
+              <strong>
+                {{ selectedMalusCount() }}
+              </strong>
+            </div>
 
-                <button
-                  type="button"
-                  class="rule-quantity-button add"
-                  [attr.aria-label]="'Aggiungi ' + rule.label"
-                  (click)="selectRule(rule.id)"
-                >
-                  <span class="material-symbols-rounded"> add </span>
-                </button>
-              </div>
-            } @else {
-              <button
-                type="button"
-                class="rule-seasonal-select"
-                [class.selected]="isRuleSelected(rule.id)"
-                [attr.aria-label]="'Seleziona ' + rule.label"
-                (click)="selectRule(rule.id)"
-              >
-                <span class="material-symbols-rounded">
-                  @if (isRuleSelected(rule.id)) {
-                    check_circle
-                  } @else {
-                    radio_button_unchecked
-                  }
-                </span>
-              </button>
-            }
-          </article>
+            <span class="match-rules-summary-equals"> = </span>
+
+            <div class="total">
+              <span>Totale</span>
+              <strong>
+                {{ ruleIds.length }}
+              </strong>
+            </div>
+          </div>
         }
-      }
-    </div>
+      </section>
+    }
+
+    @if (eventScope === "seasonal" && canSelectRules()) {
+      <div class="seasonal-rules-columns">
+        <section class="seasonal-rules-column">
+          <div class="seasonal-rules-column-label bonus">
+            <span class="material-symbols-rounded"> add_circle </span>
+
+            <strong>Bonus</strong>
+          </div>
+
+          @for (rule of filteredBonusRules(); track rule.id) {
+            <button
+              type="button"
+              class="seasonal-rule-row bonus"
+              [class.selected]="isRuleSelected(rule.id)"
+              (click)="selectSeasonalRule(rule.id)"
+            >
+              <span class="seasonal-rule-copy">
+                <strong>{{ rule.label }}</strong>
+                <small>{{ rule.description }}</small>
+              </span>
+
+              <strong class="seasonal-rule-points"> +{{ rule.points }} </strong>
+
+              <span class="material-symbols-rounded">
+                @if (isRuleSelected(rule.id)) {
+                  check_circle
+                } @else {
+                  radio_button_unchecked
+                }
+              </span>
+            </button>
+          }
+        </section>
+
+        <section class="seasonal-rules-column">
+          <div class="seasonal-rules-column-label malus">
+            <span class="material-symbols-rounded"> remove_circle </span>
+
+            <strong>Malus</strong>
+          </div>
+
+          @for (rule of filteredMalusRules(); track rule.id) {
+            <button
+              type="button"
+              class="seasonal-rule-row malus"
+              [class.selected]="isRuleSelected(rule.id)"
+              (click)="selectSeasonalRule(rule.id)"
+            >
+              <span class="seasonal-rule-copy">
+                <strong>{{ rule.label }}</strong>
+                <small>{{ rule.description }}</small>
+              </span>
+
+              <strong class="seasonal-rule-points">
+                {{ rule.points }}
+              </strong>
+
+              <span class="material-symbols-rounded">
+                @if (isRuleSelected(rule.id)) {
+                  check_circle
+                } @else {
+                  radio_button_unchecked
+                }
+              </span>
+            </button>
+          }
+        </section>
+      </div>
+    }
 
     <div class="selected-rules-summary">
       @if (eventScope === "match") {
@@ -354,13 +484,19 @@
 
     <button
       type="button"
-      class="btn action-button primary"
+      class="btn action-button primary save-events-button"
       [disabled]="!canSelectRules() || ruleIds.length === 0"
       (click)="addEvents()"
     >
       <span class="material-symbols-rounded"> add_task </span>
 
-      Inserisci Bonus/Malus
+      @if (ruleIds.length === 0) {
+        Seleziona Bonus/Malus
+      } @else if (ruleIds.length === 1) {
+        Inserisci 1 evento
+      } @else {
+        Inserisci {{ ruleIds.length }} eventi
+      }
     </button>
   </details>
 

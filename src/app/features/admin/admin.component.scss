@@ -810,3 +810,502 @@
     padding-inline: 6px;
   }
 }
+
+.match-rules-section {
+  display: grid;
+  gap: 10px;
+}
+
+.match-rules-columns {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 8px;
+}
+
+.match-rules-column {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.match-rules-column-header {
+  min-height: 40px;
+  padding: 8px 9px;
+  border-radius: 15px;
+
+  display: grid;
+  grid-template-columns:
+    auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.bonus-column
+  .match-rules-column-header {
+  color: var(--success);
+  background: var(--bg-success);
+  border-color: var(--border-success);
+}
+
+.malus-column
+  .match-rules-column-header {
+  color: var(--danger);
+  background: var(--bg-danger);
+  border-color: var(--border-danger);
+}
+
+.match-rules-column-header
+  .material-symbols-rounded {
+  font-size: 18px;
+}
+
+.match-rules-column-header strong {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.rules-column-count {
+  min-width: 23px;
+  height: 23px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+
+  color: var(--text);
+  background: var(--bg-shadow);
+  border: 1px solid var(--border);
+
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.match-rules-list {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.match-rule-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 104px;
+  padding: 8px;
+  border-radius: 16px;
+
+  display: grid;
+  grid-template-rows:
+    minmax(48px, auto)
+    30px;
+  gap: 8px;
+
+  color: var(--text);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a),
+      var(--grad-b)
+    );
+
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.match-rule-card.bonus.selected {
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a-success),
+      var(--grad-b-success)
+    );
+
+  border-color: var(--border-success);
+}
+
+.match-rule-card.malus.selected {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(251, 113, 133, .16),
+      rgba(251, 113, 133, .05)
+    );
+
+  border-color: var(--border-danger);
+}
+
+.match-rule-main {
+  min-width: 0;
+
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  align-items: start;
+  gap: 6px;
+}
+
+.match-rule-copy {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.match-rule-label {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  overflow: hidden;
+  color: var(--text);
+
+  font-size: 11px;
+  line-height: 1.1;
+  font-weight: 1000;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-rule-description {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: 4px;
+
+  overflow: hidden;
+  color: var(--muted);
+
+  font-size: 8px;
+  line-height: 1.25;
+  font-weight: 700;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.match-rule-points {
+  min-width: 34px;
+  padding: 5px 6px;
+  border-radius: 999px;
+
+  justify-self: end;
+  align-self: start;
+
+  text-align: center;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.match-rule-card.bonus
+  .match-rule-points {
+  color: var(--success);
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+}
+
+.match-rule-card.malus
+  .match-rule-points {
+  color: var(--danger);
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+}
+
+.match-rule-quantity {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns:
+    30px
+    minmax(0, 1fr)
+    30px;
+
+  align-items: center;
+  gap: 5px;
+}
+
+.match-rule-quantity button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 10px;
+
+  display: grid;
+  place-items: center;
+}
+
+.match-rule-quantity button.remove {
+  justify-self: start;
+
+  color: var(--danger);
+  background: var(--bg-danger);
+  border: 1px solid var(--border-danger);
+}
+
+.match-rule-quantity button.add {
+  justify-self: end;
+
+  color: var(--success);
+  background: var(--bg-success);
+  border: 1px solid var(--border-success);
+}
+
+.match-rule-quantity button:disabled {
+  opacity: .25;
+  cursor: not-allowed;
+}
+
+.match-rule-quantity
+  .material-symbols-rounded {
+  font-size: 17px;
+
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 700,
+    "GRAD" 0,
+    "opsz" 20;
+}
+
+.match-rule-quantity > strong {
+  justify-self: center;
+
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.match-rules-summary {
+  padding: 9px 10px;
+  border-radius: 15px;
+
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+  gap: 6px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+.match-rules-summary > div {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+}
+
+.match-rules-summary span {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.match-rules-summary strong {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.match-rules-summary
+  > div:first-child strong {
+  color: var(--success);
+}
+
+.match-rules-summary
+  > div:nth-child(3) strong {
+  color: var(--danger);
+}
+
+.match-rules-summary
+  .total strong {
+  color: var(--primary);
+}
+
+.match-rules-summary-separator,
+.match-rules-summary-equals {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 1000;
+}
+
+.seasonal-rules-columns {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 8px;
+}
+
+.seasonal-rules-column {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.seasonal-rule-row {
+  width: 100%;
+  min-width: 0;
+  min-height: 58px;
+  padding: 8px;
+  border-radius: 15px;
+
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    22px;
+
+  align-items: center;
+  gap: 6px;
+
+  color: var(--text);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a),
+      var(--grad-b)
+    );
+
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.seasonal-rule-row.bonus.selected {
+  background:
+    linear-gradient(
+      135deg,
+      var(--grad-a-success),
+      var(--grad-b-success)
+    );
+
+  border-color: var(--border-success);
+}
+
+.seasonal-rule-row.malus.selected {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(251, 113, 133, .16),
+      rgba(251, 113, 133, .05)
+    );
+
+  border-color: var(--border-danger);
+}
+
+.seasonal-rule-copy {
+  min-width: 0;
+}
+
+.seasonal-rule-copy strong,
+.seasonal-rule-copy small {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seasonal-rule-copy strong {
+  color: var(--text);
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.seasonal-rule-copy small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 8px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.seasonal-rule-points {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 1000;
+  white-space: nowrap;
+}
+
+.seasonal-rule-row
+  > .material-symbols-rounded {
+  color: var(--muted);
+  font-size: 19px;
+}
+
+.seasonal-rule-row.selected
+  > .material-symbols-rounded {
+  color: var(--success);
+}
+
+.seasonal-rules-columns {
+  margin-top: 12px;
+}
+
+.seasonal-rules-column-label {
+  min-width: 0;
+  margin: 0;
+  padding: 0 3px 7px;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.seasonal-rules-column-label .material-symbols-rounded {
+  flex-shrink: 0;
+  font-size: 17px;
+  line-height: 1;
+
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 700,
+    "GRAD" 0,
+    "opsz" 20;
+}
+
+.seasonal-rules-column-label strong {
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.seasonal-rules-column-label.bonus {
+  color: var(--success);
+  border-bottom-color: var(--border-success);
+}
+
+.seasonal-rules-column-label.malus {
+  color: var(--danger);
+  border-bottom-color: var(--border-danger);
+}
