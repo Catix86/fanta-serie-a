@@ -174,18 +174,6 @@
   transform: scale(.94);
 }
 
-.section-header-icon.clickable::after {
-  content: "";
-  position: absolute;
-  right: -3px;
-  bottom: -3px;
-  width: 13px;
-  height: 13px;
-  border-radius: 999px;
-  background: var(--accent);
-  border: 2px solid var(--bg);
-}
-
 .section-header-icon {
   position: relative;
 }

@@ -151,7 +151,6 @@
       var(--grad-a),
       var(--grad-b));
   color: var(--text);
-  border: 1px solid var(--border);
   text-align: left;
   box-shadow: 0 10px 22px var(--shadow);
   transition:
@@ -168,12 +167,8 @@
 .lineup-team-card.selected {
   background:
     linear-gradient(135deg,
-      var(--grad-a-primary),
+      var(--primary),
       var(--grad-b-primary));
-  border-color: var(--border-primary);
-  box-shadow:
-    0 0 0 1px var(--border-primary),
-    0 12px 26px var(--shadow);
 }
 
 .lineup-team-card.captain {
@@ -181,10 +176,6 @@
     linear-gradient(135deg,
       var(--grad-a-accent),
       var(--grad-b-accent));
-  border-color: var(--border-accent);
-  box-shadow:
-    0 0 0 1px var(--border-accent),
-    0 12px 28px var(--shadow);
 }
 
 .lineup-team-logo {
@@ -274,36 +265,26 @@
   min-width: 0;
   min-height: 112px;
   padding: 10px;
-  border-radius: 18px;
-
   display: grid;
   grid-template-columns:
     auto
     minmax(0, 1fr)
     auto;
-
   grid-template-areas:
     "logo info captain"
     "difficulty difficulty difficulty";
-
   align-items: center;
   gap: 9px;
-
   color: var(--text);
-
   background:
     linear-gradient(
       135deg,
       var(--grad-a),
       var(--grad-b)
     );
-
-  border: 1px solid var(--border);
   text-align: left;
-
   box-shadow:
     0 10px 22px var(--shadow);
-
   transition:
     border-color .18s ease,
     background .18s ease,
@@ -316,8 +297,6 @@
   min-width: 0;
   min-height: 112px;
   padding: 10px;
-  border-radius: 18px;
-
   display: grid;
   grid-template-columns:
     auto
@@ -340,7 +319,6 @@
       var(--grad-b)
     );
 
-  border: 1px solid var(--border);
   text-align: left;
 
   box-shadow:
@@ -540,8 +518,6 @@
   min-width: 0;
   min-height: 82px;
   padding: 10px;
-  border-radius: 18px;
-
   display: grid;
   grid-template-columns:
     auto
@@ -564,7 +540,6 @@
       var(--grad-b)
     );
 
-  border: 1px solid var(--border);
   text-align: left;
 
   box-shadow:
@@ -643,7 +618,7 @@
   align-items: center;
   gap: 4px;
 
-  color: var(--muted);
+  color: var(--text);
 }
 
 .team-fixture .material-symbols-rounded {
