@@ -3,7 +3,7 @@ import { AsyncPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DataService } from "../../core/services/data.service";
 import {
-  BONUS_RULES,
+  ALL_RULES,
   BonusRule,
   RuleCategory,
   RuleScope,
@@ -23,7 +23,7 @@ import { combineLatest, map, Observable } from "rxjs";
 export class AdminComponent {
   data = inject(DataService);
   toast = inject(ToastService);
-  rules = BONUS_RULES;
+  rules = ALL_RULES;
   fixtures$ = this.data.fixtures$();
   selFixture?: Fixture;
   selTeam = "";
@@ -297,11 +297,14 @@ export class AdminComponent {
       return [];
     }
 
-    return this.rules.filter(
+    const result = this.rules.filter(
       (rule) =>
         rule.scope === this.eventScope &&
         rule.category === this.selectedRuleCategory,
     );
+
+    console.log(result);
+    return result;
   }
 
   setEventScope(scope: RuleScope): void {
